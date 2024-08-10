@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
-import AppLoading from 'expo-app-loading';
+import { StyleSheet, View, Text } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
@@ -16,12 +16,32 @@ const App = () => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    initializeApp(firebaseConfig);
+    async function prepare() {
+      try {
+        // Prevent the splash screen from auto-hiding
+        await SplashScreen.preventAutoHideAsync();
+
+        // Initialize Firebase only if it hasn't been initialized yet
+        if (getApps().length === 0) {
+          initializeApp(firebaseConfig);
+        }
+
+        // Simulate a loading task (e.g., fetching resources)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setIsReady(true);
+        // Hide the splash screen
+        await SplashScreen.hideAsync();
+      }
+    }
+
+    prepare();
   }, []);
 
-  if(!isReady) {
-    return <AppLoading startAsync={() => Promise.resolve()} onFinish={() => setIsReady(true)} onError={console.warn} />;
-    
+  if (!isReady) {
+    return null; // Render nothing while the app is loading
   }
 
   return (
@@ -35,6 +55,7 @@ const App = () => {
     </NavigationContainer>
   );
 };
+
 export default App;
 
 const styles = StyleSheet.create({
