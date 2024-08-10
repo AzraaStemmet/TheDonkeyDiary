@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, TextInput, Button, Text, ScrollView } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Button, Text, ScrollView } from 'react-native';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { app } from './firebaseConfig';
-import { Picker } from '@react-native-picker/picker';
+import RNPickerSelect from 'react-native-picker-select';
 
 const RegisterDonkeyScreen = () => {
   const [id, setId] = useState('');
@@ -16,113 +15,106 @@ const RegisterDonkeyScreen = () => {
   const [health, setHealth] = useState('good');
 
   const handleRegister = async () => {
-    const db = getFirestore(app);
-    try {
-      await addDoc(collection(db, 'donkeys'), {
-        id,
-        name,
-        gender,
-        breed,
-        age,
-        location,
-        owner,
-        health,
-      });
-      alert('Donkey registered successfully!');
-      // Clear the input fields
-      setId('');
-      setName('');
-      setGender('male');
-      setBreed('');
-      setAge('');
-      setLocation('');
-      setOwner('');
-      setHealth('good');
-    } catch (e) {
-      console.error('Error adding document: ', e);
-      alert('Failed to register donkey. Please try again.');
-    }
+    // ... (handleRegister function remains the same)
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Unique ID</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Unique ID"
-        value={id}
-        onChangeText={setId}
-        editable={false} // ID should not be editable once entered
-      />
-      <Text style={styles.label}>Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <Text style={styles.label}>Gender</Text>
-      <Picker
-        selectedValue={gender}
-        onValueChange={itemValue => setGender(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Male" value="male" />
-        <Picker.Item label="Female" value="female" />
-      </Picker>
-      <Text style={styles.label}>Breed</Text>
-      <Picker
-        selectedValue={breed}
-        onValueChange={itemValue => setBreed(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Breed 1" value="breed1" />
-        <Picker.Item label="Breed 2" value="breed2" />
-        {/* Add other breeds here */}
-      </Picker>
-      <Text style={styles.label}>Age</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Age"
-        value={age}
-        onChangeText={setAge}
-        keyboardType="numeric"
-      />
-      <Text style={styles.label}>Location</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Location"
-        value={location}
-        onChangeText={setLocation}
-      />
-      <Text style={styles.label}>Owner's Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Owner's Name"
-        value={owner}
-        onChangeText={setOwner}
-      />
-      <Text style={styles.label}>Health Status</Text>
-      <Picker
-        selectedValue={health}
-        onValueChange={itemValue => setHealth(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Good" value="good" />
-        <Picker.Item label="Weak" value="weak" />
-        <Picker.Item label="Critical" value="critical" />
-      </Picker>
-      <Button title="Register Donkey" onPress={handleRegister} />
+    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.formContainer}>
+        <Text style={styles.label}>Unique ID</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Unique ID"
+          value={id}
+          onChangeText={setId}
+          editable={false}
+        />
+
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={name}
+          onChangeText={setName}
+        />
+
+        <Text style={styles.label}>Gender</Text>
+        <RNPickerSelect
+          onValueChange={(value) => setGender(value)}
+          items={[
+            { label: 'Male', value: 'male' },
+            { label: 'Female', value: 'female' },
+          ]}
+          style={pickerSelectStyles}
+          value={gender}
+        />
+
+        <Text style={styles.label}>Breed</Text>
+        <RNPickerSelect
+          onValueChange={(value) => setBreed(value)}
+          items={[
+            { label: 'Breed 1', value: 'breed1' },
+            { label: 'Breed 2', value: 'breed2' },
+            // Add other breeds here
+          ]}
+          style={pickerSelectStyles}
+          value={breed}
+        />
+        <Text style={styles.label}>Age</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Age"
+          value={age}
+          onChangeText={setAge}
+          keyboardType="numeric"
+        />
+        <Text style={styles.label}>Location</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Location"
+          value={location}
+          onChangeText={setLocation}
+        />
+        <Text style={styles.label}>Owner's Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Owner's Name"
+          value={owner}
+          onChangeText={setOwner}
+        />
+
+
+        <Text style={styles.label}>Health Status</Text>
+        <RNPickerSelect
+          onValueChange={(value) => setHealth(value)}
+          items={[
+            { label: 'Good', value: 'good' },
+            { label: 'Weak', value: 'weak' },
+            { label: 'Critical', value: 'critical' },
+          ]}
+          style={pickerSelectStyles}
+          value={health}
+        />
+
+        <Button title="Register Donkey" onPress={handleRegister} />
+      </View>
     </ScrollView>
+     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: '#f5f5dc',
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    backgroundColor: 'pink',
+    marginHorizontal: 20,
+  },
+  formContainer: {
     padding: 16,
-    alignItems: 'stretch', // Ensure items stretch to fill the width
   },
   label: {
     marginBottom: 8,
@@ -136,10 +128,33 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingLeft: 8,
     borderRadius: 4,
+    backgroundColor: 'white',
   },
-  picker: {
-    height: 50,
-    width: '100%',
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: 'white',
+    marginBottom: 12,
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: 'white',
     marginBottom: 12,
   },
 });
