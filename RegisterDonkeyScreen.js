@@ -1,10 +1,9 @@
-// screens/RegisterDonkeyScreen.js
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, TextInput, Button, Text, ScrollView } from 'react-native';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { app } from './firebaseConfig';
-import { Picker } from '@react-native-picker/picker'; // Updated import
+import { Picker } from '@react-native-picker/picker';
 
 const RegisterDonkeyScreen = () => {
   const [id, setId] = useState('');
@@ -47,6 +46,7 @@ const RegisterDonkeyScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.label}>Unique ID</Text>
       <TextInput
         style={styles.input}
         placeholder="Unique ID"
@@ -54,13 +54,14 @@ const RegisterDonkeyScreen = () => {
         onChangeText={setId}
         editable={false} // ID should not be editable once entered
       />
+      <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
         placeholder="Name"
         value={name}
         onChangeText={setName}
       />
-      <Text>Gender</Text>
+      <Text style={styles.label}>Gender</Text>
       <Picker
         selectedValue={gender}
         onValueChange={itemValue => setGender(itemValue)}
@@ -69,7 +70,7 @@ const RegisterDonkeyScreen = () => {
         <Picker.Item label="Male" value="male" />
         <Picker.Item label="Female" value="female" />
       </Picker>
-      <Text>Breed</Text>
+      <Text style={styles.label}>Breed</Text>
       <Picker
         selectedValue={breed}
         onValueChange={itemValue => setBreed(itemValue)}
@@ -79,6 +80,7 @@ const RegisterDonkeyScreen = () => {
         <Picker.Item label="Breed 2" value="breed2" />
         {/* Add other breeds here */}
       </Picker>
+      <Text style={styles.label}>Age</Text>
       <TextInput
         style={styles.input}
         placeholder="Age"
@@ -86,19 +88,21 @@ const RegisterDonkeyScreen = () => {
         onChangeText={setAge}
         keyboardType="numeric"
       />
+      <Text style={styles.label}>Location</Text>
       <TextInput
         style={styles.input}
         placeholder="Location"
         value={location}
         onChangeText={setLocation}
       />
+      <Text style={styles.label}>Owner's Name</Text>
       <TextInput
         style={styles.input}
         placeholder="Owner's Name"
         value={owner}
         onChangeText={setOwner}
       />
-      <Text>Health Status</Text>
+      <Text style={styles.label}>Health Status</Text>
       <Picker
         selectedValue={health}
         onValueChange={itemValue => setHealth(itemValue)}
@@ -117,9 +121,13 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: '#f5f5dc',
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 16,
+    alignItems: 'stretch', // Ensure items stretch to fill the width
+  },
+  label: {
+    marginBottom: 8,
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   input: {
     height: 40,
@@ -127,7 +135,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingLeft: 8,
-    width: '100%',
+    borderRadius: 4,
   },
   picker: {
     height: 50,
