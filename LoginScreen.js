@@ -4,8 +4,8 @@ import { StyleSheet, View, TextInput, Button, Text } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('testing@gmail.com');
+  const [password, setPassword] = useState('123456');
 
   const handleLogin = async () => {
     const auth = getAuth();
