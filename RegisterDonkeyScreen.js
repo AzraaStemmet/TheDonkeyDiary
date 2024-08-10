@@ -1,9 +1,10 @@
 // screens/RegisterDonkeyScreen.js
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, TextInput, Button, Text, Picker } from 'react-native';
+import { StyleSheet, View, TextInput, Button, Text, ScrollView } from 'react-native';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { app } from './firebaseConfig';
+import { Picker } from '@react-native-picker/picker'; // Updated import
 
 const RegisterDonkeyScreen = () => {
   const [id, setId] = useState('');
@@ -45,7 +46,7 @@ const RegisterDonkeyScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <TextInput
         style={styles.input}
         placeholder="Unique ID"
@@ -108,13 +109,13 @@ const RegisterDonkeyScreen = () => {
         <Picker.Item label="Critical" value="critical" />
       </Picker>
       <Button title="Register Donkey" onPress={handleRegister} />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#f5f5dc',
     alignItems: 'center',
     justifyContent: 'center',
