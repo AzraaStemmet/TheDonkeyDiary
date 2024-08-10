@@ -68,3 +68,5 @@ const styles = StyleSheet.create({
     width: '100%', // Ensure input fields take up full width
   },
 });
+
+
