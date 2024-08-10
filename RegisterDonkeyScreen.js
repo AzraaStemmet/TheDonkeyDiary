@@ -1,8 +1,9 @@
 // screens/RegisterDonkeyScreen.js
 import React, { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, TextInput, Button, Text, Picker } from 'react-native';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { app } from '../firebaseConfig';
+import { app } from './firebaseConfig';
 
 const RegisterDonkeyScreen = () => {
   const [id, setId] = useState('');

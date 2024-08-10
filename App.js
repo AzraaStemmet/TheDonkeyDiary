@@ -1,72 +1,47 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import React, { useState } from 'react';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { app } from './firebaseConfig';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Image } from 'react-native';
+import AppLoading from 'expo-app-loading';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from './firebaseConfig';
+import HomeScreen from './HomeScreen';
+import LoginScreen from './LoginScreen';
+import WorkersScreen from './WorkersScreen';
+import RegisterDonkeyScreen from './RegisterDonkeyScreen';
 
-export default function App() {
-  const [name, setName] = useState('');
-  const [breed, setBreed] = useState('');
+const Stack = createStackNavigator();
 
-  const handleAddData = async () => {
-    const db = getFirestore(app);
-    try {
-      await addDoc(collection(db, 'donkeys'), {
-        name,
-        breed,
-      });
-      alert('Donkey added successfully!');
-      // Clear the input fields
-      setName('');
-      setBreed('');
-    } catch (e) {
-      console.error('Error adding document: ', e);
-      alert('Failed to add donkey. Please try again.');
-    }
-  };
+const App = () => {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    initializeApp(firebaseConfig);
+  }, []);
+
+  if(!isReady) {
+    return <AppLoading startAsync={() => Promise.resolve()} onFinish={() => setIsReady(true)} onError={console.warn} />;
+    
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Add a New Donkey</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Breed"
-        value={breed}
-        onChangeText={setBreed}
-      />
-      <Button title="Add Donkey" onPress={handleAddData} />
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Home'>
+        <Stack.Screen name='Home' component={HomeScreen} />
+        <Stack.Screen name='Login' component={LoginScreen} />
+        <Stack.Screen name='Workers' component={WorkersScreen} />
+        <Stack.Screen name='RegisterDonkey' component={RegisterDonkeyScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
+export default App;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5dc',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16, // Added padding for better spacing
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    width: '100%', // Ensure input fields take up full width
   },
 });
-
-

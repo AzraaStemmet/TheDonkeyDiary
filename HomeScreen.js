@@ -5,7 +5,7 @@ import { StyleSheet, View, Text, Image, Button } from 'react-native';
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Image source={require('./assets/icon.jpg')} style={styles.image} />
+      
       <Text style={styles.title}>Welcome to The Donkey Diary</Text>
       <Text style={styles.description}>
         Your trusted platform for managing donkey health and information in rural villages.
