@@ -69,12 +69,12 @@ const RegisterDonkeyScreen = () => {
         Alert.alert('Success', 'Donkey registered successfully!');
         // Clear the input fields and generate a new ID
         setName('');
-        setGender('default');
-        setBreed('default');
-        setAge('default');
+        setGender('');
+        setBreed('');
+        setAge('');
         setLocation('');
         setOwner('');
-        setHealth('default');
+        setHealth('');
         generateUniqueId();
       } catch (e) {
         console.error('Error adding document: ', e);
@@ -154,6 +154,7 @@ const RegisterDonkeyScreen = () => {
               { label: '4 years', value: '4 years' },
               { label: '5 years', value: '5 years' },
               { label: '6 years', value: '6 years' },
+              { label: '7 years', value: '7 years'},
               { label: '> 7 years', value: '> 7 years' },
             ]}
             style={pickerSelectStyles}
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {
-    backgroundColor: 'pink',
+    backgroundColor: 'beige',
     marginHorizontal: 20,
   },
   formContainer: {
