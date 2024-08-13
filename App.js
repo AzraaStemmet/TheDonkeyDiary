@@ -9,6 +9,12 @@ import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
 import WorkersScreen from './WorkersScreen';
 import RegisterDonkeyScreen from './RegisterDonkeyScreen';
+import SearchDonkey from './SearchDonkey'; // Correct the path according to your project structure
+// For default export
+import SearchDonkey from './path/to/SearchDonkey';
+
+
+
 
 const Stack = createStackNavigator();
 
@@ -51,6 +57,8 @@ const App = () => {
         <Stack.Screen name='Login' component={LoginScreen} />
         <Stack.Screen name='Workers' component={WorkersScreen} />
         <Stack.Screen name='RegisterDonkey' component={RegisterDonkeyScreen} />
+        <Stack.Screen name='SearchDonkey' component={SearchDonkey} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

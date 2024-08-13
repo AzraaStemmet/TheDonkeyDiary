@@ -6,7 +6,7 @@ const WorkersScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Button title="Register Donkey" onPress={() => navigation.navigate('RegisterDonkey')} />
-      <Button title="Search by ID" onPress={() => { /* Implement search functionality */ }} />
+      <Button title="Search by ID" onPress={() => navigation.navigate('SearchDonkey')} />
       <Button title="View Existing Donkeys" onPress={() => { /* Implement view functionality */ }} />
     </View>
   );
