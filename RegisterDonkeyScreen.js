@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Button, Text, ScrollView, Alert } from 'react-native';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert } from 'react-native';
+import { getFirestore, collection, addDoc, getDocs, ref, uploadBytes } from 'firebase/firestore';
 import { app } from './firebaseConfig';
 import RNPickerSelect from 'react-native-picker-select';
+import * as ImagePicker from 'expo-image-picker';
+
 
 const RegisterDonkeyScreen = () => {
   const [id, setId] = useState('');
@@ -12,6 +14,7 @@ const RegisterDonkeyScreen = () => {
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
+  const [image, setImage] = useState(null);
   const [health, setHealth] = useState('');
 
   useEffect(() => {
@@ -27,6 +30,38 @@ const RegisterDonkeyScreen = () => {
     const ageCode = getAgeCode(age);
     const newId = `${donkeyCount}-${genderCode}-${year}-${ageCode}`;
     setId(newId);
+  };
+
+  const pickImage = async () => {
+    // Request necessary permissions from the user
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+  
+    // Let the user pick an image
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+  
+    if (!result.cancelled) {
+      setImage(result.uri);
+      uploadImage(result.uri);
+    }
+  };
+
+  const uploadImage = async () => {
+    const response = await fetch(image);
+    const blob = await response.blob();
+    const storage = getStorage();
+    const storageRef = ref(storage, 'path/to/your/donkey/images/${uniqueImageId}');
+    uploadBytes(storageRef, blob).then((snapshot) => {
+      console.log('Uploaded a blob or file!');
+    });
   };
 
   const getAgeCode = (age) => {
@@ -176,6 +211,12 @@ const RegisterDonkeyScreen = () => {
             value={owner}
             onChangeText={setOwner}
           />
+
+          <Text style={styles.label}>Donkey Picture</Text>
+          <Button title="Pick an image from camera roll" onPress={pickImage} />
+           {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+          
+
 
           <Text style={styles.label}>Health Status</Text>
           <RNPickerSelect

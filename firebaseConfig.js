@@ -1,6 +1,7 @@
 //  is a setup script to integrate Firebase into the application
 // essential to initialize and configure our Firebase app
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -16,3 +17,5 @@ const firebaseConfig = {
 
 // Initialize Firebase, used to interact with various firebase services
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+export { db };

@@ -2,21 +2,23 @@
 // and app js page the navigator and the workers page the button, and import in app.js
 import React, { useState } from 'react';
 import { TextInput, Button, Text, View, StyleSheet } from 'react-native';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Make sure db is properly exported from firebaseConfig
 
 function SearchDonkey() {
   const [searchKey, setSearchKey] = useState('');
   const [donkeyDetails, setDonkeyDetails] = useState(null);
 
+  const db = getFirestore(db); 
+
   const handleSearch = async () => {
     try {
-      const q = query(collection(db, "donkeys"), where("name", "==", searchKey));
+      const q = query(collection(db, "donkeys"), where("name", "==", searchKey)).or(where("id", "==", searchKey));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        console.log('No matching documents.');
-        setDonkeyDetails('No donkey found with that name or ID');
+        setDonkeyDetails(null);
+        setError('No matching donkey found.');
         return;
       }
 
@@ -45,6 +47,10 @@ function SearchDonkey() {
             <Text>Donkey Name: {donkeyDetails.name}</Text>
             <Text>Donkey Age: {donkeyDetails.age}</Text>
             <Text>Donkey Owner: {donkeyDetails.owner}</Text>
+            <Text>Location: {donkeyDetails.location}</Text>
+            <Text>Breed: {donkeyDetails.breed}</Text>
+            <Text>Gender: {donkeyDetails.gender}</Text>
+            <Text>Health Status: {donkeyDetails.health}</Text>
           </View>
         ) : (
           <Text>No donkey details to display</Text>
