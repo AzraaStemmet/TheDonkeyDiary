@@ -88,35 +88,42 @@ const RegisterDonkeyScreen = () => {
   };
 
   const handleRegister = async () => {
-    if (validateForm()) {
-      const db = getFirestore(app);
-      try {
-        await addDoc(collection(db, 'donkeys'), {
-          id,
-          name,
-          gender,
-          breed,
-          age,
-          location,
-          owner,
-          health,
-        });
-        Alert.alert('Success', 'Donkey registered successfully!');
-        // Clear the input fields and generate a new ID
-        setName('');
-        setGender('');
-        setBreed('');
-        setAge('');
-        setLocation('');
-        setOwner('');
-        setHealth('');
-        generateUniqueId();
-      } catch (e) {
-        console.error('Error adding document: ', e);
-        Alert.alert('Error', 'Failed to register donkey. Please try again.');
+  if (validateForm()) {
+    const db = getFirestore(app);
+    try {
+      let imageUrl = '';
+      if (image) {
+        imageUrl = await uploadImage(image);
       }
+      await addDoc(collection(db, 'donkeys'), {
+        id,
+        name,
+        gender,
+        breed,
+        age,
+        location,
+        owner,
+        health,
+        imageUrl,
+      });
+      Alert.alert('Success', 'Donkey registered successfully!');
+      // Clear the input fields and generate a new ID
+      setName('');
+      setGender('');
+      setBreed('');
+      setAge('');
+      setLocation('');
+      setOwner('');
+      setHealth('');
+      setImage(null);
+      generateUniqueId();
+    } catch (e) {
+      console.error('Error adding document: ', e);
+      Alert.alert('Error', 'Failed to register donkey. Please try again.');
     }
-  };
+  }
+};
+
 
   const validateForm = () => {
     if (!id || !name || gender === 'default' || breed === 'default' || age === 'default' || !location || !owner || health === 'default') {

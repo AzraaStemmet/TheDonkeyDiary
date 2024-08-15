@@ -1,23 +1,27 @@
-// this page new, changed the images in app.json
-// and app js page the navigator and the workers page the button, and import in app.js
 import React, { useState } from 'react';
 import { TextInput, Button, Text, View, StyleSheet } from 'react-native';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, or } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Make sure db is properly exported from firebaseConfig
 
 function SearchDonkey() {
   const [searchKey, setSearchKey] = useState('');
   const [donkeyDetails, setDonkeyDetails] = useState(null);
-
-  const db = getFirestore(db); 
+  const [error, setError] = useState('');
 
   const handleSearch = async () => {
     try {
-      const q = query(collection(db, "donkeys"), where("name", "==", searchKey)).or(where("id", "==", searchKey));
+      setError(''); // Clear previous errors
+      setDonkeyDetails(null); // Clear previous results
+
+      // Create a query to search for the donkey by name or ID
+      const q = query(
+        collection(db, "donkeys"),
+        or(where("name", "==", searchKey), where("id", "==", searchKey))
+      );
+
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        setDonkeyDetails(null);
         setError('No matching donkey found.');
         return;
       }
@@ -28,7 +32,7 @@ function SearchDonkey() {
       });
     } catch (error) {
       console.error("Error searching for donkey:", error);
-      setDonkeyDetails('Error searching for donkey');
+      setError('Error searching for donkey');
     }
   };
 
@@ -42,6 +46,7 @@ function SearchDonkey() {
       />
       <Button title="Search" onPress={handleSearch} />
       <View>
+        {error ? <Text>{error}</Text> : null}
         {donkeyDetails ? (
           <View>
             <Text>Donkey Name: {donkeyDetails.name}</Text>
@@ -69,8 +74,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 10,
+    paddingHorizontal: 10,
   },
 });
 
 export default SearchDonkey;
-
