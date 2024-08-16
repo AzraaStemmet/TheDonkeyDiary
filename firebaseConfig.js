@@ -1,9 +1,9 @@
-//  is a setup script to integrate Firebase into the application
-// essential to initialize and configure our Firebase app
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// firebaseConfig.js
+
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth, browserLocalPersistence, setPersistence } from 'firebase/auth'; // Import necessary methods for auth
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Ensure this package is installed
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -15,7 +15,18 @@ const firebaseConfig = {
   appId: "1:360396801033:web:7d85020462e389f77be4d8" // unique identifier for firebase app instance
 };
 
-// Initialize Firebase, used to interact with various firebase services
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
 const db = getFirestore(app);
-export { db };
+
+// Initialize Auth and configure persistence
+const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence)
+  .catch((error) => {
+    console.error('Failed to set persistence: ', error);
+  });
+
+// Export the Firestore and Auth instances
+export { db, auth };
