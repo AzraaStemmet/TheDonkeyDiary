@@ -30,6 +30,7 @@ const DonkeyDetails = () => {
         title="Return to Workers Page"
         onPress={() => navigation.navigate('WorkersScreen')}
       />
+      <Button title="Return to workers page" onPress={() => navigation.navigate('WorkersScreen')} />
     </View>
   );
 };

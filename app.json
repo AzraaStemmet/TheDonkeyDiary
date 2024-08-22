@@ -5,10 +5,10 @@
     "slug": "TheDonkeyDiary",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.JPEG",
+    "icon": "./assets/logo.jpeg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo.JPEG",
+      "image": "./assets/logo.jpeg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,12 +17,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/donkey.JPEG",
+        "foregroundImage": "./assets/donkey.jpeg",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "./assets/OIP.JPEG"
+      "favicon": "./assets/OIP.jpeg"
     }
   }
 }

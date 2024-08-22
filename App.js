@@ -7,11 +7,12 @@ import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
-import WorkersScreen from './WorkersScreen';
+import WorkersScreen from './WorkersScreen';  
 import RegisterDonkeyScreen from './RegisterDonkeyScreen';
 import SearchDonkey from './SearchDonkey'; // Correct the path according to your project structure
 import RegistrationConfirmationScreen from './RegistrationConfirmationScreen';
 import DonkeyDetails from './DonkeyDetails';
+import DonkeyReportScreen from './ViewReports';
 // For default export
 //import SearchDonkey from './path/to/SearchDonkey';
 
@@ -62,6 +63,7 @@ const App = () => {
         <Stack.Screen name='SearchDonkey' component={SearchDonkey} />
         <Stack.Screen name='RegistrationConfirmationScreen' component={RegistrationConfirmationScreen} />
         <Stack.Screen name='DonkeyDetails' component={DonkeyDetails} />
+        <Stack.Screen name='ViewReports' component={DonkeyReportScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
