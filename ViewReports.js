@@ -33,6 +33,7 @@ const DonkeyReportScreen = () => {
           <Text>Health Status: {donkey.health}</Text>
           <Text>Location: {donkey.location}</Text>
           <Text>Owner: {donkey.owner}</Text>
+          <Text>ID: {donkey.id}</Text>
         </View>
       ))}
     </ScrollView>

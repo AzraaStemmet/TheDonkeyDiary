@@ -68,6 +68,7 @@ function SearchDonkey() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    //backgroundColor: '#faf4c0', // A light and friendly background color
   },
   input: {
     height: 40,

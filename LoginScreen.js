@@ -20,6 +20,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -35,6 +36,7 @@ const LoginScreen = ({ navigation }) => {
       />
       <Button title="Login" onPress={handleLogin} />
     </View>
+    
   );
 };
 

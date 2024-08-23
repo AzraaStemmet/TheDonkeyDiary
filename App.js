@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Image, logoImage } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -55,7 +55,20 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home'>
+      <Stack.Navigator initialRouteName='Home' screenOptions={{
+          headerRight: () => (
+            <Image
+              source={logoImage}
+              style={{ width: 40, height: 40, marginRight: 10 }}  // Adjust size as necessary
+            />
+          ),
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#f5f5f5',  // Optional: adjust the header background
+          },
+          headerTintColor: '#333',  // Optional: adjust the color of the back button and title
+        }}>
+      
         <Stack.Screen name='Home' component={HomeScreen} />
         <Stack.Screen name='Login' component={LoginScreen} />
         <Stack.Screen name='Workers' component={WorkersScreen} />

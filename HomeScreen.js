@@ -1,17 +1,20 @@
 // screens/HomeScreen.js
 import React from 'react';
-import { StyleSheet, View, Text, Image, Button, ImageBackground } from 'react-native';
-
+import { StyleSheet, View, Text, Image, Button } from 'react-native';
+const logoImage = require('./assets/bahananwa.jpg');
 const HomeScreen = ({ navigation }) => {
+  
   return (
+    
   //  <ImageBackground source={require('./assets/background.jpg')}
     //style={styles.background}
    // >
+   
     <View style={styles.container}>
-     <Image
-        style={styles.logo}
-        source={require('./assets/donkey.jpeg')} // Make sure you have an appropriate image in your assets
-      />
+    <Image
+          style={styles.logo}
+          source={require('./assets/bahananwa.jpg')} 
+        />
       <Text style={styles.title}>Welcome to The Donkey Diary</Text>
       <Text style={styles.description}>
         Your trusted platform for managing donkey health and information in rural villages.
@@ -19,10 +22,10 @@ const HomeScreen = ({ navigation }) => {
       <Button 
         title="Login" 
         onPress={() => navigation.navigate('Login')} 
-        color="#AD957E" // Consider using a button color that matches your theme
+       //color="#AD957E" // Consider using a button color that matches your theme
       />
     </View>
-   // </ImageBackground>
+   // </ImageBackground>  <Button title="Login" onPress={handleLogin} />
   );
 };
 
@@ -36,11 +39,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  logo: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
-  },
+ // logo: {
+   // width: 100,
+    //height: 100,
+    //marginBottom: 20,
+ // },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -53,5 +56,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 20,
     color: '#696969', // Dark gray for the text for better readability
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    marginRight: 10,
   },
 });
