@@ -13,6 +13,7 @@ import SearchDonkey from './SearchDonkey'; // Correct the path according to your
 import RegistrationConfirmationScreen from './RegistrationConfirmationScreen';
 import DonkeyDetails from './DonkeyDetails';
 import DonkeyReportScreen from './ViewReports';
+import HealthRecordScreen from './HealthRecordScreen';
 // For default export
 //import SearchDonkey from './path/to/SearchDonkey';
 
@@ -77,6 +78,7 @@ const App = () => {
         <Stack.Screen name='RegistrationConfirmationScreen' component={RegistrationConfirmationScreen} />
         <Stack.Screen name='DonkeyDetails' component={DonkeyDetails} />
         <Stack.Screen name='ViewReports' component={DonkeyReportScreen} />
+        <Stack.Screen name='HealthRecordScreen' component={HealthRecordScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

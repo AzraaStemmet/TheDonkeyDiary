@@ -43,26 +43,28 @@ const RegisterDonkeyScreen = () => {
   };
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
-      return;
+        alert('Sorry, we need camera permissions to make this work!');
+        return;
     }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.cancelled) {
-      setImage(result.uri);
-      uploadImage(result.uri);
-    }
-  };
 
-  const uploadImage = async (uri) => {
+    const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+    });
+
+    if (!result.cancelled) {
+        setImage(result.uri);
+        uploadImage(result.uri);
+    }
+};
+
+const uploadImage = async (uri) => {
     // Logic to upload image
-  };
+};
 
   const getAgeCode = (age) => {
     switch (age) {
@@ -107,7 +109,7 @@ const RegisterDonkeyScreen = () => {
           imageUrl,
         });
         Alert.alert('Success', 'Donkey registered successfully!');
-        navigation.navigate('DonkeyDetails', { id, name, gender, breed, age, location, owner, health, imageUrl });
+        navigation.navigate('HealthRecordScreen', { id, name, gender, breed, age, location, owner, health, imageUrl });
       } catch (e) {
         console.error('Error adding document: ', e);
         Alert.alert('Error', 'Failed to register donkey. Please try again.');
