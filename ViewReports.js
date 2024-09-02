@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Button } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
 
-const DonkeyReportScreen = () => {
+const DonkeyReportScreen = ({ navigation }) => {
   const [donkeys, setDonkeys] = useState([]);
 
   useEffect(() => {
@@ -15,6 +15,7 @@ const DonkeyReportScreen = () => {
           donkeyList.push({ id: doc.id, ...doc.data() });
         });
         setDonkeys(donkeyList);
+        console.log("Fetched donkeys:", donkeyList); // Debug: Log the fetched donkeys
       } catch (error) {
         console.error("Error fetching donkeys:", error);
       }
@@ -25,7 +26,7 @@ const DonkeyReportScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {donkeys.map((donkey, index) => (
+      {donkeys.map((donkey) => (
         <View key={donkey.id} style={styles.card}>
           <Text style={styles.title}>Donkey Name: {donkey.name}</Text>
           <Text>Age: {donkey.age}</Text>
@@ -34,6 +35,21 @@ const DonkeyReportScreen = () => {
           <Text>Location: {donkey.location}</Text>
           <Text>Owner: {donkey.owner}</Text>
           <Text>ID: {donkey.id}</Text>
+          <Button
+            title="Edit"
+            onPress={() => {
+              console.log("Navigating to EditDonkey with ID:", donkey.id); // Debug: Log the navigation
+              navigation.navigate('EditDonkey', {
+                donkeyId: donkey.id, // Ensure this matches what you're expecting in EditDonkeyScreen
+                name: donkey.name,
+                age: donkey.age,
+                gender: donkey.gender,
+                health: donkey.health,
+                location: donkey.location,
+                owner: donkey.owner
+              });
+            }}
+          />
         </View>
       ))}
     </ScrollView>

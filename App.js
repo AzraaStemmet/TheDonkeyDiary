@@ -17,6 +17,7 @@ import RegistrationConfirmationScreen from './RegistrationConfirmationScreen';
 import DonkeyDetails from './DonkeyDetails';
 import DonkeyReportScreen from './ViewReports';
 import HealthRecordScreen from './HealthRecordScreen';
+import EditDonkeyScreen from './EditDonkeyScreen'; 
 
 // Require the logo image properly
 const logoImage = require('./assets/bahananwa.jpg');
@@ -83,6 +84,7 @@ const App = () => {
         <Stack.Screen name="DonkeyDetails" component={DonkeyDetails} />
         <Stack.Screen name="ViewReports" component={DonkeyReportScreen} />
         <Stack.Screen name="HealthRecordScreen" component={HealthRecordScreen} />
+        <Stack.Screen name='EditDonkey' component={EditDonkeyScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
