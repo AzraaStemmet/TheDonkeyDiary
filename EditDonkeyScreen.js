@@ -1,8 +1,6 @@
-// EditDonkeyScreen.js
-
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Alert } from 'react-native';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 const EditDonkeyScreen = ({ route, navigation }) => {
@@ -10,33 +8,33 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   const [donkey, setDonkey] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // EditDonkeyScreen.js
+  useEffect(() => {
+    const fetchDonkey = async () => {
+      try {
+        console.log("Fetching donkey with ID:", donkeyId); // Debug log
+        const donkeysRef = collection(db, "donkeys");
+        const q = query(donkeysRef, where("id", "==", donkeyId));
+        const querySnapshot = await getDocs(q);
 
-    useEffect(() => {
-        const fetchDonkey = async () => {
-            try {
-            console.log("Fetching donkey with ID:", donkeyId); // Debug log
-            const docRef = doc(db, "donkeys", donkeyId);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data()); // Debug log
-            setDonkey({ id: docSnap.id, ...docSnap.data() });
-            } else {
-            console.log("No such document!");
-            Alert.alert("Error", "Donkey not found. Please check the ID and try again.");
-            navigation.goBack();
-            }
-            } catch (error) {
-            console.error("Error fetching donkey:", error);
-            Alert.alert("Error", "Failed to fetch donkey details: " + error.message);
-            } finally {
-            setLoading(false);
-            }
-        };
+        if (!querySnapshot.empty) {
+          const docSnapshot = querySnapshot.docs[0];
+          console.log("Document data:", docSnapshot.data()); // Debug log
+          setDonkey({ firestoreId: docSnapshot.id, ...docSnapshot.data() });
+        } else {
+          console.log("No such document!");
+          Alert.alert("Error", "Donkey not found. Please check the ID and try again.");
+          navigation.goBack();
+        }
+      } catch (error) {
+        console.error("Error fetching donkey:", error); // More detailed error log
+        Alert.alert("Error", "Failed to fetch donkey details: " + error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
   
-        fetchDonkey();
-    }, [donkeyId, navigation]);
-  
+    fetchDonkey();
+  }, [donkeyId, navigation]);
 
   const handleUpdate = async () => {
     if (!donkey) {
@@ -46,18 +44,26 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
     setLoading(true);
     try {
-      const docRef = doc(db, "donkeys", donkeyId);
-      await updateDoc(docRef, {
-        name: donkey.name,
-        age: donkey.age,
-        gender: donkey.gender,
-        health: donkey.health,
-        location: donkey.location,
-        owner: donkey.owner
-      });
+      const donkeysRef = collection(db, "donkeys");
+      const q = query(donkeysRef, where("id", "==", donkeyId));
+      const querySnapshot = await getDocs(q);
 
-      Alert.alert("Success", "Donkey details updated successfully");
-      navigation.goBack();
+      if (!querySnapshot.empty) {
+        const docToUpdate = querySnapshot.docs[0];
+        await updateDoc(docToUpdate.ref, {
+          name: donkey.name,
+          age: donkey.age,
+          gender: donkey.gender,
+          health: donkey.health,
+          location: donkey.location,
+          owner: donkey.owner
+        });
+
+        Alert.alert("Success", "Donkey details updated successfully");
+        navigation.goBack();
+      } else {
+        throw new Error("Donkey not found");
+      }
     } catch (error) {
       console.error("Error updating donkey:", error);
       Alert.alert("Error", "Failed to update donkey details: " + error.message);
