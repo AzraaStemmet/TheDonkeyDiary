@@ -28,14 +28,14 @@ const HealthRecordScreen = () => {
             Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
             return;
         }
-
+    
         const db = getFirestore(app);
         try {
             let imageUrl = '';
             if (image) {
                 imageUrl = await uploadImage(image);
             }
-
+    
             // Register donkey after adding health record
             await addDoc(collection(db, 'donkeys'), {
                 id,
@@ -48,7 +48,7 @@ const HealthRecordScreen = () => {
                 health: healthStatus,
                 imageUrl,
             });
-
+    
             // Save health record (optional: to a separate collection if needed)
             await addDoc(collection(db, 'healthRecords'), {
                 donkeyId: id,
@@ -56,10 +56,10 @@ const HealthRecordScreen = () => {
                 lastCheckup,
                 treatmentGiven,
             });
-
+    
             Alert.alert('Success', 'Donkey and health record saved successfully!');
-
-            // Navigate to RegistrationConfirmationScreen
+    
+            // Navigate to RegistrationConfirmationScreen and pass the treatmentGiven
             navigation.navigate('RegistrationConfirmationScreen', {
                 donkey: {
                     id,
@@ -70,14 +70,16 @@ const HealthRecordScreen = () => {
                     location,
                     owner,
                     health: healthStatus,
+                    treatmentGiven, // Add this line
                 }
             });
-
+    
         } catch (e) {
             console.error('Error adding document: ', e);
             Alert.alert('Error', 'Failed to save health record. Please try again.');
         }
     };
+    
 
     return (
         <View style={styles.container}>

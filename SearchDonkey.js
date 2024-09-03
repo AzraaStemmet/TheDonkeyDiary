@@ -35,8 +35,8 @@ function SearchDonkey() {
 
       const [nameSnapshot, idSnapshot] = await Promise.all([getDocs(nameQuery), getDocs(idQuery)]);
 
-      const nameResults = nameSnapshot.docs.map(doc => doc.data());
-      const idResults = idSnapshot.docs.map(doc => doc.data());
+      const nameResults = nameSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const idResults = idSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       const combinedResults = [...nameResults, ...idResults];
       setSuggestions(combinedResults);
@@ -53,7 +53,10 @@ function SearchDonkey() {
 
       const donkey = suggestions.find(d => d.name === item.name || d.id === item.id);
       if (donkey) {
-        setDonkeyDetails(donkey);
+        // Fetch treatment records for the selected donkey
+        const treatmentsSnapshot = await getDocs(collection(db, `donkeys/${donkey.id}/healthRecords`));
+        const treatments = treatmentsSnapshot.docs.map(doc => doc.data());
+        setDonkeyDetails({ ...donkey, treatments });
       } else {
         setError('No matching donkey found.');
       }
@@ -91,6 +94,19 @@ function SearchDonkey() {
             <Text>Breed: {donkeyDetails.breed}</Text>
             <Text>Gender: {donkeyDetails.gender}</Text>
             <Text>Health Status: {donkeyDetails.health}</Text>
+            
+            <Text style={styles.subtitle}>Treatment Records:</Text>
+            {donkeyDetails.treatments && donkeyDetails.treatments.length > 0 ? (
+              donkeyDetails.treatments.map((treatment, index) => (
+                <View key={index} style={styles.treatmentCard}>
+                  <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
+                  <Text>Health Status: {treatment.healthStatus}</Text>
+                  <Text>Treatment Given: {treatment.treatmentGiven}</Text>
+                </View>
+              ))
+            ) : (
+              <Text>No treatment records available.</Text>
+            )}
           </View>
         ) : (
           <Text>No donkey details to display</Text>
@@ -115,6 +131,18 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  treatmentCard: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 5,
   },
 });
 

@@ -29,12 +29,14 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
       <Text>Location: {donkey.location}</Text>
       <Text>Owner: {donkey.owner}</Text>
       <Text>Health: {donkey.health}</Text>
+      <Text>Treatment Given: {donkey.treatmentGiven}</Text> 
 
       <Button title="Register Another Donkey" onPress={handleRegisterAnotherDonkey} />
       <Button title="Return to Home" onPress={() => navigation.navigate('Workers')} />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

@@ -1,8 +1,6 @@
-// DonkeyReportScreen.js
-
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, Button } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where, getDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
 
 const DonkeyReportScreen = ({ navigation }) => {
@@ -13,9 +11,12 @@ const DonkeyReportScreen = ({ navigation }) => {
       try {
         const querySnapshot = await getDocs(collection(db, "donkeys"));
         const donkeyList = [];
-        querySnapshot.forEach((doc) => {
-          donkeyList.push({ id: doc.id, ...doc.data() });
-        });
+        for (const doc of querySnapshot.docs) {
+          const donkeyData = doc.data();
+          const treatmentsSnapshot = await getDocs(collection(db, `donkeys/${doc.id}/treatments`));
+          const treatments = treatmentsSnapshot.docs.map(treatmentDoc => treatmentDoc.data());
+          donkeyList.push({ id: doc.id, ...donkeyData, treatments });
+        }
         setDonkeys(donkeyList);
         console.log("Fetched donkeys:", donkeyList); // Debug: Log the fetched donkeys
       } catch (error) {
@@ -37,6 +38,20 @@ const DonkeyReportScreen = ({ navigation }) => {
           <Text>Location: {donkey.location}</Text>
           <Text>Owner: {donkey.owner}</Text>
           <Text>ID: {donkey.id}</Text>
+
+          <Text style={styles.subtitle}>Treatment Records:</Text>
+          {donkey.treatments.length > 0 ? (
+            donkey.treatments.map((treatment, index) => (
+              <View key={index} style={styles.treatmentCard}>
+                <Text>Date: {treatment.date}</Text>
+                <Text>Type: {treatment.type}</Text>
+                <Text>Notes: {treatment.notes}</Text>
+              </View>
+            ))
+          ) : (
+            <Text>No treatment records available.</Text>
+          )}
+
           <Button
             title="Edit"
             onPress={() => {
@@ -49,8 +64,6 @@ const DonkeyReportScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
-
-export default DonkeyReportScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -74,4 +87,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  treatmentCard: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 5,
+  },
 });
+
+export default DonkeyReportScreen;
