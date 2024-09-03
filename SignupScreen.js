@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { initializeApp, getApps } from 'firebase/app';
-import firebaseConfig from './firebaseConfig'; // Make sure to import your Firebase config
+import firebaseConfig from './firebaseConfig'; // Import your Firebase config
 
 // Initialize Firebase
 if (getApps().length === 0) {
@@ -20,11 +20,9 @@ const SignupScreen = ({ navigation }) => {
     const firestore = getFirestore();
     
     try {
-      // Create a new user with email and password using Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      // Store additional user info in Firestore
       await setDoc(doc(firestore, 'users', user.uid), {
         name: name,
         email: email,
@@ -43,12 +41,14 @@ const SignupScreen = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Name"
+        placeholderTextColor="#8A7E72"
         value={name}
         onChangeText={setName}
       />
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#8A7E72"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -56,11 +56,14 @@ const SignupScreen = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#8A7E72"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Sign Up" onPress={handleSignup} />
+      <TouchableOpacity style={styles.button} onPress={handleSignup}>
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -72,20 +75,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#faf4c0',
+    backgroundColor: '#FFF8E1', // A lighter beige background
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#AD957E',
+    color: '#AD957E', // A soft, earthy brown
     marginBottom: 20,
     textAlign: 'center',
   },
   input: {
-    height: 40,
-    borderColor: '#AD957E',
+    height: 50,
+    borderColor: '#D9CAB3', // A softer border color
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    borderRadius: 10, // Rounded borders
+    backgroundColor: '#FFFAF0', // Very light beige background for input
+    color: '#5C5346', // Darker text color for better readability
+  },
+  button: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#FFF8E1',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
