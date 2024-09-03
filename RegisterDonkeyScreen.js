@@ -1,14 +1,13 @@
-// screens/RegisterDonkeyScreen.js
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert } from 'react-native';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const RegisterDonkeyScreen = () => {
-  const navigation = useNavigation(); // Hook to get the navigation prop
+  const navigation = useNavigation();
   const route = useRoute();
 
   const [id, setId] = useState('');
@@ -18,8 +17,7 @@ const RegisterDonkeyScreen = () => {
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
-  const [image, setImage] = useState(null);
-  const [health, setHealth] = useState('');
+  const [image, setImage] = useState('');
 
   useEffect(() => {
     if (route.params?.reset) {
@@ -45,26 +43,26 @@ const RegisterDonkeyScreen = () => {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-        alert('Sorry, we need camera permissions to make this work!');
-        return;
+      alert('Sorry, we need camera permissions to make this work!');
+      return;
     }
 
     const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
 
     if (!result.cancelled) {
-        setImage(result.uri);
-        uploadImage(result.uri);
+      setImage(result.uri);
+      uploadImage(result.uri);
     }
-};
+  };
 
-const uploadImage = async (uri) => {
+  const uploadImage = async (uri) => {
     // Logic to upload image
-};
+  };
 
   const getAgeCode = (age) => {
     switch (age) {
@@ -89,36 +87,24 @@ const uploadImage = async (uri) => {
     }
   };
 
-  const handleRegister = async () => {
+  const handleNavigateToHealthRecord = () => {
     if (validateForm()) {
-      const db = getFirestore(app);
-      try {
-        let imageUrl = '';
-        if (image) {
-          imageUrl = await uploadImage(image);
-        }
-        await addDoc(collection(db, 'donkeys'), {
-          id,
-          name,
-          gender,
-          breed,
-          age,
-          location,
-          owner,
-          health,
-          imageUrl,
-        });
-        Alert.alert('Success', 'Donkey registered successfully!');
-        navigation.navigate('HealthRecordScreen', { id, name, gender, breed, age, location, owner, health, imageUrl });
-      } catch (e) {
-        console.error('Error adding document: ', e);
-        Alert.alert('Error', 'Failed to register donkey. Please try again.');
-      }
+      // Pass necessary data to the HealthRecordScreen
+      navigation.navigate('HealthRecordScreen', {
+        id,
+        name,
+        gender,
+        breed,
+        age,
+        location,
+        owner,
+        image,
+      });
     }
   };
 
   const validateForm = () => {
-    if (!id || !name || gender === 'default' || breed === 'default' || age === 'default' || !location || !owner || health === 'default') {
+    if (!name || !gender || !breed || !age || !location || !owner) {
       Alert.alert('Validation Error', 'Please fill in all fields correctly.');
       return false;
     }
@@ -133,9 +119,8 @@ const uploadImage = async (uri) => {
     setAge('');
     setLocation('');
     setOwner('');
-    setImage(null);
-    setHealth('');
-    generateUniqueId(); // Call this if you want to generate a new ID when resetting
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
   };
 
   return (
@@ -163,7 +148,6 @@ const uploadImage = async (uri) => {
               generateUniqueId();
             }}
             items={[
-              
               { label: 'Male', value: 'male' },
               { label: 'Female', value: 'female' },
             ]}
@@ -174,7 +158,6 @@ const uploadImage = async (uri) => {
           <RNPickerSelect
             onValueChange={(value) => setBreed(value)}
             items={[
-              
               { label: 'Breed 1', value: 'breed1' },
               { label: 'Breed 2', value: 'breed2' },
             ]}
@@ -188,7 +171,6 @@ const uploadImage = async (uri) => {
               generateUniqueId();
             }}
             items={[
-              
               { label: '< 12 months', value: '< 12 months' },
               { label: '1 year', value: '1 year' },
               { label: '2 years', value: '2 years' },
@@ -218,19 +200,7 @@ const uploadImage = async (uri) => {
           <Text style={styles.label}>Donkey Picture</Text>
           <Button title="Pick an image from camera roll" onPress={pickImage} />
           {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-          <Text style={styles.label}>Health Status</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setHealth(value)}
-            items={[
-              
-              { label: 'Good', value: 'good' },
-              { label: 'Weak', value: 'weak' },
-              { label: 'Critical', value: 'critical' },
-            ]}
-            style={pickerSelectStyles}
-            value={health}
-          />
-          <Button title="Register Donkey" onPress={handleRegister} />
+          <Button title="Next" onPress={handleNavigateToHealthRecord} />
         </View>
       </ScrollView>
     </SafeAreaView>

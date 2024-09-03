@@ -1,3 +1,5 @@
+// DonkeyReportScreen.js
+
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, Button } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
@@ -39,15 +41,7 @@ const DonkeyReportScreen = ({ navigation }) => {
             title="Edit"
             onPress={() => {
               console.log("Navigating to EditDonkey with ID:", donkey.id); // Debug: Log the navigation
-              navigation.navigate('EditDonkey', {
-                donkeyId: donkey.id, // Ensure this matches what you're expecting in EditDonkeyScreen
-                name: donkey.name,
-                age: donkey.age,
-                gender: donkey.gender,
-                health: donkey.health,
-                location: donkey.location,
-                owner: donkey.owner
-              });
+              navigation.navigate('EditDonkey', { donkeyId: donkey.id });
             }}
           />
         </View>

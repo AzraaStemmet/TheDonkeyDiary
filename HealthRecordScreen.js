@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Platform } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Platform, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import RNPickerSelect from 'react-native-picker-select';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { app } from './firebaseConfig'; // Update the path if necessary
+import { useRoute, useNavigation } from '@react-navigation/native';
 
-const HealthRecordScreen = ({ navigation }) => {
+const HealthRecordScreen = () => {
+    const route = useRoute();
+    const navigation = useNavigation();
+
+    const { id, name, gender, breed, age, location, owner, health, image } = route.params;
+
     const [healthStatus, setHealthStatus] = useState('');
     const [lastCheckup, setLastCheckup] = useState(new Date());
     const [treatmentGiven, setTreatmentGiven] = useState('');
@@ -14,20 +23,74 @@ const HealthRecordScreen = ({ navigation }) => {
         setLastCheckup(currentDate);
     };
 
-    const handleSave = () => {
-        // Logic to save the health record to a database or state management
-        alert('Health record saved!');
-        navigation.goBack();
+    const handleSave = async () => {
+        if (!healthStatus || !treatmentGiven) {
+            Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
+            return;
+        }
+
+        const db = getFirestore(app);
+        try {
+            let imageUrl = '';
+            if (image) {
+                imageUrl = await uploadImage(image);
+            }
+
+            // Register donkey after adding health record
+            await addDoc(collection(db, 'donkeys'), {
+                id,
+                name,
+                gender,
+                breed,
+                age,
+                location,
+                owner,
+                health: healthStatus,
+                imageUrl,
+            });
+
+            // Save health record (optional: to a separate collection if needed)
+            await addDoc(collection(db, 'healthRecords'), {
+                donkeyId: id,
+                healthStatus,
+                lastCheckup,
+                treatmentGiven,
+            });
+
+            Alert.alert('Success', 'Donkey and health record saved successfully!');
+
+            // Navigate to RegistrationConfirmationScreen
+            navigation.navigate('RegistrationConfirmationScreen', {
+                donkey: {
+                    id,
+                    name,
+                    gender,
+                    breed,
+                    age,
+                    location,
+                    owner,
+                    health: healthStatus,
+                }
+            });
+
+        } catch (e) {
+            console.error('Error adding document: ', e);
+            Alert.alert('Error', 'Failed to save health record. Please try again.');
+        }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.label}>Health Status:</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter health status"
+            <RNPickerSelect
+                onValueChange={(value) => setHealthStatus(value)}
+                items={[
+                    { label: 'Good', value: 'good' },
+                    { label: 'Weak', value: 'weak' },
+                    { label: 'Critical', value: 'critical' },
+                ]}
+                style={pickerSelectStyles}
                 value={healthStatus}
-                onChangeText={setHealthStatus}
             />
 
             <Text style={styles.label}>Last Check-Up Date:</Text>
@@ -74,6 +137,33 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd',
         padding: 10,
+        marginBottom: 10,
+    },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30,
+        backgroundColor: '#fff',
+        marginBottom: 10,
+    },
+    inputAndroid: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30,
+        backgroundColor: '#fff',
         marginBottom: 10,
     },
 });
