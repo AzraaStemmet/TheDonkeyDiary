@@ -66,13 +66,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     marginRight: 10,
   },
   buttonContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     paddingHorizontal: 20,
   },
 });

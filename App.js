@@ -61,12 +61,12 @@ const App = () => {
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
-          headerRight: () => (
-            <Image
-              source={logoImage}
-              style={{ width: 40, height: 40, marginRight: 10 }} // Adjust size as necessary
-            />
-          ),
+         // headerRight: () => (
+          //  <Image
+           //   source={logoImage}
+           //   style={{ width: 40, height: 40, marginRight: 10 }} // Adjust size as necessary
+           //</NavigationContainer> />
+          //),
           headerTitleAlign: 'center',
           headerStyle: {
             backgroundColor: '#f5f5f5', // Optional: adjust the header background

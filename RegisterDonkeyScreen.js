@@ -1,15 +1,14 @@
-// screens/RegisterDonkeyScreen.js
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { getStorage, ref, uploadBytes, getDownloadURL} from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const RegisterDonkeyScreen = () => {
-  const navigation = useNavigation(); // Hook to get the navigation prop
+  const navigation = useNavigation(); //hook to get the nvaigation prop
   const route = useRoute();
 
   const [id, setId] = useState('');
@@ -46,52 +45,46 @@ const RegisterDonkeyScreen = () => {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-        Alert.alert('Sorry, we need camera permissions to make this work!');
-        return;
+      Alert.alert('Sorry, we need camera permissions to make this work!');
+      return;
     }
 
     const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
 
     if (!result.cancelled) {
-        console.log("Image Picker Result:", result);
-        setImage(result.uri);
-        await uploadImage(result.uri);
+      console.log("Image Picker Result:", result);
+      setImage(result.uri);
+      await uploadImage(result.uri);
     } else {
       console.log("Image Picker was cancelled");
     }
-    
-};
+  };
 
-const uploadImage = async (uri) => {
-  console.log("Image URI:", uri);
-  try {
-    const response = await fetch(uri);
-    const blob = await response.blob();
+  const uploadImage = async (uri) => {
+    console.log("Image URI:", uri);
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
 
-    const storage = getStorage(app);
-    const storageRef = ref(storage, 'images/${id}.jpg')
+      const storage = getStorage(app);
+      const storageRef = ref(storage, `images/${id}.jpg`);
 
-    
-    await uploadBytes(storageRef, blob);
+      await uploadBytes(storageRef, blob);
 
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
+      const downloadURL = await getDownloadURL(storageRef);
+      return downloadURL;
 
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error uploading image:", error);
       Alert.alert('Error', 'Failed to upload image. Please try again.');
       return null;
     }
-  
-    
-};
-
+  };
 
   const getAgeCode = (age) => {
     switch (age) {
@@ -123,8 +116,7 @@ const uploadImage = async (uri) => {
         let imageUrl = '';
         if (image) {
           imageUrl = await uploadImage(image);
-          if (!imageUrl)
-          {
+          if (!imageUrl) {
             return;
           }
         }
@@ -169,113 +161,125 @@ const uploadImage = async (uri) => {
     generateUniqueId(); // Call this if you want to generate a new ID when resetting
   };
 
+  const backgroundImage = require('./assets/background.jpg');
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.formContainer}>
-          <Text style={styles.label}>Unique ID</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Unique ID"
-            value={id}
-            editable={false}
-          />
-          <Text style={styles.label}>Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            value={name}
-            onChangeText={setName}
-          />
-          <Text style={styles.label}>Gender</Text>
-          <RNPickerSelect
-            onValueChange={(value) => {
-              setGender(value);
-              generateUniqueId();
-            }}
-            items={[
-              
-              { label: 'Male', value: 'male' },
-              { label: 'Female', value: 'female' },
-            ]}
-            style={pickerSelectStyles}
-            value={gender}
-          />
-          <Text style={styles.label}>Breed</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setBreed(value)}
-            items={[
-              
-              { label: 'Breed 1', value: 'breed1' },
-              { label: 'Breed 2', value: 'breed2' },
-            ]}
-            style={pickerSelectStyles}
-            value={breed}
-          />
-          <Text style={styles.label}>Age</Text>
-          <RNPickerSelect
-            onValueChange={(value) => {
-              setAge(value);
-              generateUniqueId();
-            }}
-            items={[
-              
-              { label: '< 12 months', value: '< 12 months' },
-              { label: '1 year', value: '1 year' },
-              { label: '2 years', value: '2 years' },
-              { label: '3 years', value: '3 years' },
-              { label: '4 years', value: '4 years' },
-              { label: '5 years', value: '5 years' },
-              { label: '6 years', value: '6 years' },
-              { label: '> 7 years', value: '> 7 years' },
-            ]}
-            style={pickerSelectStyles}
-            value={age}
-          />
-          <Text style={styles.label}>Location</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Location"
-            value={location}
-            onChangeText={setLocation}
-          />
-          <Text style={styles.label}>Owner's Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Owner's Name"
-            value={owner}
-            onChangeText={setOwner}
-          />
-          <Text style={styles.label}>Donkey Picture</Text>
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
-          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-          <Text style={styles.label}>Health Status</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setHealth(value)}
-            items={[
-              
-              { label: 'Good', value: 'good' },
-              { label: 'Weak', value: 'weak' },
-              { label: 'Critical', value: 'critical' },
-            ]}
-            style={pickerSelectStyles}
-            value={health}
-          />
-          <Button title="Register Donkey" onPress={handleRegister} />
-        </View>
-      </ScrollView>
+      <KeyboardAvoidingView //ensures that the keyboaord doesnt cover textbox when putting in information 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
+        <ImageBackground
+          source={backgroundImage}
+          style={styles.backgroundImage}
+        >
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <View style={styles.formContainer}>
+              <Text style={styles.label}>Unique ID</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Unique ID"
+                value={id}
+                editable={false}
+              />
+              <Text style={styles.label}>Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+              />
+              <Text style={styles.label}>Gender</Text>
+              <RNPickerSelect
+                onValueChange={(value) => {
+                  setGender(value);
+                  generateUniqueId();
+                }}
+                items={[
+                  { label: 'Male', value: 'male' },
+                  { label: 'Female', value: 'female' },
+                ]}
+                style={pickerSelectStyles}
+                value={gender}
+              />
+              <Text style={styles.label}>Breed</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setBreed(value)}
+                items={[
+                  { label: 'Breed 1', value: 'breed1' },
+                  { label: 'Breed 2', value: 'breed2' },
+                ]}
+                style={pickerSelectStyles}
+                value={breed}
+              />
+              <Text style={styles.label}>Age</Text>
+              <RNPickerSelect
+                onValueChange={(value) => {
+                  setAge(value);
+                  generateUniqueId();
+                }}
+                items={[
+                  { label: '< 12 months', value: '< 12 months' },
+                  { label: '1 year', value: '1 year' },
+                  { label: '2 years', value: '2 years' },
+                  { label: '3 years', value: '3 years' },
+                  { label: '4 years', value: '4 years' },
+                  { label: '5 years', value: '5 years' },
+                  { label: '6 years', value: '6 years' },
+                  { label: '> 7 years', value: '> 7 years' },
+                ]}
+                style={pickerSelectStyles}
+                value={age}
+              />
+              <Text style={styles.label}>Location</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Location"
+                value={location}
+                onChangeText={setLocation}
+              />
+              <Text style={styles.label}>Owner's Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Owner's Name"
+                value={owner}
+                onChangeText={setOwner}
+              />
+              <Text style={styles.label}>Donkey Picture</Text>
+              <Button title="Pick an image from camera roll" onPress={pickImage} />
+              {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+              <Text style={styles.label}>Health Status</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setHealth(value)}
+                items={[
+                  { label: 'Good', value: 'good' },
+                  { label: 'Weak', value: 'weak' },
+                  { label: 'Critical', value: 'critical' },
+                ]}
+                style={pickerSelectStyles}
+                value={health}
+              />
+              <Button title="Register Donkey" onPress={handleRegister} />
+            </View>
+          </ScrollView>
+        </ImageBackground>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
-    backgroundColor: '#f5f5dc',
   },
-  scrollView: {
-    backgroundColor: '#f5f5dc',
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   formContainer: {
     padding: 20,
