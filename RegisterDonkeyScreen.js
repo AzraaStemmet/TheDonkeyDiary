@@ -6,6 +6,7 @@ import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { getStorage, ref, uploadBytes, getDownloadURL} from 'firebase/storage';
 
 const RegisterDonkeyScreen = () => {
   const navigation = useNavigation(); // Hook to get the navigation prop
@@ -45,7 +46,7 @@ const RegisterDonkeyScreen = () => {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-        alert('Sorry, we need camera permissions to make this work!');
+        Alert.alert('Sorry, we need camera permissions to make this work!');
         return;
     }
 
@@ -57,14 +58,40 @@ const RegisterDonkeyScreen = () => {
     });
 
     if (!result.cancelled) {
+        console.log("Image Picker Result:", result);
         setImage(result.uri);
-        uploadImage(result.uri);
+        await uploadImage(result.uri);
+    } else {
+      console.log("Image Picker was cancelled");
     }
+    
 };
 
 const uploadImage = async (uri) => {
-    // Logic to upload image
+  console.log("Image URI:", uri);
+  try {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const storage = getStorage(app);
+    const storageRef = ref(storage, 'images/${id}.jpg')
+
+    
+    await uploadBytes(storageRef, blob);
+
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+
+    }
+    catch (error) {
+      console.error("Error uploading image:", error);
+      Alert.alert('Error', 'Failed to upload image. Please try again.');
+      return null;
+    }
+  
+    
 };
+
 
   const getAgeCode = (age) => {
     switch (age) {
@@ -96,6 +123,10 @@ const uploadImage = async (uri) => {
         let imageUrl = '';
         if (image) {
           imageUrl = await uploadImage(image);
+          if (!imageUrl)
+          {
+            return;
+          }
         }
         await addDoc(collection(db, 'donkeys'), {
           id,

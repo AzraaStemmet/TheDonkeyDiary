@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, logoImage } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
+
+// Import your screens
 import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
-import WorkersScreen from './WorkersScreen';  
+import SignupScreen from './SignupScreen';
+import WorkersScreen from './WorkersScreen';
 import RegisterDonkeyScreen from './RegisterDonkeyScreen';
-import SearchDonkey from './SearchDonkey'; // Correct the path according to your project structure
+import SearchDonkey from './SearchDonkey';
 import RegistrationConfirmationScreen from './RegistrationConfirmationScreen';
 import DonkeyDetails from './DonkeyDetails';
 import DonkeyReportScreen from './ViewReports';
 import HealthRecordScreen from './HealthRecordScreen';
-// For default export
-//import SearchDonkey from './path/to/SearchDonkey';
+import ManageWorkersScreen from './WorkersMenu';
 
-
-
+// Require the logo image properly
+const logoImage = require('./assets/bahananwa.jpg');
 
 const Stack = createStackNavigator();
 
@@ -37,7 +39,7 @@ const App = () => {
         }
 
         // Simulate a loading task (e.g., fetching resources)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -56,42 +58,36 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home' screenOptions={{
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
           headerRight: () => (
             <Image
               source={logoImage}
-              style={{ width: 40, height: 40, marginRight: 10 }}  // Adjust size as necessary
+              style={{ width: 40, height: 40, marginRight: 10 }} // Adjust size as necessary
             />
           ),
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#f5f5f5',  // Optional: adjust the header background
+            backgroundColor: '#f5f5f5', // Optional: adjust the header background
           },
-          headerTintColor: '#333',  // Optional: adjust the color of the back button and title
-        }}>
-      
-        <Stack.Screen name='Home' component={HomeScreen} />
-        <Stack.Screen name='Login' component={LoginScreen} />
-        <Stack.Screen name='Workers' component={WorkersScreen} />
-        <Stack.Screen name='RegisterDonkey' component={RegisterDonkeyScreen} />
-        <Stack.Screen name='SearchDonkey' component={SearchDonkey} />
-        <Stack.Screen name='RegistrationConfirmationScreen' component={RegistrationConfirmationScreen} />
-        <Stack.Screen name='DonkeyDetails' component={DonkeyDetails} />
-        <Stack.Screen name='ViewReports' component={DonkeyReportScreen} />
-        <Stack.Screen name='HealthRecordScreen' component={HealthRecordScreen} />
-
+          headerTintColor: '#333', // Optional: adjust the color of the back button and title
+        }}
+      >
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Workers" component={WorkersScreen} />
+        <Stack.Screen name="RegisterDonkey" component={RegisterDonkeyScreen} />
+        <Stack.Screen name="SearchDonkey" component={SearchDonkey} />
+        <Stack.Screen name="RegistrationConfirmationScreen" component={RegistrationConfirmationScreen} />
+        <Stack.Screen name="DonkeyDetails" component={DonkeyDetails} />
+        <Stack.Screen name="ViewReports" component={DonkeyReportScreen} />
+        <Stack.Screen name="HealthRecordScreen" component={HealthRecordScreen} />
+        <Stack.Screen name="WorkersMenu" component={ManageWorkersScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
 export default App;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5dc',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

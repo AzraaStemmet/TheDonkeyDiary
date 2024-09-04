@@ -8,7 +8,7 @@ const WorkersScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.buttonText}>Home Page</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Workers')}>
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('WorkersMenu')}>
           <Text style={styles.buttonText}>Workers Menu</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('RegisterDonkey')}>
