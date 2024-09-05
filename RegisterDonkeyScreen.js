@@ -10,6 +10,7 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
 
+
 const RegisterDonkeyScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
