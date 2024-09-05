@@ -36,8 +36,11 @@ const HealthRecordScreen = () => {
                 imageUrl = await uploadImage(image);
             }
     
-            // Register donkey after adding health record
-            await addDoc(collection(db, 'donkeys'), {
+            // Register or update the donkey in the 'donkeys' collection
+            const donkeyDocRef = doc(db, 'donkeys', id); // Reference to the specific donkey document
+    
+            // Update the donkey document with the latest health status and details
+            await setDoc(donkeyDocRef, {
                 id,
                 name,
                 gender,
@@ -47,11 +50,10 @@ const HealthRecordScreen = () => {
                 owner,
                 health: healthStatus,
                 imageUrl,
-            });
+            }, { merge: true }); // Merge to avoid overwriting the whole document
     
-            // Save health record (optional: to a separate collection if needed)
-            await addDoc(collection(db, 'healthRecords'), {
-                donkeyId: id,
+            // Save health record under the correct donkey's subcollection
+            await addDoc(collection(donkeyDocRef, 'healthRecords'), {
                 healthStatus,
                 lastCheckup,
                 treatmentGiven,
@@ -59,7 +61,7 @@ const HealthRecordScreen = () => {
     
             Alert.alert('Success', 'Donkey and health record saved successfully!');
     
-            // Navigate to RegistrationConfirmationScreen and pass the treatmentGiven
+            // Navigate to the next screen
             navigation.navigate('RegistrationConfirmationScreen', {
                 donkey: {
                     id,
@@ -70,7 +72,7 @@ const HealthRecordScreen = () => {
                     location,
                     owner,
                     health: healthStatus,
-                    treatmentGiven, // Add this line
+                    treatmentGiven,
                 }
             });
     
@@ -79,6 +81,8 @@ const HealthRecordScreen = () => {
             Alert.alert('Error', 'Failed to save health record. Please try again.');
         }
     };
+    
+    
     
 
     return (
