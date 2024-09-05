@@ -1,14 +1,18 @@
-// screens/RegisterDonkeyScreen.js
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert } from 'react-native';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
+
+
 
 const RegisterDonkeyScreen = () => {
-  const navigation = useNavigation(); // Hook to get the navigation prop
+  const navigation = useNavigation();
   const route = useRoute();
 
   const [id, setId] = useState('');
@@ -18,8 +22,78 @@ const RegisterDonkeyScreen = () => {
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
-  const [image, setImage] = useState(null);
-  const [health, setHealth] = useState('');
+  const [image, setImage] = useState('');
+
+  useEffect(() => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'You need to grant location permissions to use this feature.');
+      return;
+    }};
+  const [region, setRegion] = useState({
+    latitude: -23.14064265296368,
+    longitude: 28.99409628254349,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,});
+
+    const handleMapPress = (e) => {
+      const { latitude, longitude } = e.nativeEvent.coordinate;
+      setLocation({ latitude, longitude });
+      setRegion({
+        ...region,
+        latitude,
+        longitude,
+      });
+    };
+   
+      
+    
+
+
+
+
+
+  const uploadImage = async (uri) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const storage = getStorage(app);
+      const storageRef = ref(storage, `donkeys/${id}/image.jpg`); // Ensure 'id' is unique for each donkey
+  
+      // Upload the blob to Firebase Storage
+      const snapshot = await uploadBytes(storageRef, blob);
+      const imageUrl = await getDownloadURL(snapshot.ref);
+      console.log('File available at', downloadURL);
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          // Now save the downloadURL to the Firestore
+          const donkeyDocRef = doc(db, 'donkeys', id);
+          updateDoc(donkeyDocRef, { imageURL: downloadURL });
+        });
+      }).catch((error) => {
+        console.error("Error uploading image:", error);
+        alert('Error uploading image: ' + error);
+      });
+    
+      // Save the imageUrl to Firestore
+      const donkeyDocRef = doc(db, 'donkeys', id); // Make sure 'id' corresponds to the specific donkey document
+      await updateDoc(donkeyDocRef, {
+        imageURL: imageUrl
+      });
+  
+
+      
+      Alert.alert('Upload Success', 'Image uploaded successfully!');
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      Alert.alert('Upload Error', error.message);
+    }
+  };
 
   useEffect(() => {
     if (route.params?.reset) {
@@ -45,26 +119,24 @@ const RegisterDonkeyScreen = () => {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-        alert('Sorry, we need camera permissions to make this work!');
-        return;
+      alert('Sorry, we need camera permissions to make this work!');
+      return;
     }
 
     const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
 
     if (!result.cancelled) {
-        setImage(result.uri);
-        uploadImage(result.uri);
+      setImage(result.uri);
+      uploadImage(result.uri);
     }
-};
+  };
 
-const uploadImage = async (uri) => {
-    // Logic to upload image
-};
+
 
   const getAgeCode = (age) => {
     switch (age) {
@@ -89,36 +161,24 @@ const uploadImage = async (uri) => {
     }
   };
 
-  const handleRegister = async () => {
+  const handleNavigateToHealthRecord = () => {
     if (validateForm()) {
-      const db = getFirestore(app);
-      try {
-        let imageUrl = '';
-        if (image) {
-          imageUrl = await uploadImage(image);
-        }
-        await addDoc(collection(db, 'donkeys'), {
-          id,
-          name,
-          gender,
-          breed,
-          age,
-          location,
-          owner,
-          health,
-          imageUrl,
-        });
-        Alert.alert('Success', 'Donkey registered successfully!');
-        navigation.navigate('HealthRecordScreen', { id, name, gender, breed, age, location, owner, health, imageUrl });
-      } catch (e) {
-        console.error('Error adding document: ', e);
-        Alert.alert('Error', 'Failed to register donkey. Please try again.');
-      }
+      // Pass necessary data to the HealthRecordScreen
+      navigation.navigate('HealthRecordScreen', {
+        id,
+        name,
+        gender,
+        breed,
+        age,
+        location,
+        owner,
+        image,
+      });
     }
   };
 
   const validateForm = () => {
-    if (!id || !name || gender === 'default' || breed === 'default' || age === 'default' || !location || !owner || health === 'default') {
+    if (!name || !gender || !breed || !age || !location || !owner) {
       Alert.alert('Validation Error', 'Please fill in all fields correctly.');
       return false;
     }
@@ -133,9 +193,8 @@ const uploadImage = async (uri) => {
     setAge('');
     setLocation('');
     setOwner('');
-    setImage(null);
-    setHealth('');
-    generateUniqueId(); // Call this if you want to generate a new ID when resetting
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
   };
 
   return (
@@ -163,7 +222,6 @@ const uploadImage = async (uri) => {
               generateUniqueId();
             }}
             items={[
-              
               { label: 'Male', value: 'male' },
               { label: 'Female', value: 'female' },
             ]}
@@ -174,7 +232,6 @@ const uploadImage = async (uri) => {
           <RNPickerSelect
             onValueChange={(value) => setBreed(value)}
             items={[
-              
               { label: 'Breed 1', value: 'breed1' },
               { label: 'Breed 2', value: 'breed2' },
             ]}
@@ -188,7 +245,6 @@ const uploadImage = async (uri) => {
               generateUniqueId();
             }}
             items={[
-              
               { label: '< 12 months', value: '< 12 months' },
               { label: '1 year', value: '1 year' },
               { label: '2 years', value: '2 years' },
@@ -201,13 +257,6 @@ const uploadImage = async (uri) => {
             style={pickerSelectStyles}
             value={age}
           />
-          <Text style={styles.label}>Location</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Location"
-            value={location}
-            onChangeText={setLocation}
-          />
           <Text style={styles.label}>Owner's Name</Text>
           <TextInput
             style={styles.input}
@@ -215,22 +264,37 @@ const uploadImage = async (uri) => {
             value={owner}
             onChangeText={setOwner}
           />
-          <Text style={styles.label}>Donkey Picture</Text>
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
-          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-          <Text style={styles.label}>Health Status</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setHealth(value)}
-            items={[
-              
-              { label: 'Good', value: 'good' },
-              { label: 'Weak', value: 'weak' },
-              { label: 'Critical', value: 'critical' },
-            ]}
-            style={pickerSelectStyles}
-            value={health}
+          <Text style={styles.label}>Location</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Location"
+            value={location}
+            onChangeText={setLocation}
           />
-          <Button title="Register Donkey" onPress={handleRegister} />
+          <ScrollView style={styles.container}>
+        <View style={styles.mapContainer}>
+          <MapView
+            style={styles.map}
+            initialRegion={region}
+            onPress={handleMapPress}
+          >
+            {location && <Marker coordinate={location} />}
+          </MapView>
+        </View>
+        <Text style={styles.label}>Selected Location:</Text>
+        <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
+        <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
+        <Text style={styles.buttonText}>Select Location</Text>
+      </TouchableOpacity>
+      </ScrollView>
+      
+          <Text style={styles.label}>Donkey Picture</Text>
+          <TouchableOpacity style={styles.button} onPress={pickImage}>
+        <Text style={styles.buttonText}>Pick Image</Text>
+      </TouchableOpacity>
+          
+          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+          <Button title="Next" onPress={handleNavigateToHealthRecord} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -243,6 +307,15 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     backgroundColor: '#f5f5dc',
   },
+  mapContainer: {
+    height: 400,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
   scrollView: {
     backgroundColor: '#f5f5dc',
   },
@@ -251,6 +324,15 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
   },
   input: {
@@ -289,5 +371,4 @@ const pickerSelectStyles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
 export default RegisterDonkeyScreen;

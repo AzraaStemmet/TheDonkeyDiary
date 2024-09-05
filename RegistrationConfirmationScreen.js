@@ -1,23 +1,25 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity,Image, Button  } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Button } from 'react-native';
 
 const RegistrationConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
 
+  const handleRegisterAnotherDonkey = () => {
+    navigation.navigate('RegisterDonkey', { reset: true });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.navBar}>
-      <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Workers')}>
-        <Text style={styles.buttonText}>Workers Menu</Text>
+        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Workers')}>
+          <Text style={styles.buttonText}>Workers Menu</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('RegisterDonkey')}>
-        <Text style={styles.buttonText}>Register Donkey</Text>
+        <TouchableOpacity style={styles.navButton} onPress={handleRegisterAnotherDonkey}>
+          <Text style={styles.buttonText}>Register Donkey</Text>
         </TouchableOpacity>
-        <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} 
-        />
+        <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} />
       </View>
 
-     
       <Text style={styles.title}>Registration Successful!</Text>
       <Text>ID: {donkey.id}</Text>
       <Text>Name: {donkey.name}</Text>
@@ -27,12 +29,14 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
       <Text>Location: {donkey.location}</Text>
       <Text>Owner: {donkey.owner}</Text>
       <Text>Health: {donkey.health}</Text>
+      <Text>Treatment Given: {donkey.treatmentGiven}</Text> 
 
-      <Button title="Register Another Donkey" onPress={() => navigation.navigate('RegisterDonkey')} />
-      <Button title="Return to Home" onPress={() => navigation.navigate('Home')} />
+      <Button title="Register Another Donkey" onPress={handleRegisterAnotherDonkey} />
+      <Button title="Return to Home" onPress={() => navigation.navigate('Workers')} />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -47,21 +51,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
-   navBar: {
+  navBar: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    height: 60, // Fixed height for nav bar
-   // backgroundColor: '#faf4c0', // Consistent header background color
+    height: 60,
   },
   navButton: {
     padding: 10,
-    backgroundColor: '#AD957E', // Button background color
+    backgroundColor: '#AD957E',
     borderRadius: 5,
     borderColor: '#000000',
   },
   buttonText: {
-    color: '#000000', // White text for buttons
+    color: '#000000',
     fontSize: 16,
   },
   logo: {
