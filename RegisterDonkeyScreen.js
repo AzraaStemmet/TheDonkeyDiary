@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert } from 'react-native';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
+
 
 const RegisterDonkeyScreen = () => {
   const navigation = useNavigation();
@@ -18,6 +22,77 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
+
+  useEffect(() => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'You need to grant location permissions to use this feature.');
+      return;
+    }};
+  const [region, setRegion] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,});
+
+    const handleMapPress = (e) => {
+      const { latitude, longitude } = e.nativeEvent.coordinate;
+      setLocation({ latitude, longitude });
+      setRegion({
+        ...region,
+        latitude,
+        longitude,
+      });
+    };
+   
+      
+    
+
+
+
+
+
+  const uploadImage = async (uri) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const storage = getStorage(app);
+      const storageRef = ref(storage, `donkeys/${id}/image.jpg`); // Ensure 'id' is unique for each donkey
+  
+      // Upload the blob to Firebase Storage
+      const snapshot = await uploadBytes(storageRef, blob);
+      const imageUrl = await getDownloadURL(snapshot.ref);
+      console.log('File available at', downloadURL);
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+          // Now save the downloadURL to the Firestore
+          const donkeyDocRef = doc(db, 'donkeys', id);
+          updateDoc(donkeyDocRef, { imageURL: downloadURL });
+        });
+      }).catch((error) => {
+        console.error("Error uploading image:", error);
+        alert('Error uploading image: ' + error);
+      });
+    
+      // Save the imageUrl to Firestore
+      const donkeyDocRef = doc(db, 'donkeys', id); // Make sure 'id' corresponds to the specific donkey document
+      await updateDoc(donkeyDocRef, {
+        imageURL: imageUrl
+      });
+  
+
+      
+      Alert.alert('Upload Success', 'Image uploaded successfully!');
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      Alert.alert('Upload Error', error.message);
+    }
+  };
 
   useEffect(() => {
     if (route.params?.reset) {
@@ -60,9 +135,7 @@ const RegisterDonkeyScreen = () => {
     }
   };
 
-  const uploadImage = async (uri) => {
-    // Logic to upload image
-  };
+
 
   const getAgeCode = (age) => {
     switch (age) {
@@ -190,6 +263,20 @@ const RegisterDonkeyScreen = () => {
             value={location}
             onChangeText={setLocation}
           />
+          <ScrollView style={styles.container}>
+        <View style={styles.mapContainer}>
+          <MapView
+            style={styles.map}
+            initialRegion={region}
+            onPress={handleMapPress}
+          >
+            {location && <Marker coordinate={location} />}
+          </MapView>
+        </View>
+        <Text style={styles.label}>Selected Location:</Text>
+        <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
+        <Button title="Confirm Location" onPress={() => Alert.alert('Location Confirmed')} />
+      </ScrollView>
           <Text style={styles.label}>Owner's Name</Text>
           <TextInput
             style={styles.input}
@@ -212,6 +299,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: StatusBar.currentHeight,
     backgroundColor: '#f5f5dc',
+  },
+  mapContainer: {
+    height: 400,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
   scrollView: {
     backgroundColor: '#f5f5dc',
@@ -259,5 +355,4 @@ const pickerSelectStyles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
 export default RegisterDonkeyScreen;
