@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
-const DonkeyReportScreen = () => {
+const DonkeyReport = () => {
   const [donkeys, setDonkeys] = useState([]);
+  const [filteredDonkeys, setFilteredDonkeys] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchDonkeys = async () => {
@@ -15,6 +17,7 @@ const DonkeyReportScreen = () => {
           donkeyList.push({ id: doc.id, ...doc.data() });
         });
         setDonkeys(donkeyList);
+        setFilteredDonkeys(donkeyList);
       } catch (error) {
         console.error("Error fetching donkeys:", error);
       }
@@ -23,8 +26,32 @@ const DonkeyReportScreen = () => {
     fetchDonkeys();
   }, []);
 
+  useEffect(() => {
+    filterDonkeys();
+  }, [searchQuery, donkeys]);
+
+  const filterDonkeys = () => {
+    const query = searchQuery.toLowerCase();
+    const filtered = donkeys.filter(donkey =>
+      donkey.name.toLowerCase().includes(query) ||
+      donkey.age.toLowerCase().includes(query) ||
+      donkey.gender.toLowerCase().includes(query) ||
+      donkey.health.toLowerCase().includes(query) ||
+      donkey.location.toLowerCase().includes(query) ||
+      donkey.owner.toLowerCase().includes(query) ||
+      donkey.id.toLowerCase().includes(query)
+    );
+    setFilteredDonkeys(filtered);
+  };
+
   return (
-    <ScrollView style={styles.container} horizontal={true}>
+    <ScrollView style={styles.container}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
       <View style={styles.table}>
         <View style={styles.headerRow}>
           <Text style={styles.header}>Donkey Name</Text>
@@ -36,7 +63,7 @@ const DonkeyReportScreen = () => {
           <Text style={styles.header}>ID</Text>
         </View>
         <ScrollView style={styles.scrollableContent} vertical={true}>
-          {donkeys.map((donkey) => (
+          {filteredDonkeys.map((donkey) => (
             <View key={donkey.id} style={styles.row}>
               <Text style={styles.cell}>{donkey.name}</Text>
               <Text style={styles.cell}>{donkey.age}</Text>
@@ -53,13 +80,19 @@ const DonkeyReportScreen = () => {
   );
 };
 
-export default DonkeyReportScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
     backgroundColor: '#f5f5dc',
+  },
+  searchInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
   },
   table: {
     flexDirection: 'column', // Stack rows vertically
@@ -98,3 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
+export default DonkeyReport;

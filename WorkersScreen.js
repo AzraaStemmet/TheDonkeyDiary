@@ -1,8 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity,Image, Button } from 'react-native';
-
+import { StyleSheet, View, Text, TouchableOpacity,Image, Button, ImageBackground } from 'react-native';
+const workerBackground = require('./assets/back.png')
 const WorkersScreen = ({ navigation }) => {
   return (
+    <ImageBackground
+      source={workerBackground}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
     <View style={styles.container}>
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')}>
@@ -36,8 +41,14 @@ const WorkersScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('ViewReports')}
           color="#AD957E"
         />
+        <Button
+          title="View Reports"
+          onPress={() => navigation.navigate('Reports')}
+          color="#AD957E"
+        />
       </View>
     </View>
+    </ImageBackground>
   );
 };
 
@@ -47,6 +58,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5dc',
+  },
+  backgroundImage: {
+    flex: 1,
+    justifyContent: 'center', // Center items vertically
+    alignItems: 'center', // Center items horizontally
   },
   navBar: {
     flexDirection: 'row',
@@ -72,7 +88,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     paddingHorizontal: 20,
   },
 });

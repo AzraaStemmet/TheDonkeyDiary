@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent background to make text readable
     borderRadius: 10,
   },
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-around', // Distribute buttons evenly
+    justifyContent: 'space-evenly', // Distribute buttons evenly
   },
 });
 

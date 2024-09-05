@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from './firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
+import { db } from './firebaseConfig';
 
 const ManageWorkersScreen = () => {
   const [users, setUsers] = useState([]);
@@ -25,13 +25,20 @@ const ManageWorkersScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {users.map((user, index) => (
-        <View key={user.id} style={styles.card}>
-          <Text style={styles.title}>User Name: {user.name}</Text>
-          <Text>Email: {user.email}</Text>
-          <Text>ID: {user.id}</Text>
+      <View style={styles.table}>
+        <View style={styles.headerRow}>
+        <Text style={styles.header}>Name</Text>
+        <Text style={styles.header}>Email</Text>
+        <Text style={styles.header}>ID</Text>
         </View>
-      ))}
+        {users.map((user) => (
+          <View key={user.id} style={styles.row}>
+            <Text style={styles.cell}>{user.name}</Text>
+            <Text style={styles.cell}>{user.email}</Text>
+            <Text style={styles.cell}>{user.id}</Text>
+          </View>
+        ))}
+      </View>
     </ScrollView>
   );
 };
@@ -44,23 +51,37 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#f5f5dc',
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+  table: {
+    marginTop: 10,
   },
-  title: {
-    fontSize: 18,
+  headerRow: { 
+    flexDirection: 'row',
+    backgroundColor: '#8B4513', 
+  },
+  row: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
+  },
+  header: {
+    flex: 1,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
+    textAlign: 'center',
+    color: '#ffffff', 
+    padding: 5,
+  },
+  cell: {
+    flex: 1,
+    fontSize: 14,
+    textAlign: 'center',
+    padding: 5,
   },
 });
+
+
+
 
 
 
