@@ -41,13 +41,13 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       Alert.alert("Error", "No donkey data to update");
       return;
     }
-
+  
     setLoading(true);
     try {
       const donkeysRef = collection(db, "donkeys");
       const q = query(donkeysRef, where("id", "==", donkeyId));
       const querySnapshot = await getDocs(q);
-
+  
       if (!querySnapshot.empty) {
         const docToUpdate = querySnapshot.docs[0];
         await updateDoc(docToUpdate.ref, {
@@ -58,9 +58,10 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           location: donkey.location,
           owner: donkey.owner
         });
-
-        Alert.alert("Success", "Donkey details updated successfully");
-        navigation.goBack();
+  
+        // Navigate to confirmation screen after update
+        navigation.navigate('EditConfirmation', { donkey });
+  
       } else {
         throw new Error("Donkey not found");
       }
@@ -71,6 +72,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       setLoading(false);
     }
   };
+  
 
   if (loading) return <Text>Loading...</Text>;
   if (!donkey) return <Text>No donkey data available</Text>;
