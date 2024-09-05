@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
@@ -34,8 +34,8 @@ const RegisterDonkeyScreen = () => {
       return;
     }};
   const [region, setRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: -23.14064265296368,
+    longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,});
 
@@ -256,6 +256,13 @@ const RegisterDonkeyScreen = () => {
             style={pickerSelectStyles}
             value={age}
           />
+          <Text style={styles.label}>Owner's Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Owner's Name"
+            value={owner}
+            onChangeText={setOwner}
+          />
           <Text style={styles.label}>Location</Text>
           <TextInput
             style={styles.input}
@@ -275,17 +282,16 @@ const RegisterDonkeyScreen = () => {
         </View>
         <Text style={styles.label}>Selected Location:</Text>
         <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
-        <Button title="Confirm Location" onPress={() => Alert.alert('Location Confirmed')} />
+        <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
+        <Text style={styles.buttonText}>Select Location</Text>
+      </TouchableOpacity>
       </ScrollView>
-          <Text style={styles.label}>Owner's Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Owner's Name"
-            value={owner}
-            onChangeText={setOwner}
-          />
+      
           <Text style={styles.label}>Donkey Picture</Text>
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          <TouchableOpacity style={styles.button} onPress={pickImage}>
+        <Text style={styles.buttonText}>Pick Image</Text>
+      </TouchableOpacity>
+          
           {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           <Button title="Next" onPress={handleNavigateToHealthRecord} />
         </View>
@@ -317,6 +323,15 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
   },
   input: {
