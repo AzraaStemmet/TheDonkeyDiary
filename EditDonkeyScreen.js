@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Alert } from 'react-native';
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
@@ -10,18 +11,27 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const fetchDonkey = async () => {
-      const donkeysRef = collection(db, "donkeys");
-      const q = query(donkeysRef, where("id", "==", donkeyId));
-      const querySnapshot = await getDocs(q);
+      try {
+        console.log("Fetching donkey with ID:", donkeyId); // Debug log
+        const donkeysRef = collection(db, "donkeys");
+        const q = query(donkeysRef, where("id", "==", donkeyId));
+        const querySnapshot = await getDocs(q);
 
-      if (!querySnapshot.empty) {
-        const docSnapshot = querySnapshot.docs[0];
-        setDonkey({ firestoreId: docSnapshot.id, ...docSnapshot.data() });
-      } else {
-        Alert.alert("Error", "Donkey not found. Please check the ID and try again.");
-        navigation.goBack();
+        if (!querySnapshot.empty) {
+          const docSnapshot = querySnapshot.docs[0];
+          console.log("Document data:", docSnapshot.data()); // Debug log
+          setDonkey({ firestoreId: docSnapshot.id, ...docSnapshot.data() });
+        } else {
+          console.log("No such document!");
+          Alert.alert("Error", "Donkey not found. Please check the ID and try again.");
+          navigation.goBack();
+        }
+      } catch (error) {
+        console.error("Error fetching donkey:", error); // More detailed error log
+        Alert.alert("Error", "Failed to fetch donkey details: " + error.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
   
     fetchDonkey();
@@ -32,22 +42,38 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       Alert.alert("Error", "No donkey data to update");
       return;
     }
-
+  
     setLoading(true);
-    const donkeysRef = collection(db, "donkeys");
-    const q = query(donkeysRef, where("id", "==", donkeyId));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      const docToUpdate = querySnapshot.docs[0];
-      await updateDoc(docToUpdate.ref, donkey);
-      Alert.alert("Success", "Donkey details updated successfully");
-      navigation.goBack();
-    } else {
-      Alert.alert("Error", "Failed to find donkey to update");
+    try {
+      const donkeysRef = collection(db, "donkeys");
+      const q = query(donkeysRef, where("id", "==", donkeyId));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        const docToUpdate = querySnapshot.docs[0];
+        await updateDoc(docToUpdate.ref, {
+          name: donkey.name,
+          age: donkey.age,
+          gender: donkey.gender,
+          health: donkey.health,
+          location: donkey.location,
+          owner: donkey.owner
+        });
+  
+        // Navigate to confirmation screen after update
+        navigation.navigate('EditConfirmation', { donkey });
+  
+      } else {
+        throw new Error("Donkey not found");
+      }
+    } catch (error) {
+      console.error("Error updating donkey:", error);
+      Alert.alert("Error", "Failed to update donkey details: " + error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+  
 
   if (loading) return <Text>Loading...</Text>;
   if (!donkey) return <Text>No donkey data available</Text>;
@@ -90,12 +116,12 @@ const EditDonkeyScreen = ({ route, navigation }) => {
         onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
         placeholder="Owner"
       />
-      <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>
-        <Text style={styles.buttonText}>Save Changes</Text>
-      </TouchableOpacity>
+      <Button title="Save Changes" onPress={handleUpdate} disabled={loading} />
     </View>
   );
 };
+
+export default EditDonkeyScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -110,18 +136,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
-  button: {
-    backgroundColor: '#AD957E',
-    padding: 10,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-  },
 });
-
-export default EditDonkeyScreen;
