@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity,Image, Button } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 
 const WorkersScreen = ({ navigation }) => {
   return (
@@ -14,28 +14,22 @@ const WorkersScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('RegisterDonkey')}>
           <Text style={styles.buttonText}>Register Donkey</Text>
         </TouchableOpacity>
-        <Image
-          style={styles.logo}
-          source={require('./assets/bahananwa.jpg')} 
-        />
+        <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} />
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button
-          title="Register Donkey"
-          onPress={() => navigation.navigate('RegisterDonkey')}
-          color="#AD957E"
-        />
-        <Button
-          title="Search by ID"
-          onPress={() => navigation.navigate('SearchDonkey')}
-          color="#AD957E"
-        />
-        <Button
-          title="View Existing Donkeys"
-          onPress={() => navigation.navigate('ViewReports')}
-          color="#AD957E"
-        />
+        <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <Text style={styles.buttonText}>Register Donkey</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('SearchDonkey')}>
+          <Text style={styles.buttonText}>Search by ID</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('ViewReports')}>
+          <Text style={styles.buttonText}>View Existing Donkeys</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Reports')}>
+          <Text style={styles.buttonText}>View Reports</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -52,17 +46,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    height: 60, // Fixed height for nav bar
-   // backgroundColor: '#faf4c0', // Consistent header background color
+    height: 60,
   },
   navButton: {
     padding: 10,
-    backgroundColor: '#AD957E', // Button background color
+    backgroundColor: '#AD957E',
     borderRadius: 5,
-    borderColor: '#000000',
   },
   buttonText: {
-    color: '#000000', // White text for buttons
+    color: '#FFF', // Adjusted for better visibility
     fontSize: 16,
   },
   logo: {
@@ -74,5 +66,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
+  },
+  customButton: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 10,
   },
 });

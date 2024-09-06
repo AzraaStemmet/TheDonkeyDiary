@@ -1,5 +1,7 @@
+
+// screens/LoginScreen.js
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, TextInput, Button, ImageBackground, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
@@ -10,78 +12,66 @@ const LoginScreen = ({ navigation }) => {
     const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('Workers');
+      navigation.navigate('Workers'); // Adjust based on your navigation
     } catch (error) {
       console.error(error);
-      Alert.alert('Login Failed', 'Please check your credentials.');
+      Alert.alert('Login failed', 'Please check your credentials.');
     }
   };
 
+  const loginBackground = require('./assets/back.png');
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#8A7E72"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#8A7E72"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground
+      source={loginBackground}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <Button title="Login" onPress={handleLogin} color="#AD957E" />
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
-export default LoginScreen;
-
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    backgroundColor: '#FFF8E1', // Consistent with the signup screen
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    justifyContent: 'center', // Center items vertically
+    alignItems: 'center', // Center items horizontally
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#AD957E', // Earthy brown
-    marginBottom: 20,
+  container: {
+    width: '90%', // Adjust as needed
+    maxWidth: 400, // Maximum width for large screens
+    padding: 20, // Add padding if needed
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
+    borderRadius: 10, // Rounded corners
   },
   input: {
     height: 50,
-    borderColor: '#D9CAB3',
+    borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-    width: '90%', // Increased width for better alignment
-    backgroundColor: '#FFFAF0',
-    color: '#5C5346',
-  },
-  button: {
-    backgroundColor: '#AD957E',
-    padding: 15,
-    borderRadius: 10,
-    width: '90%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#FFF8E1',
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    width: '100%', // Full width of the container
   },
 });
+
+export default LoginScreen;

@@ -5,10 +5,10 @@
     "slug": "TheDonkeyDiary",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.jpeg",
+    "icon": "./assets/bahananwa.jpg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo.jpeg",
+      "image": "./assets/bahananwa.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
