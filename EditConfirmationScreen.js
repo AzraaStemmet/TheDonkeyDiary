@@ -5,9 +5,6 @@ import { StyleSheet, View, Text, TouchableOpacity, Image, Button } from 'react-n
 const EditConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
 
-  const handleEditAnotherDonkey = () => {
-    navigation.navigate('EditDonkey', { reset: true });
-  };
 
   return (
     <View style={styles.container}>
@@ -15,9 +12,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Workers')}>
           <Text style={styles.buttonText}>Workers Menu</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={handleEditAnotherDonkey}>
-          <Text style={styles.buttonText}>Edit Another Donkey</Text>
-        </TouchableOpacity>
+
         <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} />
       </View>
 
@@ -31,7 +26,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
       <Text>Owner: {donkey.owner}</Text>
       <Text>Health: {donkey.health}</Text>
 
-      <Button title="Edit Another Donkey" onPress={handleEditAnotherDonkey} />
+      <Button title="Edit Another Donkey" onPress={() => navigation.navigate('ViewReports')} />
       <Button title="Return to Home" onPress={() => navigation.navigate('Workers')} />
     </View>
   );
