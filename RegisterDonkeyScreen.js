@@ -9,8 +9,6 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
-
-
 const RegisterDonkeyScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -18,7 +16,6 @@ const RegisterDonkeyScreen = () => {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
-  const [breed, setBreed] = useState('');
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
@@ -49,13 +46,6 @@ const RegisterDonkeyScreen = () => {
         longitude,
       });
     };
-   
-      
-    
-
-
-
-
 
   const uploadImage = async (uri) => {
     try {
@@ -64,29 +54,12 @@ const RegisterDonkeyScreen = () => {
       const storage = getStorage(app);
       const storageRef = ref(storage, `donkeys/${id}/image.jpg`); // Ensure 'id' is unique for each donkey
   
-      // Upload the blob to Firebase Storage
       const snapshot = await uploadBytes(storageRef, blob);
       const imageUrl = await getDownloadURL(snapshot.ref);
-      console.log('File available at', downloadURL);
-      uploadBytes(storageRef, blob).then((snapshot) => {
-        getDownloadURL(snapshot.ref).then((downloadURL) => {
-          console.log('File available at', downloadURL);
-          // Now save the downloadURL to the Firestore
-          const donkeyDocRef = doc(db, 'donkeys', id);
-          updateDoc(donkeyDocRef, { imageURL: downloadURL });
-        });
-      }).catch((error) => {
-        console.error("Error uploading image:", error);
-        alert('Error uploading image: ' + error);
-      });
-    
-      // Save the imageUrl to Firestore
-      const donkeyDocRef = doc(db, 'donkeys', id); // Make sure 'id' corresponds to the specific donkey document
-      await updateDoc(donkeyDocRef, {
-        imageURL: imageUrl
-      });
-  
+      console.log('File available at', imageUrl);
 
+      const donkeyDocRef = doc(db, 'donkeys', id); 
+      await updateDoc(donkeyDocRef, { imageURL: imageUrl });
       
       Alert.alert('Upload Success', 'Image uploaded successfully!');
     } catch (error) {
@@ -136,8 +109,6 @@ const RegisterDonkeyScreen = () => {
     }
   };
 
-
-
   const getAgeCode = (age) => {
     switch (age) {
       case '< 12 months':
@@ -163,12 +134,10 @@ const RegisterDonkeyScreen = () => {
 
   const handleNavigateToHealthRecord = () => {
     if (validateForm()) {
-      // Pass necessary data to the HealthRecordScreen
       navigation.navigate('HealthRecordScreen', {
         id,
         name,
         gender,
-        breed,
         age,
         location,
         owner,
@@ -178,7 +147,7 @@ const RegisterDonkeyScreen = () => {
   };
 
   const validateForm = () => {
-    if (!name || !gender || !breed || !age || !location || !owner) {
+    if (!name || !gender || !age || !location || !owner) {
       Alert.alert('Validation Error', 'Please fill in all fields correctly.');
       return false;
     }
@@ -189,12 +158,11 @@ const RegisterDonkeyScreen = () => {
     setId('');
     setName('');
     setGender('');
-    setBreed('');
     setAge('');
     setLocation('');
     setOwner('');
     setImage('');
-    generateUniqueId(); // Generate a new ID when resetting
+    generateUniqueId(); 
   };
 
   return (
@@ -227,16 +195,6 @@ const RegisterDonkeyScreen = () => {
             ]}
             style={pickerSelectStyles}
             value={gender}
-          />
-          <Text style={styles.label}>Breed</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setBreed(value)}
-            items={[
-              { label: 'Breed 1', value: 'breed1' },
-              { label: 'Breed 2', value: 'breed2' },
-            ]}
-            style={pickerSelectStyles}
-            value={breed}
           />
           <Text style={styles.label}>Age</Text>
           <RNPickerSelect

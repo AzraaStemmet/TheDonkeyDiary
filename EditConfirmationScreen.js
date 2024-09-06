@@ -21,7 +21,6 @@ const EditConfirmationScreen = ({ route, navigation }) => {
       <Text>ID: {donkey.id}</Text>
       <Text>Name: {donkey.name}</Text>
       <Text>Gender: {donkey.gender}</Text>
-      <Text>Breed: {donkey.breed}</Text>
       <Text>Age: {donkey.age}</Text>
       <Text>Location: {donkey.location}</Text>
       <Text>Owner: {donkey.owner}</Text>

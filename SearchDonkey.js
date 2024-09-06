@@ -91,7 +91,6 @@ function SearchDonkey() {
             <Text>Donkey Age: {donkeyDetails.age}</Text>
             <Text>Donkey Owner: {donkeyDetails.owner}</Text>
             <Text>Location: {donkeyDetails.location}</Text>
-            <Text>Breed: {donkeyDetails.breed}</Text>
             <Text>Gender: {donkeyDetails.gender}</Text>
             <Text>Health Status: {donkeyDetails.health}</Text>
             

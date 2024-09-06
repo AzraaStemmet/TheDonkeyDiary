@@ -6,7 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 const DonkeyDetails = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { id, name, gender, breed, age, location, owner, health, imageUrl } = route.params;
+  const { id, name, gender, age, location, owner, health, imageUrl } = route.params;
 
   return (
     <View style={styles.container}>
@@ -24,7 +24,6 @@ const DonkeyDetails = () => {
       <Text>Donkey ID: {id}</Text>
       <Text>Donkey Name: {name}</Text>
       <Text>Donkey Gender: {gender}</Text>
-      <Text>Donkey Breed: {breed}</Text>
       <Text>Donkey Age: {age}</Text>
       <Text>Location: {location}</Text>
       <Text>Owner: {owner}</Text>
