@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, Button } from 'react-native';
-import { collection, getDocs, query, where, getDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
 
 const DonkeyReportScreen = ({ navigation }) => {
@@ -27,6 +27,13 @@ const DonkeyReportScreen = ({ navigation }) => {
     fetchDonkeys();
   }, []);
 
+  // Define the renderLocation function
+  const renderLocation = (location) => {
+    if (!location) return 'No location available';
+    const [latitude, longitude] = location.split(', ');
+    return `Lat: ${latitude}, Lon: ${longitude}`;
+  };
+
   return (
     <ScrollView style={styles.container}>
       {donkeys.map((donkey) => (
@@ -35,7 +42,7 @@ const DonkeyReportScreen = ({ navigation }) => {
           <Text>Age: {donkey.age}</Text>
           <Text>Gender: {donkey.gender}</Text>
           <Text>Health Status: {donkey.health}</Text>
-          <Text>Location: {donkey.location}</Text>
+          <Text>Location: {renderLocation(donkey.location)}</Text>
           <Text>Owner: {donkey.owner}</Text>
           <Text>ID: {donkey.id}</Text>
 
