@@ -27,18 +27,13 @@ const DonkeyReportScreen = ({ navigation }) => {
     fetchDonkeys();
   }, []);
 
-  // Corrected renderLocation function
+  // Define the renderLocation function
   const renderLocation = (location) => {
     if (!location) return 'No location available';
-    
-    // Check if location is an object and has latitude and longitude properties
-    if (typeof location === 'object' && location.latitude && location.longitude) {
-      return `Lat: ${location.latitude}, Lon: ${location.longitude}`;
-    }
-
-    // If location is not an object, return it directly
-    return location;
+    const [latitude, longitude] = location.split(', ');
+    return `Lat: ${latitude}, Lon: ${longitude}`;
   };
+
 
   return (
     <ScrollView style={styles.container}>
