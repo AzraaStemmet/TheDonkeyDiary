@@ -10,7 +10,7 @@ const HealthRecordScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
 
-    const { id, name, gender, breed, age, location, owner, health, image } = route.params;
+    const { id, name, gender, age, location, owner, health, image } = route.params;
 
     const [healthStatus, setHealthStatus] = useState('');
     const [lastCheckup, setLastCheckup] = useState(new Date());
@@ -41,7 +41,6 @@ const HealthRecordScreen = () => {
                 id,
                 name,
                 gender,
-                breed,
                 age,
                 location,
                 owner,
@@ -65,7 +64,6 @@ const HealthRecordScreen = () => {
                     id,
                     name,
                     gender,
-                    breed,
                     age,
                     location,
                     owner,

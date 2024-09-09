@@ -168,7 +168,6 @@ const RegisterDonkeyScreen = () => {
         id,
         name,
         gender,
-        breed,
         age,
         location,
         owner,
@@ -178,7 +177,7 @@ const RegisterDonkeyScreen = () => {
   };
 
   const validateForm = () => {
-    if (!name || !gender || !breed || !age || !location || !owner) {
+    if (!name || !gender || !age || !location || !owner) {
       Alert.alert('Validation Error', 'Please fill in all fields correctly.');
       return false;
     }
@@ -189,7 +188,6 @@ const RegisterDonkeyScreen = () => {
     setId('');
     setName('');
     setGender('');
-    setBreed('');
     setAge('');
     setLocation('');
     setOwner('');
@@ -228,16 +226,7 @@ const RegisterDonkeyScreen = () => {
             style={pickerSelectStyles}
             value={gender}
           />
-          <Text style={styles.label}>Breed</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setBreed(value)}
-            items={[
-              { label: 'Breed 1', value: 'breed1' },
-              { label: 'Breed 2', value: 'breed2' },
-            ]}
-            style={pickerSelectStyles}
-            value={breed}
-          />
+         
           <Text style={styles.label}>Age</Text>
           <RNPickerSelect
             onValueChange={(value) => {

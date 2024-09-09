@@ -29,18 +29,30 @@ const DonkeyReport = () => {
     let filtered = donkeys.filter(donkey => {
       return donkey.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
              (filterGender ? donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
+<<<<<<< HEAD
+=======
+            // (filterAge ? donkey.age.toLowerCase() === filterAge.toLowerCase() : true) 
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
              (filterAge ? checkAgeRange(donkey.age, filterAge) : true);
     });
     setFilteredDonkeys(filtered);
   };
 
   const checkAgeRange = (age, range) => {
+<<<<<<< HEAD
     // Assumes `age` is stored as a number in the database
+=======
+    // Assumes age is stored as a number in the database
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
     switch (range) {
       case '< 12 months': return age < 1;
       case '1 year': return age >= 1;
       case '2 years': return age >= 2;
+<<<<<<< HEAD
       case '3 years': return age > 3;
+=======
+      case '3 years': return age >= 3;
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
       default: return true;
     }
   };
@@ -61,11 +73,16 @@ const DonkeyReport = () => {
           { label: 'All', value: '' },
         ]}
         style={pickerSelectStyles}
+<<<<<<< HEAD
         placeholder={{ label: "Select Gender", value: null }}
+=======
+        placeholder={{ label: "Filter Gender", value: '' }}
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
       />
       <RNPickerSelect
         onValueChange={(value) => setFilterAge(value)}
         items={[
+<<<<<<< HEAD
           { label: 'Under 1 year', value: 'under_1' },
           { label: '1 to 3 years', value: '1_to_3' },
           { label: 'Over 3 years', value: 'over_3' },
@@ -87,6 +104,43 @@ const DonkeyReport = () => {
           </View>
         ))}
       </View>
+=======
+          { label: 'Under 1 year', value: '< 12 months' },
+          { label: '1 year', value: '1 year' },
+          { label: '2 years', value: '2 years' },
+          { label: 'All Ages', value: '' },
+        ]}
+        style={pickerSelectStyles}
+        placeholder={{ label: "Filter Age", value: null }}
+      />
+      
+      <ScrollView horizontal={true}>
+        <View style={styles.table}>
+          <ScrollView horizontal={true}>
+            <View style={styles.headerRow}>
+              <Text style={styles.header}>Donkey Name</Text>
+              <Text style={styles.header}>Age</Text>
+              <Text style={styles.header}>Gender</Text>
+              <Text style={styles.header}>Health Status</Text>
+              <Text style={styles.header}>Location</Text>
+              <Text style={styles.header}>Owner</Text>
+              <Text style={styles.header}>ID</Text>
+            </View>
+          </ScrollView>
+          {filteredDonkeys.map((donkey) => (
+            <ScrollView horizontal={true} key={donkey.id} style={styles.row}>
+              <Text style={styles.cell}>{donkey.name}</Text>
+              <Text style={styles.cell}>{donkey.age}</Text>
+              <Text style={styles.cell}>{donkey.gender}</Text>
+              <Text style={styles.cell}>{donkey.health}</Text>
+              <Text style={styles.cell}>{donkey.location}</Text>
+              <Text style={styles.cell}>{donkey.owner}</Text>
+              <Text style={styles.cell}>{donkey.id}</Text>
+            </ScrollView>
+          ))}
+        </View>
+      </ScrollView>
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
     </ScrollView>
   );
 };
@@ -106,7 +160,11 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
     },
     table: {
+<<<<<<< HEAD
       flexDirection: 'column',
+=======
+      minWidth: 700, // Ensure the table has a minimum width
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
     },
     headerRow: {
       flexDirection: 'row',
@@ -122,12 +180,17 @@ const styles = StyleSheet.create({
       borderBottomColor: '#cccccc',
     },
     header: {
+<<<<<<< HEAD
       flex: 1,
+=======
+      minWidth: 120, // Ensure all headers have a minimum width
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center',
       color: '#ffffff',
       padding: 5,
+<<<<<<< HEAD
       minWidth: 120,
     },
     cell: {
@@ -139,6 +202,14 @@ const styles = StyleSheet.create({
     },
     scrollableContent: {
       flexDirection: 'column',
+=======
+    },
+    cell: {
+      minWidth: 120, // Ensure all cells have a minimum width
+      fontSize: 14,
+      textAlign: 'center',
+      padding: 5,
+>>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
     },
     pickerSelectStyles: {
       inputIOS: {

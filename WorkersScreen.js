@@ -1,7 +1,18 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; // Ensure this path is correct
 
 const WorkersScreen = ({ navigation }) => {
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.navBar}>
@@ -13,6 +24,9 @@ const WorkersScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('RegisterDonkey')}>
           <Text style={styles.buttonText}>Register Donkey</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navButton} onPress={handleSignOut}>
+          <Text style={styles.buttonText}>Sign Out</Text>
         </TouchableOpacity>
         <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} />
       </View>
