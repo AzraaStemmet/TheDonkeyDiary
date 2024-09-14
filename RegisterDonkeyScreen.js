@@ -8,17 +8,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-
-
+import uuid from 'react-native-uuid';
 
 const RegisterDonkeyScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const db = getFirestore(app);
 
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
-  const [breed, setBreed] = useState('');
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
@@ -26,6 +25,7 @@ const RegisterDonkeyScreen = () => {
 
   useEffect(() => {
     checkPermissions();
+    generateUniqueId();
   }, []);
 
   const checkPermissions = async () => {
@@ -33,29 +33,37 @@ const RegisterDonkeyScreen = () => {
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'You need to grant location permissions to use this feature.');
       return;
-    }};
+    }
+  };
+
+  const generateUniqueId = () => {
+    const newId = uuid.v4(); // Generate a unique UUID
+    setId(newId);
+  };
+
+  const handleMapPress = async (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    const locationString = `${latitude}, ${longitude}`;
+    setLocation(locationString); // Save location as string
+  
+    try {
+      const donkeyDocRef = doc(db, 'donkeys', id); // Ensure 'db' is initialized
+      await updateDoc(donkeyDocRef, {
+        location: locationString // Save the location string
+      });
+      console.log('Location updated successfully!');
+    } catch (error) {
+      console.error('Error updating location:', error);
+    } 
+  };
+  
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,});
-
-    const handleMapPress = (e) => {
-      const { latitude, longitude } = e.nativeEvent.coordinate;
-      setLocation({ latitude, longitude });
-      setRegion({
-        ...region,
-        latitude,
-        longitude,
-      });
-    };
-   
-      
-    
-
-
-
-
+    longitudeDelta: 0.0421,
+  });
+  
 
   const uploadImage = async (uri) => {
     try {
@@ -101,20 +109,8 @@ const RegisterDonkeyScreen = () => {
     }
   }, [route.params]);
 
-  useEffect(() => {
-    generateUniqueId();
-  }, [gender, age]);
-
-  const generateUniqueId = async () => {
-    const db = getFirestore(app);
-    const querySnapshot = await getDocs(collection(db, 'donkeys'));
-    const donkeyCount = querySnapshot.size + 1;
-    const genderCode = gender === 'male' ? '01' : '02';
-    const year = new Date().getFullYear().toString().slice(-2);
-    const ageCode = getAgeCode(age);
-    const newId = `${donkeyCount}-${genderCode}-${year}-${ageCode}`;
-    setId(newId);
-  };
+  
+  
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -217,7 +213,6 @@ const RegisterDonkeyScreen = () => {
           <RNPickerSelect
             onValueChange={(value) => {
               setGender(value);
-              generateUniqueId();
             }}
             items={[
               { label: 'Male', value: 'male' },
@@ -231,7 +226,6 @@ const RegisterDonkeyScreen = () => {
           <RNPickerSelect
             onValueChange={(value) => {
               setAge(value);
-              generateUniqueId();
             }}
             items={[
               { label: '< 12 months', value: '< 12 months' },
@@ -246,6 +240,7 @@ const RegisterDonkeyScreen = () => {
             style={pickerSelectStyles}
             value={age}
           />
+
           <Text style={styles.label}>Owner's Name</Text>
           <TextInput
             style={styles.input}
@@ -253,6 +248,7 @@ const RegisterDonkeyScreen = () => {
             value={owner}
             onChangeText={setOwner}
           />
+          
           <Text style={styles.label}>Location</Text>
           <TextInput
             style={styles.input}
@@ -267,7 +263,7 @@ const RegisterDonkeyScreen = () => {
             initialRegion={region}
             onPress={handleMapPress}
           >
-            {location && <Marker coordinate={location} />}
+            {location && <Marker coordinate={{ latitude: parseFloat(location.split(', ')[0]), longitude: parseFloat(location.split(', ')[1]) }} />}
           </MapView>
         </View>
         <Text style={styles.label}>Selected Location:</Text>
