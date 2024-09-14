@@ -4,38 +4,27 @@ import { StyleSheet, View, Text, TouchableOpacity, Image, Button } from 'react-n
 const RegistrationConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
 
-  const handleRegisterAnotherDonkey = () => {
-    navigation.navigate('RegisterDonkey', { reset: true });
+  const handleConfirmDetails = () => {
+    // Proceed to health record screen
+    navigation.navigate('HealthRecordScreen', { donkey });
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Workers')}>
-          <Text style={styles.buttonText}>Workers Menu</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={handleRegisterAnotherDonkey}>
-          <Text style={styles.buttonText}>Register Donkey</Text>
-        </TouchableOpacity>
-        <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} />
-      </View>
-
-      <Text style={styles.title}>Registration Successful!</Text>
+      <Text> Donkey Registration Successful</Text>
+      <Text>Confirm Donkey Details</Text>
       <Text>ID: {donkey.id}</Text>
       <Text>Name: {donkey.name}</Text>
       <Text>Gender: {donkey.gender}</Text>
       <Text>Age: {donkey.age}</Text>
       <Text>Location: {donkey.location}</Text>
       <Text>Owner: {donkey.owner}</Text>
-      <Text>Health: {donkey.health}</Text>
-      <Text>Treatment Given: {donkey.treatmentGiven}</Text> 
 
-      <Button title="Register Another Donkey" onPress={handleRegisterAnotherDonkey} />
+      <Button title="Add Health Record" onPress={handleConfirmDetails} />
       <Button title="Return to Home" onPress={() => navigation.navigate('Workers')} />
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

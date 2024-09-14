@@ -54,7 +54,7 @@ function SearchDonkey() {
       const donkey = suggestions.find(d => d.name === item.name || d.id === item.id);
       if (donkey) {
         // Fetch treatment records for the selected donkey
-        const treatmentsSnapshot = await getDocs(collection(db, `donkeys/${donkey.id}/healthRecords`));
+        const treatmentsSnapshot = await getDocs(collection(db, `healthRecords`), where("donkeyId", "==", donkey.id));
         const treatments = treatmentsSnapshot.docs.map(doc => doc.data());
         setDonkeyDetails({ ...donkey, treatments });
       } else {
@@ -99,7 +99,7 @@ function SearchDonkey() {
               donkeyDetails.treatments.map((treatment, index) => (
                 <View key={index} style={styles.treatmentCard}>
                   <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
-                  <Text>Health Status: {treatment.healthStatus}</Text>
+                  <Text>Medication: {treatment.medication}</Text>
                   <Text>Treatment Given: {treatment.treatmentGiven}</Text>
                 </View>
               ))

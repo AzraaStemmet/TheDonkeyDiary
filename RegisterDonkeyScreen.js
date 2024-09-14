@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
-import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
@@ -8,17 +8,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-
-
+import uuid from 'react-native-uuid';
 
 const RegisterDonkeyScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const db = getFirestore(app);
 
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
-  const [breed, setBreed] = useState('');
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
@@ -26,6 +25,7 @@ const RegisterDonkeyScreen = () => {
 
   useEffect(() => {
     checkPermissions();
+    generateUniqueId();
   }, []);
 
   const checkPermissions = async () => {
@@ -33,29 +33,37 @@ const RegisterDonkeyScreen = () => {
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'You need to grant location permissions to use this feature.');
       return;
-    }};
+    }
+  };
+
+  const generateUniqueId = () => {
+    const newId = uuid.v4(); // Generate a unique UUID
+    setId(newId);
+  };
+
+  const handleMapPress = async (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    const locationString = `${latitude}, ${longitude}`;
+    setLocation(locationString); // Save location as string
+  
+    try {
+      const donkeyDocRef = doc(db, 'donkeys', id); // Ensure 'db' is initialized
+      await updateDoc(donkeyDocRef, {
+        location: locationString // Save the location string
+      });
+      console.log('Location updated successfully!');
+    } catch (error) {
+      console.error('Error updating location:', error);
+    } 
+  };
+  
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,});
-
-    const handleMapPress = (e) => {
-      const { latitude, longitude } = e.nativeEvent.coordinate;
-      setLocation({ latitude, longitude });
-      setRegion({
-        ...region,
-        latitude,
-        longitude,
-      });
-    };
-   
-      
-    
-
-
-
-
+    longitudeDelta: 0.0421,
+  });
+  
 
   const uploadImage = async (uri) => {
     try {
@@ -101,20 +109,8 @@ const RegisterDonkeyScreen = () => {
     }
   }, [route.params]);
 
-  useEffect(() => {
-    generateUniqueId();
-  }, [gender, age]);
-
-  const generateUniqueId = async () => {
-    const db = getFirestore(app);
-    const querySnapshot = await getDocs(collection(db, 'donkeys'));
-    const donkeyCount = querySnapshot.size + 1;
-    const genderCode = gender === 'male' ? '01' : '02';
-    const year = new Date().getFullYear().toString().slice(-2);
-    const ageCode = getAgeCode(age);
-    const newId = `${donkeyCount}-${genderCode}-${year}-${ageCode}`;
-    setId(newId);
-  };
+  
+  
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -137,42 +133,28 @@ const RegisterDonkeyScreen = () => {
   };
 
 
-
-  const getAgeCode = (age) => {
-    switch (age) {
-      case '< 12 months':
-        return '00';
-      case '1 year':
-        return '01';
-      case '2 years':
-        return '02';
-      case '3 years':
-        return '03';
-      case '4 years':
-        return '04';
-      case '5 years':
-        return '05';
-      case '6 years':
-        return '06';
-      case '> 7 years':
-        return '08';
-      default:
-        return '00';
-    }
-  };
-
-  const handleNavigateToHealthRecord = () => {
+  const handleAddDonkey = async () => {
     if (validateForm()) {
-      // Pass necessary data to the HealthRecordScreen
-      navigation.navigate('HealthRecordScreen', {
-        id,
-        name,
-        gender,
-        age,
-        location,
-        owner,
-        image,
-      });
+      try {
+        const donkey = {
+          id,
+          name,
+          gender,
+          age,
+          location,
+          owner,
+          image,
+        };
+  
+        // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
+        const docRef = await addDoc(collection(db, 'donkeys'), donkey);
+        
+        // Navigate to the confirmation screen
+        navigation.navigate('RegistrationConfirmationScreen', { donkey });
+      } catch (error) {
+        Alert.alert('Error', 'Failed to add donkey. Please try again.');
+        console.error('Error adding donkey: ', error);
+      }
     }
   };
 
@@ -217,7 +199,6 @@ const RegisterDonkeyScreen = () => {
           <RNPickerSelect
             onValueChange={(value) => {
               setGender(value);
-              generateUniqueId();
             }}
             items={[
               { label: 'Male', value: 'male' },
@@ -231,7 +212,6 @@ const RegisterDonkeyScreen = () => {
           <RNPickerSelect
             onValueChange={(value) => {
               setAge(value);
-              generateUniqueId();
             }}
             items={[
               { label: '< 12 months', value: '< 12 months' },
@@ -246,6 +226,7 @@ const RegisterDonkeyScreen = () => {
             style={pickerSelectStyles}
             value={age}
           />
+
           <Text style={styles.label}>Owner's Name</Text>
           <TextInput
             style={styles.input}
@@ -253,6 +234,7 @@ const RegisterDonkeyScreen = () => {
             value={owner}
             onChangeText={setOwner}
           />
+          
           <Text style={styles.label}>Location</Text>
           <TextInput
             style={styles.input}
@@ -261,31 +243,33 @@ const RegisterDonkeyScreen = () => {
             onChangeText={setLocation}
           />
           <ScrollView style={styles.container}>
+
         <View style={styles.mapContainer}>
           <MapView
             style={styles.map}
             initialRegion={region}
             onPress={handleMapPress}
           >
-            {location && <Marker coordinate={location} />}
+            {location && <Marker coordinate={{ latitude: parseFloat(location.split(', ')[0]), longitude: parseFloat(location.split(', ')[1]) }} />}
           </MapView>
         </View>
+
         <Text style={styles.label}>Selected Location:</Text>
         <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
         <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
         <Text style={styles.buttonText}>Select Location</Text>
+
       </TouchableOpacity>
       </ScrollView>
-      
           <Text style={styles.label}>Donkey Picture</Text>
           <TouchableOpacity style={styles.button} onPress={pickImage}>
         <Text style={styles.buttonText}>Pick Image</Text>
       </TouchableOpacity>
-          
           {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-          <Button title="Next" onPress={handleNavigateToHealthRecord} />
+          <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
+      
     </SafeAreaView>
   );
 };
