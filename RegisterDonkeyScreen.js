@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
-import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
@@ -133,42 +133,28 @@ const RegisterDonkeyScreen = () => {
   };
 
 
-
-  const getAgeCode = (age) => {
-    switch (age) {
-      case '< 12 months':
-        return '00';
-      case '1 year':
-        return '01';
-      case '2 years':
-        return '02';
-      case '3 years':
-        return '03';
-      case '4 years':
-        return '04';
-      case '5 years':
-        return '05';
-      case '6 years':
-        return '06';
-      case '> 7 years':
-        return '08';
-      default:
-        return '00';
-    }
-  };
-
-  const handleNavigateToHealthRecord = () => {
+  const handleAddDonkey = async () => {
     if (validateForm()) {
-      // Pass necessary data to the HealthRecordScreen
-      navigation.navigate('HealthRecordScreen', {
-        id,
-        name,
-        gender,
-        age,
-        location,
-        owner,
-        image,
-      });
+      try {
+        const donkey = {
+          id,
+          name,
+          gender,
+          age,
+          location,
+          owner,
+          image,
+        };
+  
+        // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
+        const docRef = await addDoc(collection(db, 'donkeys'), donkey);
+        
+        // Navigate to the confirmation screen
+        navigation.navigate('RegistrationConfirmationScreen', { donkey });
+      } catch (error) {
+        Alert.alert('Error', 'Failed to add donkey. Please try again.');
+        console.error('Error adding donkey: ', error);
+      }
     }
   };
 
@@ -257,6 +243,7 @@ const RegisterDonkeyScreen = () => {
             onChangeText={setLocation}
           />
           <ScrollView style={styles.container}>
+
         <View style={styles.mapContainer}>
           <MapView
             style={styles.map}
@@ -266,22 +253,23 @@ const RegisterDonkeyScreen = () => {
             {location && <Marker coordinate={{ latitude: parseFloat(location.split(', ')[0]), longitude: parseFloat(location.split(', ')[1]) }} />}
           </MapView>
         </View>
+
         <Text style={styles.label}>Selected Location:</Text>
         <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
         <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
         <Text style={styles.buttonText}>Select Location</Text>
+
       </TouchableOpacity>
       </ScrollView>
-      
           <Text style={styles.label}>Donkey Picture</Text>
           <TouchableOpacity style={styles.button} onPress={pickImage}>
         <Text style={styles.buttonText}>Pick Image</Text>
       </TouchableOpacity>
-          
           {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-          <Button title="Next" onPress={handleNavigateToHealthRecord} />
+          <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
+      
     </SafeAreaView>
   );
 };
