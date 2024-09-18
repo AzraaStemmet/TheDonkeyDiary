@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, pickerSelectStyles } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput, pickerSelectStyles, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 const DonkeyReport = () => {
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }};
   const [donkeys, setDonkeys] = useState([]);
   const [filteredDonkeys, setFilteredDonkeys] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,35 +36,39 @@ const DonkeyReport = () => {
     let filtered = donkeys.filter(donkey => {
       return donkey.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
              (filterGender ? donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
-<<<<<<< HEAD
-=======
             // (filterAge ? donkey.age.toLowerCase() === filterAge.toLowerCase() : true) 
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
              (filterAge ? checkAgeRange(donkey.age, filterAge) : true);
     });
     setFilteredDonkeys(filtered);
   };
 
   const checkAgeRange = (age, range) => {
-<<<<<<< HEAD
-    // Assumes `age` is stored as a number in the database
-=======
     // Assumes age is stored as a number in the database
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
     switch (range) {
       case '< 12 months': return age < 1;
       case '1 year': return age >= 1;
       case '2 years': return age >= 2;
-<<<<<<< HEAD
-      case '3 years': return age > 3;
-=======
       case '3 years': return age >= 3;
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
       default: return true;
     }
   };
 
   return (
+    <ScrollView style={styles.scrollView}>
+        <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+            <Text style={styles.buttonTextCust}>Register Donkey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+            <Text style={styles.buttonTextCust}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+            <Text style={styles.buttonTextCust}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
     <ScrollView style={styles.container}>
       <TextInput
         style={styles.searchInput}
@@ -73,38 +84,11 @@ const DonkeyReport = () => {
           { label: 'All', value: '' },
         ]}
         style={pickerSelectStyles}
-<<<<<<< HEAD
-        placeholder={{ label: "Select Gender", value: null }}
-=======
         placeholder={{ label: "Filter Gender", value: '' }}
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
       />
       <RNPickerSelect
         onValueChange={(value) => setFilterAge(value)}
         items={[
-<<<<<<< HEAD
-          { label: 'Under 1 year', value: 'under_1' },
-          { label: '1 to 3 years', value: '1_to_3' },
-          { label: 'Over 3 years', value: 'over_3' },
-          { label: 'All Ages', value: '' },
-        ]}
-        style={pickerSelectStyles}
-        placeholder={{ label: "Select Age Range", value: null }}
-      />
-      <View style={styles.table}>
-        {filteredDonkeys.map((donkey) => (
-          <View key={donkey.id} style={styles.row}>
-            <Text style={styles.cell}>{donkey.name}</Text>
-            <Text style={styles.cell}>{donkey.age}</Text>
-            <Text style={styles.cell}>{donkey.gender}</Text>
-            <Text style={styles.cell}>{donkey.health}</Text>
-            <Text style={styles.cell}>{donkey.location}</Text>
-            <Text style={styles.cell}>{donkey.owner}</Text>
-            <Text style={styles.cell}>{donkey.id}</Text>
-          </View>
-        ))}
-      </View>
-=======
           { label: 'Under 1 year', value: '< 12 months' },
           { label: '1 year', value: '1 year' },
           { label: '2 years', value: '2 years' },
@@ -140,7 +124,7 @@ const DonkeyReport = () => {
           ))}
         </View>
       </ScrollView>
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
+    </ScrollView>
     </ScrollView>
   );
 };
@@ -151,6 +135,37 @@ const styles = StyleSheet.create({
       padding: 10,
       backgroundColor: '#f5f5dc',
     },
+    containers: {
+      width: '100%', // Adjust as needed
+      maxWidth: 400, // Maximum width for large screens
+      padding: 20, // Add padding if needed
+      backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
+      borderRadius: 10, // Rounded corners
+    },
+    customButton: {
+      backgroundColor: '#AD957E',
+      padding: 15,
+      borderRadius: 10,
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    buttonTextCust: {
+      color: '#FFF',
+      fontSize: 12,
+      textAlign: 'center',
+    },
+    menuStrip: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      paddingTop: 10,
+      paddingBottom: 10,
+      backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+    },
+    menuButton: {
+      padding: 5,
+      borderRadius: 5,
+      backgroundColor: '#AD957E',
+    },
     searchInput: {
       height: 40,
       borderColor: 'gray',
@@ -160,15 +175,11 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
     },
     table: {
-<<<<<<< HEAD
-      flexDirection: 'column',
-=======
       minWidth: 700, // Ensure the table has a minimum width
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
     },
     headerRow: {
       flexDirection: 'row',
-      backgroundColor: '#8B4513',
+      backgroundColor: '#AD957E',
       paddingVertical: 10,
       borderBottomWidth: 1,
       borderBottomColor: '#cccccc',
@@ -180,17 +191,12 @@ const styles = StyleSheet.create({
       borderBottomColor: '#cccccc',
     },
     header: {
-<<<<<<< HEAD
-      flex: 1,
-=======
       minWidth: 120, // Ensure all headers have a minimum width
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center',
       color: '#ffffff',
       padding: 5,
-<<<<<<< HEAD
       minWidth: 120,
     },
     cell: {
@@ -202,14 +208,6 @@ const styles = StyleSheet.create({
     },
     scrollableContent: {
       flexDirection: 'column',
-=======
-    },
-    cell: {
-      minWidth: 120, // Ensure all cells have a minimum width
-      fontSize: 14,
-      textAlign: 'center',
-      padding: 5,
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
     },
     pickerSelectStyles: {
       inputIOS: {
@@ -235,6 +233,7 @@ const styles = StyleSheet.create({
         paddingRight: 30,
         backgroundColor: '#fff',
       },
+      
     }
   });
 

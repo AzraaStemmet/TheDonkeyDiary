@@ -21,28 +21,15 @@ const EditConfirmationScreen = ({ route, navigation }) => {
       <Text>ID: {donkey.id}</Text>
       <Text>Name: {donkey.name}</Text>
       <Text>Gender: {donkey.gender}</Text>
-<<<<<<< HEAD
-      <Text>Breed: {donkey.breed}</Text>
-      <Text>Age: {donkey.age}</Text>
-      <Text>Location: {donkey.location}</Text>
-      <Text>Owner: {donkey.owner}</Text>
-      <Text>Health: {donkey.health}</Text>
-
-=======
       <Text>Age: {donkey.age}</Text>
       <Text>Location: {donkey.location}</Text>
       <Text>Owner: {donkey.owner}</Text>  
       <Text>Health: {donkey.health}</Text>
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
       <Button title="Edit Another Donkey" onPress={() => navigation.navigate('ViewReports')} />
       <Button title="Return to Home" onPress={() => navigation.navigate('Workers')} />
     </View>
   );
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a
 export default EditConfirmationScreen;
 
 const styles = StyleSheet.create({
@@ -84,8 +71,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> 1221bf62c1cfda97d86e441b33f4f17fb2c3f03a

@@ -22,7 +22,13 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
-
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }};
   useEffect(() => {
     checkPermissions();
     generateUniqueId();
@@ -178,8 +184,23 @@ const RegisterDonkeyScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    
+    <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
+        <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+            <Text style={styles.buttonTextCust}>Register Donkey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+            <Text style={styles.buttonTextCust}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+            <Text style={styles.buttonTextCust}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.formContainer}>
           <Text style={styles.label}>Unique ID</Text>
           <TextInput
@@ -191,7 +212,7 @@ const RegisterDonkeyScreen = () => {
           <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="Donkey's Name"
             value={name}
             onChangeText={setName}
           />
@@ -201,8 +222,8 @@ const RegisterDonkeyScreen = () => {
               setGender(value);
             }}
             items={[
-              { label: 'Male', value: 'male' },
-              { label: 'Female', value: 'female' },
+              { label: 'Male', value: 'Male' },
+              { label: 'Female', value: 'Female' },
             ]}
             style={pickerSelectStyles}
             value={gender}
@@ -215,13 +236,11 @@ const RegisterDonkeyScreen = () => {
             }}
             items={[
               { label: '< 12 months', value: '< 12 months' },
-              { label: '1 year', value: '1 year' },
-              { label: '2 years', value: '2 years' },
-              { label: '3 years', value: '3 years' },
-              { label: '4 years', value: '4 years' },
-              { label: '5 years', value: '5 years' },
-              { label: '6 years', value: '6 years' },
-              { label: '> 7 years', value: '> 7 years' },
+              { label: '1-5 years', value: '1-5yrs' },
+              { label: '6-10 years', value: '6-10yrs' },
+              { label: 'older than 10 years', value: 'older than 10yrs' },
+              { label: 'unknown', value: 'unknown' },
+             
             ]}
             style={pickerSelectStyles}
             value={age}
@@ -238,7 +257,7 @@ const RegisterDonkeyScreen = () => {
           <Text style={styles.label}>Location</Text>
           <TextInput
             style={styles.input}
-            placeholder="Location"
+            placeholder="Select a location below"
             value={location}
             onChangeText={setLocation}
           />
@@ -280,6 +299,14 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     backgroundColor: '#f5f5dc',
   },
+  containers: {
+    width: '100%', // Adjust as needed
+    maxWidth: 400, // Maximum width for large screens
+    padding: 20, // Add padding if needed
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
+    borderRadius: 10, // Rounded corners
+  },
+
   mapContainer: {
     height: 400,
     width: '100%',
@@ -303,7 +330,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#AD957E',
     padding: 15,
     borderRadius: 10,
-    width: '90%',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
@@ -315,6 +342,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
+  },
+  customButton: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonTextCust: {
+    color: '#FFF',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  menuStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+  },
+  menuButton: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: '#AD957E',
   },
 });
 

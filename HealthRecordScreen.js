@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
@@ -10,6 +10,15 @@ const HealthRecordScreen = () => {
     const route = useRoute();
     const navigation = useNavigation();
 
+    const handleSignOut = async () => {
+        try {
+          await signOut(auth);
+          navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+        } catch (error) {
+          Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+        }
+      };
+    
 
 
     const [healthStatus, setHealthStatus] = useState('');
@@ -41,9 +50,7 @@ const HealthRecordScreen = () => {
 
         const db = getFirestore(app);
         try {
-            
             await addDoc(collection(db, 'healthRecords'), {
-                
                 healthStatus,
                 symptoms,
                 medication,
@@ -52,8 +59,8 @@ const HealthRecordScreen = () => {
                 treatmentGiven,
             });
 
-            Alert.alert('Success', 'Donkey and health record saved successfully!');
-
+            Alert.alert('Success', 'Health record saved successfully!');
+            navigation.goBack();
         } catch (e) {
             console.error('Error adding document: ', e);
             Alert.alert('Error', 'Failed to save health record. Please try again.');
@@ -73,7 +80,6 @@ const HealthRecordScreen = () => {
                 style={pickerSelectStyles}
                 value={healthStatus}
             />
-        
 
             <Text style={styles.label}>Symptoms:</Text>
             <RNPickerSelect
@@ -135,41 +141,67 @@ const HealthRecordScreen = () => {
                 numberOfLines={4}
             />
 
-            <Button
-                title="Save Record"
-                onPress={handleSave}
-            />
+<TouchableOpacity style={styles.customButton} onPress={handleSave}>
+          <Text style={styles.buttonText}>Save Record</Text>
+        </TouchableOpacity>
+
         </ScrollView>
     );
 };
-
-export default HealthRecordScreen;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#f5f5dc',
     },
     label: {
         fontSize: 16,
+        fontWeight: 'bold',
         marginBottom: 5,
+        color: '#AD957E',
     },
     input: {
         fontSize: 16,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#AD957E',
         padding: 10,
         marginBottom: 10,
+        backgroundColor: '#fff',
     },
     textArea: {
         fontSize: 16,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#AD957E',
         padding: 10,
         marginBottom: 10,
         height: 100,
+        backgroundColor: '#fff',
     },
+    menuButton: {
+        padding: 5,
+        borderRadius: 5,
+        backgroundColor: '#AD957E',
+      },
+      
+      buttonTextCust: {
+        color: '#FFF',
+        fontSize: 12,
+        textAlign: 'center',
+      },
+      customButton: {
+        backgroundColor: '#AD957E',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginBottom: 10,
+      },
+      buttonText: {
+        color: '#FFF',
+        fontSize: 16,
+        textAlign: 'center',
+      },
+
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -178,7 +210,7 @@ const pickerSelectStyles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 10,
         borderWidth: 1,
-        borderColor: 'gray',
+        borderColor: '#AD957E',
         borderRadius: 4,
         color: 'black',
         paddingRight: 30,
@@ -190,7 +222,7 @@ const pickerSelectStyles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 10,
         borderWidth: 1,
-        borderColor: 'gray',
+        borderColor: '#AD957E',
         borderRadius: 4,
         color: 'black',
         paddingRight: 30,
@@ -198,3 +230,5 @@ const pickerSelectStyles = StyleSheet.create({
         marginBottom: 10,
     },
 });
+
+export default HealthRecordScreen;
