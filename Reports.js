@@ -34,13 +34,13 @@ const DonkeyReport = () => {
 
   const filterDonkeys = () => {
     let filtered = donkeys.filter(donkey => {
-      return donkey.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-             (filterGender ? donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
-            // (filterAge ? donkey.age.toLowerCase() === filterAge.toLowerCase() : true) 
+      return (donkey.name && donkey.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+             (filterGender ? donkey.gender && donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
              (filterAge ? checkAgeRange(donkey.age, filterAge) : true);
     });
     setFilteredDonkeys(filtered);
   };
+  
 
   const checkAgeRange = (age, range) => {
     // Assumes age is stored as a number in the database
@@ -106,9 +106,9 @@ const DonkeyReport = () => {
               <Text style={styles.header}>Age</Text>
               <Text style={styles.header}>Gender</Text>
               <Text style={styles.header}>Health Status</Text>
-              <Text style={styles.header}>Location</Text>
+              <Text style={styles.headerLocation}>Location</Text>
               <Text style={styles.header}>Owner</Text>
-              <Text style={styles.header}>ID</Text>
+              <Text style={styles.headerID}>ID</Text>
             </View>
           </ScrollView>
           {filteredDonkeys.map((donkey) => (
@@ -117,7 +117,7 @@ const DonkeyReport = () => {
               <Text style={styles.cell}>{donkey.age}</Text>
               <Text style={styles.cell}>{donkey.gender}</Text>
               <Text style={styles.cell}>{donkey.health}</Text>
-              <Text style={styles.cell}>{donkey.location}</Text>
+              <Text style={styles.cellLocation}>{donkey.location}</Text>
               <Text style={styles.cell}>{donkey.owner}</Text>
               <Text style={styles.cell}>{donkey.id}</Text>
             </ScrollView>
@@ -205,6 +205,40 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       padding: 5,
       minWidth: 120,
+    },
+    headerLocation: {
+      minWidth: 300, // Ensure all headers have a minimum width
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#ffffff',
+      padding: 5,
+
+    },
+    cellLocation:{
+      flex: 1,
+      fontSize: 14,
+      textAlign: 'center',
+      padding: 5,
+      minWidth: 300,
+
+    },
+    headerID:{
+      minWidth: 300, // Ensure all headers have a minimum width
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#ffffff',
+      padding: 5,
+
+    },
+    cellID:{
+    flex: 1,
+      fontSize: 14,
+      textAlign: 'center',
+      padding: 5,
+      minWidth: 300,
+
     },
     scrollableContent: {
       flexDirection: 'column',
