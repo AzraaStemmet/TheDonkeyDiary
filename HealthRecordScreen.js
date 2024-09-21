@@ -73,9 +73,9 @@ const HealthRecordScreen = () => {
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
                 items={[
-                    { label: 'Good', value: 'good' },
-                    { label: 'Weak', value: 'weak' },
-                    { label: 'Critical', value: 'critical' },
+                    { label: 'Good', value: 'Good' },
+                    { label: 'Mild', value: 'Mild' },
+                    { label: 'Serious', value: 'Serious' },
                 ]}
                 style={pickerSelectStyles}
                 value={healthStatus}

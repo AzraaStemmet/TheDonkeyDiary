@@ -3,6 +3,7 @@ import { TextInput, TouchableOpacity, ScrollView, Text, View, StyleSheet, Alert 
 import { collection, query, where, getDocs, startAt, endAt, orderBy } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
+
 function SearchDonkey() {
   const [searchKey, setSearchKey] = useState('');
   const [suggestions, setSuggestions] = useState([]);

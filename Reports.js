@@ -17,6 +17,7 @@ const DonkeyReport = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterGender, setFilterGender] = useState('');
   const [filterAge, setFilterAge] = useState('');
+  const [filterHealthStatus, setFilterHealthStatus] = useState('');
 
   useEffect(() => {
     const fetchDonkeys = async () => {
@@ -34,22 +35,24 @@ const DonkeyReport = () => {
 
   const filterDonkeys = () => {
     let filtered = donkeys.filter(donkey => {
-      return donkey.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-             (filterGender ? donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
-            // (filterAge ? donkey.age.toLowerCase() === filterAge.toLowerCase() : true) 
-             (filterAge ? checkAgeRange(donkey.age, filterAge) : true);
+      return (
+        (donkey.name && donkey.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        (filterGender ? donkey.gender && donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
+        (filterAge ? checkAgeRange(donkey.age, filterAge) : true) &&
+        (filterHealthStatus ? donkey.health && donkey.health.toLowerCase() === filterHealthStatus.toLowerCase() : true)
+      );
     });
     setFilteredDonkeys(filtered);
   };
 
   const checkAgeRange = (age, range) => {
-    // Assumes age is stored as a number in the database
     switch (range) {
-      case '< 12 months': return age < 1;
-      case '1 year': return age >= 1;
-      case '2 years': return age >= 2;
-      case '3 years': return age >= 3;
-      default: return true;
+      case '< 12 months': return age === '< 12 months';
+      case '1-5yrs': return age === '1-5yrs';
+      case '6-10yrs': return age === '6-10yrs';
+      case 'older than 10yrs': return age === 'older than 10yrs';
+      case 'unknown': return age === 'unknown';
+      default: return true; // Show all ages if no filter is selected
     }
   };
 
@@ -72,10 +75,12 @@ const DonkeyReport = () => {
     <ScrollView style={styles.container}>
       <TextInput
         style={styles.searchInput}
-        placeholder="Search..."
+        placeholder="Search by ID..."
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between',alignItems: 'center',marginTop:20, marginBottom: 30 }}>
+      <View style={{ flex: 1, marginRight: 5 }}>
       <RNPickerSelect
         onValueChange={(value) => setFilterGender(value)}
         items={[
@@ -84,20 +89,38 @@ const DonkeyReport = () => {
           { label: 'All', value: '' },
         ]}
         style={pickerSelectStyles}
-        placeholder={{ label: "Filter Gender", value: '' }}
+        placeholder={{ label: "Filter by Gender", value: '' }}
       />
+      </View>
+      <View style={{ flex: 1, marginHoriztontal: 5}}>
       <RNPickerSelect
         onValueChange={(value) => setFilterAge(value)}
         items={[
-          { label: 'Under 1 year', value: '< 12 months' },
-          { label: '1 year', value: '1 year' },
-          { label: '2 years', value: '2 years' },
+          { label: 'Under 12 months', value: '< 12 months' },
+          { label: '1-5 years', value: '1-5yrs' },
+          { label: '6-10 years', value: '6-10yrs' },
+          { label: 'Older than 10 years', value: 'older than 10yrs' },
+          { label: 'Unknown', value: 'unknown' },
           { label: 'All Ages', value: '' },
         ]}
         style={pickerSelectStyles}
-        placeholder={{ label: "Filter Age", value: null }}
+        placeholder={{ label: "Filter by Age", value: null }}
       />
+      </View>
       
+      <View style={{ flex: 1, marginLeft: 1}}>
+      <RNPickerSelect
+      onValueChange={(value) => setFilterHealthStatus(value)}
+      items={[
+        {label: 'Good', value: 'Good'},
+        {label: 'Mild', value: 'Mild'},
+        {label: 'Serious', value: 'Serious'},
+      ]}
+      style={pickerSelectStyles}
+      placeholder={{ label: "Filter by Health St", value: null}}
+      />
+      </View>
+    </View>
       <ScrollView horizontal={true}>
         <View style={styles.table}>
           <ScrollView horizontal={true}>
@@ -106,9 +129,9 @@ const DonkeyReport = () => {
               <Text style={styles.header}>Age</Text>
               <Text style={styles.header}>Gender</Text>
               <Text style={styles.header}>Health Status</Text>
-              <Text style={styles.header}>Location</Text>
+              <Text style={styles.headerLocation}>Location</Text>
               <Text style={styles.header}>Owner</Text>
-              <Text style={styles.header}>ID</Text>
+              <Text style={styles.headerID}>ID</Text>
             </View>
           </ScrollView>
           {filteredDonkeys.map((donkey) => (
@@ -117,7 +140,7 @@ const DonkeyReport = () => {
               <Text style={styles.cell}>{donkey.age}</Text>
               <Text style={styles.cell}>{donkey.gender}</Text>
               <Text style={styles.cell}>{donkey.health}</Text>
-              <Text style={styles.cell}>{donkey.location}</Text>
+              <Text style={styles.cellLocation}>{donkey.location}</Text>
               <Text style={styles.cell}>{donkey.owner}</Text>
               <Text style={styles.cell}>{donkey.id}</Text>
             </ScrollView>
@@ -206,9 +229,44 @@ const styles = StyleSheet.create({
       padding: 5,
       minWidth: 120,
     },
+    headerLocation: {
+      minWidth: 300, // Ensure all headers have a minimum width
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#ffffff',
+      padding: 5,
+
+    },
+    cellLocation:{
+      flex: 1,
+      fontSize: 14,
+      textAlign: 'center',
+      padding: 5,
+      minWidth: 300,
+
+    },
+    headerID:{
+      minWidth: 300, // Ensure all headers have a minimum width
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#ffffff',
+      padding: 5,
+
+    },
+    cellID:{
+    flex: 1,
+      fontSize: 14,
+      textAlign: 'center',
+      padding: 5,
+      minWidth: 300,
+
+    },
     scrollableContent: {
       flexDirection: 'column',
     },
+   
     pickerSelectStyles: {
       inputIOS: {
         fontSize: 16,
@@ -221,6 +279,7 @@ const styles = StyleSheet.create({
         paddingRight: 30,
         backgroundColor: '#fff',
         marginBottom: 10,
+        
       },
       inputAndroid: {
         fontSize: 16,
