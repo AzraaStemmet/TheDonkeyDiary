@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { initializeApp, getApps } from 'firebase/app';
@@ -34,48 +34,56 @@ const SignupScreen = ({ navigation }) => {
       Alert.alert('Error', error.message);
     }
   };
+  const signupBackground = require('./assets/back.png'); // Adjust the path as needed
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        placeholderTextColor="#8A7E72"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#8A7E72"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#8A7E72"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground
+      source={signupBackground}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Sign Up</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 };
 
-export default SignupScreen;
-
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#FFF8E1', // A lighter beige background
+    justifyContent: 'center', // Center items vertically
+    alignItems: 'center', // Center items horizontally
+  },
+  container: {
+    width: '90%', // Adjust as needed
+    maxWidth: 400, // Maximum width for large screens
+    padding: 20, // Add padding if needed
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
+    borderRadius: 10, // Rounded corners
   },
   title: {
     fontSize: 24,
@@ -107,3 +115,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default SignupScreen;

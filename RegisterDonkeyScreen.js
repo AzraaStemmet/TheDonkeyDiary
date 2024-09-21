@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
-import { getFirestore, collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
@@ -9,9 +9,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
+
+
 const RegisterDonkeyScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const db = getFirestore(app);
 
   const [id, setId] = useState('');
   const [name, setName] = useState('');
@@ -20,9 +23,16 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
-
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }};
   useEffect(() => {
     checkPermissions();
+    generateUniqueId();
   }, []);
 
   const checkPermissions = async () => {
@@ -30,7 +40,30 @@ const RegisterDonkeyScreen = () => {
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'You need to grant location permissions to use this feature.');
       return;
-    }};
+    }
+  };
+
+  const generateUniqueId = () => {
+    const newId = uuid.v4(); // Generate a unique UUID
+    setId(newId);
+  };
+
+  const handleMapPress = async (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    const locationString = `${latitude}, ${longitude}`;
+    setLocation(locationString); // Save location as string
+  
+    try {
+      const donkeyDocRef = doc(db, 'donkeys', id); // Ensure 'db' is initialized
+      await updateDoc(donkeyDocRef, {
+        location: locationString // Save the location string
+      });
+      console.log('Location updated successfully!');
+    } catch (error) {
+      console.error('Error updating location:', error);
+    } 
+  };
+  
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
@@ -46,6 +79,13 @@ const RegisterDonkeyScreen = () => {
         longitude,
       });
     };
+   
+      
+    
+
+
+
+
 
   const uploadImage = async (uri) => {
     try {
@@ -74,20 +114,8 @@ const RegisterDonkeyScreen = () => {
     }
   }, [route.params]);
 
-  useEffect(() => {
-    generateUniqueId();
-  }, [gender, age]);
-
-  const generateUniqueId = async () => {
-    const db = getFirestore(app);
-    const querySnapshot = await getDocs(collection(db, 'donkeys'));
-    const donkeyCount = querySnapshot.size + 1;
-    const genderCode = gender === 'male' ? '01' : '02';
-    const year = new Date().getFullYear().toString().slice(-2);
-    const ageCode = getAgeCode(age);
-    const newId = `${donkeyCount}-${genderCode}-${year}-${ageCode}`;
-    setId(newId);
-  };
+  
+  
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -108,6 +136,8 @@ const RegisterDonkeyScreen = () => {
       uploadImage(result.uri);
     }
   };
+
+
 
   const getAgeCode = (age) => {
     switch (age) {
@@ -134,10 +164,12 @@ const RegisterDonkeyScreen = () => {
 
   const handleNavigateToHealthRecord = () => {
     if (validateForm()) {
+      // Pass necessary data to the HealthRecordScreen
       navigation.navigate('HealthRecordScreen', {
         id,
         name,
         gender,
+        breed,
         age,
         location,
         owner,
@@ -166,8 +198,23 @@ const RegisterDonkeyScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    
+    <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
+        <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+            <Text style={styles.buttonTextCust}>Register Donkey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+            <Text style={styles.buttonTextCust}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+            <Text style={styles.buttonTextCust}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.formContainer}>
           <Text style={styles.label}>Unique ID</Text>
           <TextInput
@@ -179,7 +226,7 @@ const RegisterDonkeyScreen = () => {
           <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="Donkey's Name"
             value={name}
             onChangeText={setName}
           />
@@ -187,34 +234,41 @@ const RegisterDonkeyScreen = () => {
           <RNPickerSelect
             onValueChange={(value) => {
               setGender(value);
-              generateUniqueId();
             }}
             items={[
-              { label: 'Male', value: 'male' },
-              { label: 'Female', value: 'female' },
+              { label: 'Male', value: 'Male' },
+              { label: 'Female', value: 'Female' },
             ]}
             style={pickerSelectStyles}
             value={gender}
+          />
+          <Text style={styles.label}>Breed</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setBreed(value)}
+            items={[
+              { label: 'Breed 1', value: 'breed1' },
+              { label: 'Breed 2', value: 'breed2' },
+            ]}
+            style={pickerSelectStyles}
+            value={breed}
           />
           <Text style={styles.label}>Age</Text>
           <RNPickerSelect
             onValueChange={(value) => {
               setAge(value);
-              generateUniqueId();
             }}
             items={[
               { label: '< 12 months', value: '< 12 months' },
-              { label: '1 year', value: '1 year' },
-              { label: '2 years', value: '2 years' },
-              { label: '3 years', value: '3 years' },
-              { label: '4 years', value: '4 years' },
-              { label: '5 years', value: '5 years' },
-              { label: '6 years', value: '6 years' },
-              { label: '> 7 years', value: '> 7 years' },
+              { label: '1-5 years', value: '1-5yrs' },
+              { label: '6-10 years', value: '6-10yrs' },
+              { label: 'older than 10 years', value: 'older than 10yrs' },
+              { label: 'unknown', value: 'unknown' },
+             
             ]}
             style={pickerSelectStyles}
             value={age}
           />
+
           <Text style={styles.label}>Owner's Name</Text>
           <TextInput
             style={styles.input}
@@ -222,39 +276,42 @@ const RegisterDonkeyScreen = () => {
             value={owner}
             onChangeText={setOwner}
           />
+          
           <Text style={styles.label}>Location</Text>
           <TextInput
             style={styles.input}
-            placeholder="Location"
+            placeholder="Select a location below"
             value={location}
             onChangeText={setLocation}
           />
           <ScrollView style={styles.container}>
+
         <View style={styles.mapContainer}>
           <MapView
             style={styles.map}
             initialRegion={region}
             onPress={handleMapPress}
           >
-            {location && <Marker coordinate={location} />}
+            {location && <Marker coordinate={{ latitude: parseFloat(location.split(', ')[0]), longitude: parseFloat(location.split(', ')[1]) }} />}
           </MapView>
         </View>
+
         <Text style={styles.label}>Selected Location:</Text>
         <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
         <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
         <Text style={styles.buttonText}>Select Location</Text>
+
       </TouchableOpacity>
       </ScrollView>
-      
           <Text style={styles.label}>Donkey Picture</Text>
           <TouchableOpacity style={styles.button} onPress={pickImage}>
         <Text style={styles.buttonText}>Pick Image</Text>
       </TouchableOpacity>
-          
           {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-          <Button title="Next" onPress={handleNavigateToHealthRecord} />
+          <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
+      
     </SafeAreaView>
   );
 };
@@ -265,6 +322,14 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
     backgroundColor: '#f5f5dc',
   },
+  containers: {
+    width: '100%', // Adjust as needed
+    maxWidth: 400, // Maximum width for large screens
+    padding: 20, // Add padding if needed
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
+    borderRadius: 10, // Rounded corners
+  },
+
   mapContainer: {
     height: 400,
     width: '100%',
@@ -288,7 +353,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#AD957E',
     padding: 15,
     borderRadius: 10,
-    width: '90%',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
@@ -300,6 +365,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
+  },
+  customButton: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonTextCust: {
+    color: '#FFF',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  menuStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+  },
+  menuButton: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: '#AD957E',
   },
 });
 

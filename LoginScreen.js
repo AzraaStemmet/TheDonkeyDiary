@@ -1,7 +1,7 @@
 
 // screens/LoginScreen.js
 import React, { useState } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, TextInput, Button, ImageBackground, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Button, ImageBackground, KeyboardAvoidingView, Platform, Alert, TouchableOpacity } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
@@ -27,25 +27,27 @@ const LoginScreen = ({ navigation }) => {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
-      >
+      <View style={styles.container}>
+        <Text style={styles.title}>Login</Text>
         <TextInput
           style={styles.input}
           placeholder="Email"
+          placeholderTextColor="#8A7E72"
           value={email}
           onChangeText={setEmail}
         />
         <TextInput
           style={styles.input}
           placeholder="Password"
+          placeholderTextColor="#8A7E72"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
-        <Button title="Login" onPress={handleLogin} color="#AD957E" />
-      </KeyboardAvoidingView>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+      </View>
     </ImageBackground>
   );
 };
@@ -65,12 +67,32 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    borderColor: 'gray',
+    borderColor: '#D9CAB3', // A softer border color
     borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
-    width: '100%', // Full width of the container
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    borderRadius: 10, // Rounded borders
+    backgroundColor: '#FFFAF0', // Very light beige background for input
+    color: '#5C5346', // Darker text color for better readability
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#AD957E', // A soft, earthy brown
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#FFF8E1',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
