@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, pickerSelectStyles, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput, pickerSelectStyles, TouchableOpacity, Alert } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const DonkeyReport = () => {
+  const navigation = useNavigation();
   const handleSignOut = async () => {
     try {
       await signOut(auth);
       navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
-    }};
+    }
+  };
   const [donkeys, setDonkeys] = useState([]);
   const [filteredDonkeys, setFilteredDonkeys] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,6 +49,7 @@ const DonkeyReport = () => {
     });
     setFilteredDonkeys(filtered);
   };
+  
 
   const checkAgeRange = (age, range) => {
     switch (range) {
@@ -69,8 +75,8 @@ const DonkeyReport = () => {
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
-            <Text style={styles.buttonTextCust}>Sign Out</Text>
-          </TouchableOpacity>
+          <Text style={styles.buttonTextCust}>Sign Out</Text>
+        </TouchableOpacity>
         </View>
     <ScrollView style={styles.container}>
       <TextInput

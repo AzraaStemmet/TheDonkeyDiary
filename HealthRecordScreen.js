@@ -5,11 +5,10 @@ import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { app } from './firebaseConfig';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
 
 const HealthRecordScreen = () => {
-    const route = useRoute();
-    const navigation = useNavigation();
-
     const handleSignOut = async () => {
         try {
           await signOut(auth);
@@ -18,6 +17,8 @@ const HealthRecordScreen = () => {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
       };
+    const navigation = useNavigation();
+    const route = useRoute();
     
 
 
@@ -141,10 +142,10 @@ const HealthRecordScreen = () => {
                 numberOfLines={4}
             />
 
-<TouchableOpacity style={styles.customButton} onPress={handleSave}>
+        <TouchableOpacity style={styles.customButton} onPress={handleSave}>
           <Text style={styles.buttonText}>Save Record</Text>
         </TouchableOpacity>
-
+        
         </ScrollView>
     );
 };
