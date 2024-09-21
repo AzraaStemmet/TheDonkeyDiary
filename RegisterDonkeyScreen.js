@@ -9,8 +9,17 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
-
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
 const RegisterDonkeyScreen = () => {
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }
+  };
   const navigation = useNavigation();
   const route = useRoute();
   const db = getFirestore(app);
@@ -22,13 +31,8 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
-    } catch (error) {
-      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
-    }};
+
+
   useEffect(() => {
     checkPermissions();
     generateUniqueId();

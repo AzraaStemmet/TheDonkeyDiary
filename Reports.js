@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, pickerSelectStyles, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput, pickerSelectStyles, TouchableOpacity, Alert } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const DonkeyReport = () => {
+  const navigation = useNavigation();
   const handleSignOut = async () => {
     try {
       await signOut(auth);
       navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
-    }};
+    }
+  };
   const [donkeys, setDonkeys] = useState([]);
   const [filteredDonkeys, setFilteredDonkeys] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,13 +39,13 @@ const DonkeyReport = () => {
 
   const filterDonkeys = () => {
     let filtered = donkeys.filter(donkey => {
-      return donkey.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-             (filterGender ? donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
-            // (filterAge ? donkey.age.toLowerCase() === filterAge.toLowerCase() : true) 
+      return (donkey.name && donkey.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+             (filterGender ? donkey.gender && donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
              (filterAge ? checkAgeRange(donkey.age, filterAge) : true);
     });
     setFilteredDonkeys(filtered);
   };
+  
 
   const checkAgeRange = (age, range) => {
     // Assumes age is stored as a number in the database
@@ -66,8 +71,8 @@ const DonkeyReport = () => {
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
-            <Text style={styles.buttonTextCust}>Sign Out</Text>
-          </TouchableOpacity>
+          <Text style={styles.buttonTextCust}>Sign Out</Text>
+        </TouchableOpacity>
         </View>
     <ScrollView style={styles.container}>
       <TextInput
@@ -106,9 +111,9 @@ const DonkeyReport = () => {
               <Text style={styles.header}>Age</Text>
               <Text style={styles.header}>Gender</Text>
               <Text style={styles.header}>Health Status</Text>
-              <Text style={styles.header}>Location</Text>
+              <Text style={styles.headerLocation}>Location</Text>
               <Text style={styles.header}>Owner</Text>
-              <Text style={styles.header}>ID</Text>
+              <Text style={styles.headerID}>ID</Text>
             </View>
           </ScrollView>
           {filteredDonkeys.map((donkey) => (
@@ -117,7 +122,7 @@ const DonkeyReport = () => {
               <Text style={styles.cell}>{donkey.age}</Text>
               <Text style={styles.cell}>{donkey.gender}</Text>
               <Text style={styles.cell}>{donkey.health}</Text>
-              <Text style={styles.cell}>{donkey.location}</Text>
+              <Text style={styles.cellLocation}>{donkey.location}</Text>
               <Text style={styles.cell}>{donkey.owner}</Text>
               <Text style={styles.cell}>{donkey.id}</Text>
             </ScrollView>
@@ -205,6 +210,40 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       padding: 5,
       minWidth: 120,
+    },
+    headerLocation: {
+      minWidth: 300, // Ensure all headers have a minimum width
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#ffffff',
+      padding: 5,
+
+    },
+    cellLocation:{
+      flex: 1,
+      fontSize: 14,
+      textAlign: 'center',
+      padding: 5,
+      minWidth: 300,
+
+    },
+    headerID:{
+      minWidth: 300, // Ensure all headers have a minimum width
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#ffffff',
+      padding: 5,
+
+    },
+    cellID:{
+    flex: 1,
+      fontSize: 14,
+      textAlign: 'center',
+      padding: 5,
+      minWidth: 300,
+
     },
     scrollableContent: {
       flexDirection: 'column',

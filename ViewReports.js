@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, Button, TouchableOpacity } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig';
+
 
 const DonkeyReportScreen = ({ navigation }) => {
   const [donkeys, setDonkeys] = useState([]);

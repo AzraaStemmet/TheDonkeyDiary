@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Alert, ScrollView } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; // Ensure this path is correct
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const WorkersScreen = ({ navigation }) => {
   const handleSignOut = async () => {
@@ -12,7 +13,9 @@ const WorkersScreen = ({ navigation }) => {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
   };
+  const route = useRoute();
   const background = require('./assets/back.png'); // Ensure the path to your background image is correct
+  
 
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">

@@ -3,11 +3,38 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Alert } from 'react-native';
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
 
 const EditDonkeyScreen = ({ route, navigation }) => {
   const { donkeyId } = route.params;
   const [donkey, setDonkey] = useState(null);
   const [loading, setLoading] = useState(true);
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }
+  };
+
+  useEffect(() => {
+    if (route.params?.reset) {
+      resetForm();
+    }
+  }, [route.params]);
+
+  const resetForm = () => {
+    setId('');
+    setName('');
+    setGender('');
+    setAge('');
+    setLocation('');
+    setOwner('');
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
+  };
 
   useEffect(() => {
     const fetchDonkey = async () => {
@@ -117,6 +144,21 @@ const EditDonkeyScreen = ({ route, navigation }) => {
         placeholder="Owner"
       />
       <Button title="Save Changes" onPress={handleUpdate} disabled={loading} />
+
+      <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+            <Text style={styles.buttonTextCust}>Register Donkey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+            <Text style={styles.buttonTextCust}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+            <Text style={styles.buttonTextCust}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
     </View>
   );
 };
