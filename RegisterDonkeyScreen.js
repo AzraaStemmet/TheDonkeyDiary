@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
@@ -11,6 +11,7 @@ import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; 
+
 const RegisterDonkeyScreen = () => {
   const handleSignOut = async () => {
     try {
@@ -77,26 +78,28 @@ const RegisterDonkeyScreen = () => {
 
   const uploadImage = async (uri) => {
     try {
+
       const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image. Status: ${response.status}`);
+      }
+  
+
       const blob = await response.blob();
+      
+      if (!blob) {
+        throw new Error('Failed to convert URI to blob.');
+      }
+      console.log("Image converted to blob successfully.");
+
       const storage = getStorage(app);
       const storageRef = ref(storage, `donkeys/${id}/image.jpg`); // Ensure 'id' is unique for each donkey
-  
+
       // Upload the blob to Firebase Storage
       const snapshot = await uploadBytes(storageRef, blob);
       const imageUrl = await getDownloadURL(snapshot.ref);
-      console.log('File available at', downloadURL);
-      uploadBytes(storageRef, blob).then((snapshot) => {
-        getDownloadURL(snapshot.ref).then((downloadURL) => {
-          console.log('File available at', downloadURL);
-          // Now save the downloadURL to the Firestore
-          const donkeyDocRef = doc(db, 'donkeys', id);
-          updateDoc(donkeyDocRef, { imageURL: downloadURL });
-        });
-      }).catch((error) => {
-        console.error("Error uploading image:", error);
-        alert('Error uploading image: ' + error);
-      });
+
+      console.log('File available at', imageURL);
     
       // Save the imageUrl to Firestore
       const donkeyDocRef = doc(db, 'donkeys', id); // Make sure 'id' corresponds to the specific donkey document
@@ -104,8 +107,6 @@ const RegisterDonkeyScreen = () => {
         imageURL: imageUrl
       });
   
-
-      
       Alert.alert('Upload Success', 'Image uploaded successfully!');
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -114,13 +115,12 @@ const RegisterDonkeyScreen = () => {
   };
 
   useEffect(() => {
-    if (route.params?.reset) {
+    if (route.params?.reset) { 
       resetForm();
     }
   }, [route.params]);
 
-  
-  
+
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -137,8 +137,23 @@ const RegisterDonkeyScreen = () => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
-      uploadImage(result.uri);
+      console.log('Image URI:', result.uri); // Log the URI for debugging
+    setImage(result.uri); // Update state with image URI
+    await saveImageLocally(result.uri); // Save the image locally
+    await uploadImage(result.uri); // Upload the image to Firebase
+    }
+  };
+
+  const saveImageLocally = async (uri) => {
+    try {
+      const fileName = `donkey_${id}.jpg`; // Use a unique name for the file
+      const localUri = `${FileSystem.documentDirectory}${fileName}`;
+      await FileSystem.copyAsync({ from: uri, to: localUri });
+      console.log('Image saved locally at:', localUri);
+      Alert.alert('Success', 'Image saved locally.');
+    } catch (error) {
+      console.error("Error saving image locally:", error);
+      Alert.alert('Error', 'Failed to save image locally.');
     }
   };
 
@@ -288,7 +303,11 @@ const RegisterDonkeyScreen = () => {
           <TouchableOpacity style={styles.button} onPress={pickImage}>
         <Text style={styles.buttonText}>Pick Image</Text>
       </TouchableOpacity>
-          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      {image ? (
+          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        ) : (
+          <Text>No image selected</Text>
+        )}
           <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
