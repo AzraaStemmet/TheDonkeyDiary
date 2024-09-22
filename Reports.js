@@ -6,6 +6,9 @@ import { db } from './firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { printToFileAsync } from 'expo-print';
+import { shareAsync } from 'expo-sharing';
+
 
 const DonkeyReport = () => {
   const navigation = useNavigation();
@@ -60,6 +63,97 @@ const DonkeyReport = () => {
       case 'unknown': return age === 'unknown';
       default: return true; // Show all ages if no filter is selected
     }
+  };
+  const generateTable = (filteredDonkeys, filterGender, filterAge, filterHealthStatus) => {
+    const heading = `
+      <h2 style="color: #AD957E;">Donkey Report</h2>
+      <p>Filters Applied: 
+        ${filterGender ? `Gender: ${filterGender}, ` : ''}
+        ${filterAge ? `Age: ${filterAge}, ` : ''}
+        ${filterHealthStatus ? `Health Status: ${filterHealthStatus}` : ''}
+      </p>
+    `;
+  
+    return `
+     <html>
+       <head>
+         <style>
+           body {
+             font-family: Arial, sans-serif;
+           }
+           table {
+             width: 100%;
+             border-collapse: collapse;
+           }
+           table, th, td {
+             border: 1px solid #cccccc;
+           }
+           th {
+             background-color: #AD957E; /* Match your app's menu strip color */
+             color: white;
+             padding: 10px;
+             text-align: center;
+           }
+           td {
+             padding: 10px;
+             text-align: center;
+           }
+           tr:nth-child(even) {
+             background-color: #f5f5dc; /* Light background for alternate rows */
+           }
+           tr:nth-child(odd) {
+             background-color: #ffffff; /* White background for alternate rows */
+           }
+           h2 {
+             text-align: center;
+             font-size: 24px;
+           }
+           p {
+             font-size: 16px;
+             text-align: center;
+             color: #333;
+             margin-bottom: 20px;
+           }
+         </style>
+       </head>
+       <body>
+         ${heading}
+         <table>
+           <thead>
+             <tr>
+               <th>ID</th>
+               <th>Name</th>
+               <th>Age</th>
+               <th>Gender</th>
+               <th>Health Status</th>
+               <th>Location</th>
+             </tr>
+           </thead>
+           <tbody>
+             ${filteredDonkeys.map(donkey => `
+               <tr>
+                 <td>${donkey.id}</td>
+                 <td>${donkey.name}</td>
+                 <td>${donkey.age}</td>
+                 <td>${donkey.gender}</td>
+                 <td>${donkey.health}</td>
+                 <td>${donkey.location}</td>
+               </tr>
+             `).join('')}
+           </tbody>
+         </table>
+       </body>
+     </html>
+   `;
+  };
+  
+  let generatePDF = async () => {
+    const htmlContent = generateTable(filteredDonkeys, filterGender, filterAge, filterHealthStatus); // Pass the filters
+    const file = await printToFileAsync({
+      html: htmlContent,
+      base64: false,
+    });
+    await shareAsync(file.uri);
   };
 
   return (
@@ -153,6 +247,9 @@ const DonkeyReport = () => {
           ))}
         </View>
       </ScrollView>
+      <TouchableOpacity style={styles.customButton} onPress={generatePDF}>
+          <Text style={styles.buttonTextCust}>Export as PDF</Text>
+        </TouchableOpacity>
     </ScrollView>
     </ScrollView>
   );
