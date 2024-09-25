@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, TouchableOpacity, ScrollView, Text, View, StyleSheet, Alert } from 'react-native';
 import { collection, query, where, getDocs, startAt, endAt, orderBy } from 'firebase/firestore';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { db } from './firebaseConfig';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
+
 
 function SearchDonkey() {
   const [searchKey, setSearchKey] = useState('');
@@ -14,7 +18,27 @@ function SearchDonkey() {
       navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
-    }};
+    }
+  };
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  useEffect(() => {
+    if (route.params?.reset) {
+      resetForm();
+    }
+  }, [route.params]);
+
+  const resetForm = () => {
+    setId('');
+    setName('');
+    setGender('');
+    setAge('');
+    setLocation('');
+    setOwner('');
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
+  };
 
   useEffect(() => {
     if (searchKey.length >= 2) {
@@ -76,7 +100,7 @@ function SearchDonkey() {
   return (
     <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>

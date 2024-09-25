@@ -1,18 +1,55 @@
-
-// EditConfirmationScreen.js
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Button, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
 
 const EditConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }
+  };
 
+  useEffect(() => {
+    if (route.params?.reset) {
+      resetForm();
+    }
+  }, [route.params]);
+
+  const resetForm = () => {
+    setId('');
+    setName('');
+    setGender('');
+    setAge('');
+    setLocation('');
+    setOwner('');
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
+  };  
 
   return (
     <View style={styles.container}>
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Workers')}>
-          <Text style={styles.buttonText}>Workers Menu</Text>
+      <View style={styles.menuStrip}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+         <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+            <Text style={styles.buttonTextCust}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+            <Text style={styles.buttonTextCust}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
 
         <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} />
       </View>

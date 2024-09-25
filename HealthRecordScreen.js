@@ -5,12 +5,22 @@ import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { app } from './firebaseConfig';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
 
 const HealthRecordScreen = () => {
-    const route = useRoute();
+    const handleSignOut = async () => {
+        try {
+          await signOut(auth);
+          navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+        } catch (error) {
+          Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+        }
+      };
     const navigation = useNavigation();
+    const route = useRoute();
+    
 
-    const { id, name, gender, breed, age, location, owner, health, image } = route.params;
 
     const [healthStatus, setHealthStatus] = useState('');
     const [symptoms, setSymptoms] = useState('');
@@ -98,9 +108,9 @@ const HealthRecordScreen = () => {
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
                 items={[
-                    { label: 'Good', value: 'good' },
-                    { label: 'Weak', value: 'weak' },
-                    { label: 'Critical', value: 'critical' },
+                    { label: 'Good', value: 'Good' },
+                    { label: 'Mild', value: 'Mild' },
+                    { label: 'Serious', value: 'Serious' },
                 ]}
                 style={pickerSelectStyles}
                 value={healthStatus}
@@ -166,10 +176,10 @@ const HealthRecordScreen = () => {
                 numberOfLines={4}
             />
 
-<TouchableOpacity style={styles.customButton} onPress={handleSave}>
+        <TouchableOpacity style={styles.customButton} onPress={handleSave}>
           <Text style={styles.buttonText}>Save Record</Text>
         </TouchableOpacity>
-
+        
         </ScrollView>
     );
 };

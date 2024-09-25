@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Button, Alert, ImageBackground, background} from 'react-native';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const RegistrationConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
@@ -11,7 +14,23 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
   };
+  
+  useEffect(() => {
+    if (route.params?.reset) {
+      resetForm();
+    }
+  }, [route.params]);
 
+  const resetForm = () => {
+    setId('');
+    setName('');
+    setGender('');
+    setAge('');
+    setLocation('');
+    setOwner('');
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
+  };
   const handleConfirmDetails = () => {
     // Proceed to health record screen
     navigation.navigate('HealthRecordScreen', { donkey });
@@ -21,18 +40,23 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <View style={styles.menuStrip}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
           <Text style={styles.buttonTextCust}>Search by ID</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
           <Text style={styles.buttonTextCust}>View Reports</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
           <Text style={styles.buttonTextCust}>Sign Out</Text>
         </TouchableOpacity>
+        
       </View>
 
       <Text style={styles.title}>Registration Successful!</Text>

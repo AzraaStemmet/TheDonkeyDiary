@@ -1,13 +1,43 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
 
 const EditDonkeyScreen = ({ route, navigation }) => {
   const { donkeyId } = route.params;
   const [donkey, setDonkey] = useState(null);
   const [loading, setLoading] = useState(true);
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }
+  };
+
+  useEffect(() => {
+    if (route.params?.reset) {
+      resetForm();
+    }
+  }, [route.params]);
+
+  const resetForm = () => {
+    setId('');
+    setName('');
+    setGender('');
+    setAge('');
+    setLocation('');
+    setOwner('');
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
+  };
+
+
+
 
   useEffect(() => {
     const fetchDonkey = async () => {
@@ -79,6 +109,22 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   if (!donkey) return <Text>No donkey data available</Text>;
 
   return (
+    <ScrollView style={styles.scrollView}>
+    <View style={styles.menuStrip}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+        <Text style={styles.buttonTextCust}>Register Donkey</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+        <Text style={styles.buttonTextCust}>Search by ID</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+        <Text style={styles.buttonTextCust}>View Reports</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+        <Text style={styles.buttonTextCust}>Sign Out</Text>
+      </TouchableOpacity>
+    </View>
+
     <View style={styles.container}>
       <TextInput
         style={styles.input}
@@ -116,8 +162,13 @@ const EditDonkeyScreen = ({ route, navigation }) => {
         onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
         placeholder="Owner"
       />
-      <Button title="Save Changes" onPress={handleUpdate} disabled={loading} />
+
+      <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>
+          <Text style={styles.buttonText}>Save Changes</Text>
+      </TouchableOpacity>
+     
     </View>
+    </ScrollView>
   );
 };
 
@@ -127,7 +178,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#faf4c0',
+    height: 800,
+    backgroundColor: '#ffe5b6',
   },
   input: {
     height: 40,
@@ -135,5 +187,42 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+  },
+  buttonTextCust: {
+    color: '#FFF',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  menuStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+  },
+  menuButton: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: '#AD957E',
+  },
+  customButton: {
+    backgroundColor: '#AD957E',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
+  button: {
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#FFF8E1',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-
-
+import uuid from 'react-native-uuid';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig'; 
 
 const RegisterDonkeyScreen = () => {
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }
+  };
   const navigation = useNavigation();
   const route = useRoute();
   const db = getFirestore(app);
@@ -23,13 +32,8 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
-    } catch (error) {
-      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
-    }};
+
+
   useEffect(() => {
     checkPermissions();
     generateUniqueId();
@@ -70,15 +74,7 @@ const RegisterDonkeyScreen = () => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,});
 
-    const handleMapPress = (e) => {
-      const { latitude, longitude } = e.nativeEvent.coordinate;
-      setLocation({ latitude, longitude });
-      setRegion({
-        ...region,
-        latitude,
-        longitude,
-      });
-    };
+  
    
       
     
@@ -89,18 +85,35 @@ const RegisterDonkeyScreen = () => {
 
   const uploadImage = async (uri) => {
     try {
+
       const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image. Status: ${response.status}`);
+      }
+  
+
       const blob = await response.blob();
+      
+      if (!blob) {
+        throw new Error('Failed to convert URI to blob.');
+      }
+      console.log("Image converted to blob successfully.");
+
       const storage = getStorage(app);
       const storageRef = ref(storage, `donkeys/${id}/image.jpg`); // Ensure 'id' is unique for each donkey
-  
+
+      // Upload the blob to Firebase Storage
       const snapshot = await uploadBytes(storageRef, blob);
       const imageUrl = await getDownloadURL(snapshot.ref);
-      console.log('File available at', imageUrl);
 
-      const donkeyDocRef = doc(db, 'donkeys', id); 
-      await updateDoc(donkeyDocRef, { imageURL: imageUrl });
-      
+      console.log('File available at', imageURL);
+    
+      // Save the imageUrl to Firestore
+      const donkeyDocRef = doc(db, 'donkeys', id); // Make sure 'id' corresponds to the specific donkey document
+      await updateDoc(donkeyDocRef, {
+        imageURL: imageUrl
+      });
+  
       Alert.alert('Upload Success', 'Image uploaded successfully!');
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -109,13 +122,12 @@ const RegisterDonkeyScreen = () => {
   };
 
   useEffect(() => {
-    if (route.params?.reset) {
+    if (route.params?.reset) { 
       resetForm();
     }
   }, [route.params]);
 
-  
-  
+
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -132,8 +144,23 @@ const RegisterDonkeyScreen = () => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
-      uploadImage(result.uri);
+      console.log('Image URI:', result.uri); // Log the URI for debugging
+    setImage(result.uri); // Update state with image URI
+    await saveImageLocally(result.uri); // Save the image locally
+    await uploadImage(result.uri); // Upload the image to Firebase
+    }
+  };
+
+  const saveImageLocally = async (uri) => {
+    try {
+      const fileName = `donkey_${id}.jpg`; // Use a unique name for the file
+      const localUri = `${FileSystem.documentDirectory}${fileName}`;
+      await FileSystem.copyAsync({ from: uri, to: localUri });
+      console.log('Image saved locally at:', localUri);
+      Alert.alert('Success', 'Image saved locally.');
+    } catch (error) {
+      console.error("Error saving image locally:", error);
+      Alert.alert('Error', 'Failed to save image locally.');
     }
   };
 
@@ -307,7 +334,11 @@ const RegisterDonkeyScreen = () => {
           <TouchableOpacity style={styles.button} onPress={pickImage}>
         <Text style={styles.buttonText}>Pick Image</Text>
       </TouchableOpacity>
-          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      {image ? (
+          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        ) : (
+          <Text>No image selected</Text>
+        )}
           <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
