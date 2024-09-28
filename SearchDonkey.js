@@ -113,6 +113,7 @@ function SearchDonkey() {
             <Text style={styles.buttonTextCust}>Sign Out</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.background}>
     <ScrollView style={styles.container}>
       <TextInput
         style={styles.input}
@@ -170,7 +171,7 @@ function SearchDonkey() {
           )}
         </View>
       )}
-    </ScrollView>
+    </ScrollView></View>
     </ScrollView>
   );
 }
@@ -273,6 +274,10 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     fontSize: 16,
+  },
+  background: {
+    flex: 1,
+    backgroundColor: '#f5f5dc',
   },
 });
 

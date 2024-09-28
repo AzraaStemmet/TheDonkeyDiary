@@ -14,7 +14,6 @@ import WorkersScreen from './WorkersScreen';
 import RegisterDonkeyScreen from './RegisterDonkeyScreen';
 import SearchDonkey from './SearchDonkey';
 import RegistrationConfirmationScreen from './RegistrationConfirmationScreen';
-import DonkeyDetails from './DonkeyDetails';
 import DonkeyReportScreen from './ViewReports';
 import HealthRecordScreen from './HealthRecordScreen';
 import EditDonkeyScreen from './EditDonkeyScreen'; 
@@ -83,7 +82,6 @@ const App = () => {
         <Stack.Screen name="RegisterDonkey" component={RegisterDonkeyScreen} />
         <Stack.Screen name="SearchDonkey" component={SearchDonkey} />
         <Stack.Screen name="RegistrationConfirmationScreen" component={RegistrationConfirmationScreen} />
-        <Stack.Screen name="DonkeyDetails" component={DonkeyDetails} />
         <Stack.Screen name="ViewReports" component={DonkeyReportScreen} />
         <Stack.Screen name="HealthRecordScreen" component={HealthRecordScreen} />
         <Stack.Screen name='EditDonkey' component={EditDonkeyScreen} />

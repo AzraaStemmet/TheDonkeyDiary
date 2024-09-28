@@ -50,7 +50,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
-          <Text style={styles.buttonTextCust}>View Reports</Text>
+          <Text style={styles.buttonTextCust}>View Donkeys</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
