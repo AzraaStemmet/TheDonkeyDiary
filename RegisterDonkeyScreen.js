@@ -11,6 +11,8 @@ import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; 
+import * as FileSystem from 'expo-file-system';
+
 
 const RegisterDonkeyScreen = () => {
   const handleSignOut = async () => {
@@ -54,7 +56,7 @@ const RegisterDonkeyScreen = () => {
 
   const handleMapPress = async (e) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
-    const locationString = `${latitude}, ${longitude}`;
+    const locationString = `${latitude}; ${longitude}`;
     setLocation(locationString); // Save location as string
   
     try {
@@ -78,34 +80,22 @@ const RegisterDonkeyScreen = () => {
 
   const uploadImage = async (uri) => {
     try {
-
-      const response = await fetch(uri);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image. Status: ${response.status}`);
-      }
-  
-
-      const blob = await response.blob();
-      
-      if (!blob) {
-        throw new Error('Failed to convert URI to blob.');
-      }
-      console.log("Image converted to blob successfully.");
-
       const storage = getStorage(app);
-      const storageRef = ref(storage, `donkeys/${id}/image.jpg`); // Ensure 'id' is unique for each donkey
-
-      // Upload the blob to Firebase Storage
+      const storageRef = ref(storage, `donkeys/${id}/image.jpg`);
+  
+      // Fetch the image from the file system as a Blob
+      const response = await fetch(uri);
+      const blob = await response.blob();  // Convert response to a Blob
+  
+      // Upload the Blob to Firebase Storage
       const snapshot = await uploadBytes(storageRef, blob);
       const imageUrl = await getDownloadURL(snapshot.ref);
-
-      console.log('File available at', imageURL);
-    
+  
+      console.log('File available at', imageUrl);
+  
       // Save the imageUrl to Firestore
-      const donkeyDocRef = doc(db, 'donkeys', id); // Make sure 'id' corresponds to the specific donkey document
-      await updateDoc(donkeyDocRef, {
-        imageURL: imageUrl
-      });
+      const donkeyDocRef = doc(db, 'donkeys', id);
+      await updateDoc(donkeyDocRef, { imageURL: imageUrl });
   
       Alert.alert('Upload Success', 'Image uploaded successfully!');
     } catch (error) {
@@ -113,6 +103,8 @@ const RegisterDonkeyScreen = () => {
       Alert.alert('Upload Error', error.message);
     }
   };
+  
+  
 
   useEffect(() => {
     if (route.params?.reset) { 
@@ -128,27 +120,41 @@ const RegisterDonkeyScreen = () => {
       alert('Sorry, we need camera permissions to make this work!');
       return;
     }
-
+  
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
-    if (!result.cancelled) {
-      console.log('Image URI:', result.uri); // Log the URI for debugging
-    setImage(result.uri); // Update state with image URI
-    await saveImageLocally(result.uri); // Save the image locally
-    await uploadImage(result.uri); // Upload the image to Firebase
+  
+    console.log("ImagePicker result:", result); // Log the result for debugging
+  
+    if (!result.canceled) {
+      // Access the first image asset in the array
+      const imageUri = result.assets[0].uri;
+      console.log('Image URI:', imageUri);  // Log the URI for debugging
+      setImage(imageUri);  // Update the image state with the URI
+      await saveImageLocally(imageUri);  // Save image locally
+      await uploadImage(imageUri);  // Upload image to Firebase
+    } else {
+      console.log("Image picking cancelled");
     }
   };
+  
+  
 
   const saveImageLocally = async (uri) => {
     try {
-      const fileName = `donkey_${id}.jpg`; // Use a unique name for the file
+      const fileName = `donkey_${id}.jpg`;  // Ensure 'id' is properly set
       const localUri = `${FileSystem.documentDirectory}${fileName}`;
-      await FileSystem.copyAsync({ from: uri, to: localUri });
+      console.log("Saving image locally to:", localUri);
+      
+      await FileSystem.copyAsync({
+        from: uri,   // 'from' should be the image URI
+        to: localUri // 'to' is the local storage path
+      });
+  
       console.log('Image saved locally at:', localUri);
       Alert.alert('Success', 'Image saved locally.');
     } catch (error) {
@@ -156,6 +162,7 @@ const RegisterDonkeyScreen = () => {
       Alert.alert('Error', 'Failed to save image locally.');
     }
   };
+  
 
 
   const handleAddDonkey = async () => {
