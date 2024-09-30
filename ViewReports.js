@@ -40,19 +40,24 @@ const DonkeyReportScreen = ({ navigation }) => {
   }, []);
 
   const renderLocation = (location) => {
-    if (!location) return 'No location available';
+    if (!location || typeof location !== 'string') return 'No location available';
     const [latitude, longitude] = location.split(', ');
     return `Lat: ${latitude}, Lon: ${longitude}`;
   };
+  
 
   const background = require('./assets/back.png'); // Ensure this path is correct
 
   return (
+   
+        
     <ImageBackground
     source={homeBackground}
     style={styles.homeBackground}
     resizeMode="cover" // Ensure the image covers the background properly
   >
+    
+            
     <ScrollView style={styles.scrollView}>
     <View style={styles.menuStrip}>
       <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
@@ -101,6 +106,7 @@ const DonkeyReportScreen = ({ navigation }) => {
             </View>
           ))}
         </ScrollView>
+        
         </ImageBackground>
   );
 };
@@ -195,3 +201,5 @@ const styles = StyleSheet.create({
 });
 
 export default DonkeyReportScreen;
+
+
