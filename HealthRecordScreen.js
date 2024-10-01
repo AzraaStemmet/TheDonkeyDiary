@@ -16,12 +16,11 @@ const HealthRecordScreen = () => {
         } catch (error) {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
-      };
+    };
+
+
     const navigation = useNavigation();
     const route = useRoute();
-    
-
-
     const [healthStatus, setHealthStatus] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [medication, setMedication] = useState('');
@@ -45,28 +44,32 @@ const HealthRecordScreen = () => {
 
     const handleSave = async () => {
         if (!healthStatus || !treatmentGiven) {
-            Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
-            return;
+          Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
+          return;
         }
-
+      
+        const donkeyId = route.params?.donkeyId; // Retrieve the donkey ID from route parameters
+      
         const db = getFirestore(app);
         try {
-            await addDoc(collection(db, 'healthRecords'), {
-                healthStatus,
-                symptoms,
-                medication,
-                medicationDate,
-                lastCheckup,
-                treatmentGiven,
-            });
-
-            Alert.alert('Success', 'Health record saved successfully!');
-            navigation.goBack();
+          await addDoc(collection(db, 'healthRecords'), {
+            donkeyId,  // Save donkey ID along with health record
+            healthStatus,
+            symptoms,
+            medication,
+            medicationDate,
+            lastCheckup,
+            treatmentGiven,
+          });
+      
+          Alert.alert('Success', 'Health record saved successfully!');
+          navigation.goBack();
         } catch (e) {
-            console.error('Error adding document: ', e);
-            Alert.alert('Error', 'Failed to save health record. Please try again.');
+          console.error('Error adding document: ', e);
+          Alert.alert('Error', 'Failed to save health record. Please try again.');
         }
     };
+      
 
     return (
         <ScrollView style={styles.container}>
@@ -86,6 +89,7 @@ const HealthRecordScreen = () => {
             <RNPickerSelect
                 onValueChange={(value) => setSymptoms(value)}
                 items={[
+                    { label: 'None', value: 'None'},
                     { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
                     { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
                     { label: 'Wound', value: 'Wound' },
