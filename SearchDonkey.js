@@ -6,15 +6,12 @@ import { db } from './firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; 
 
+
 function SearchDonkey() {
   const [searchKey, setSearchKey] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [donkeyDetails, setDonkeyDetails] = useState(null);
   const [error, setError] = useState('');
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  // Handle sign out
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -23,8 +20,9 @@ function SearchDonkey() {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
   };
+  const navigation = useNavigation();
+  const route = useRoute();
 
-  // Reset form when needed
   useEffect(() => {
     if (route.params?.reset) {
       resetForm();
@@ -32,17 +30,21 @@ function SearchDonkey() {
   }, [route.params]);
 
   const resetForm = () => {
-    setSearchKey('');
-    setDonkeyDetails(null);
-    setSuggestions([]);
+    setId('');
+    setName('');
+    setGender('');
+    setAge('');
+    setLocation('');
+    setOwner('');
+    setImage('');
+    generateUniqueId(); // Generate a new ID when resetting
   };
 
-  // Fetch suggestions for the donkey based on name or ID
   useEffect(() => {
     if (searchKey.length >= 2) {
       fetchSuggestions(searchKey);
     } else {
-      setSuggestions([]); // Clear suggestions when input is less than 2 characters
+      setSuggestions([]); // Clear suggestions when input is less than 3 characters
     }
   }, [searchKey]);
 
@@ -75,7 +77,6 @@ function SearchDonkey() {
     }
   };
 
-  // Handle the search of a specific donkey
   const handleSearch = async (item) => {
     try {
       setError(''); // Clear previous errors
@@ -84,9 +85,7 @@ function SearchDonkey() {
       const donkey = suggestions.find(d => d.name === item.name || d.id === item.id);
       if (donkey) {
         // Fetch treatment records for the selected donkey
-        const treatmentsSnapshot = await getDocs(
-          query(collection(db, `healthRecords`), where("donkeyId", "==", donkey.id))
-        );
+        const treatmentsSnapshot = await getDocs(collection(db, `healthRecords`), where("donkeyId", "==", donkey.id));
         const treatments = treatmentsSnapshot.docs.map(doc => doc.data());
         setDonkeyDetails({ ...donkey, treatments });
       } else {
@@ -100,107 +99,118 @@ function SearchDonkey() {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <View style={styles.menuStrip}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
-          <Text style={styles.buttonTextCust}>Register Donkey</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-          <Text style={styles.buttonTextCust}>Search by ID</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
-          <Text style={styles.buttonTextCust}>View Reports</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
-          <Text style={styles.buttonTextCust}>Sign Out</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView style={styles.container}>
-        <TextInput
-          style={styles.input}
-          value={searchKey}
-          onChangeText={setSearchKey}
-          placeholder="Enter Donkey Name or ID"
-          placeholderTextColor="#8A7E72"
-        />
-        {suggestions.length > 0 && (
-          <View style={styles.resultsContainer}>
-            {suggestions.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.suggestionItem} onPress={() => handleSearch(item)}>
-                <Text style={styles.suggestionText}>{item.name} ({item.id})</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        {donkeyDetails && (
-          <View style={styles.detailsContainer}>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailHeader}>Name:</Text>
-              <Text style={styles.detailValue}>{donkeyDetails.name}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailHeader}>Age:</Text>
-              <Text style={styles.detailValue}>{donkeyDetails.age}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailHeader}>Owner:</Text>
-              <Text style={styles.detailValue}>{donkeyDetails.owner}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailHeader}>Location:</Text>
-              <Text style={styles.detailValue}>{donkeyDetails.location}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailHeader}>Gender:</Text>
-              <Text style={styles.detailValue}>{donkeyDetails.gender}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailHeader}>Health Status:</Text>
-              <Text style={styles.detailValue}>{donkeyDetails.health}</Text>
-            </View>
-            {donkeyDetails.treatments.length > 0 ? (
-              donkeyDetails.treatments.map((treatment, index) => (
-                <View key={index} style={styles.treatmentCard}>
-                  <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
-                  <Text>Medication: {treatment.medication}</Text>
-                  <Text>Treatment Given: {treatment.treatmentGiven}</Text>
-                </View>
-              ))
-            ) : (
-              <Text>No treatment records available.</Text>
-            )}
-          </View>
-        )}
-      </ScrollView>
+        <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
+            <Text style={styles.buttonTextCust}>Register Donkey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
+            <Text style={styles.buttonTextCust}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+            <Text style={styles.buttonTextCust}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
+    <ScrollView style={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={searchKey}
+        onChangeText={setSearchKey}
+        placeholder="Enter Donkey Name or ID"
+        placeholderTextColor="#8A7E72"
+      />
+      {suggestions.length > 0 && (
+        <View style={styles.resultsContainer}>
+          {suggestions.map((item) => (
+            <TouchableOpacity key={item.id} style={styles.suggestionItem} onPress={() => handleSearch(item)}>
+              <Text style={styles.suggestionText}>{item.name} ({item.id})</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {donkeyDetails && (
+         <View style={styles.detailsContainer}>
+         <View style={styles.detailRow}>
+           <Text style={styles.detailHeader}>Name:</Text>
+           <Text style={styles.detailValue}>{donkeyDetails.name}</Text>
+         </View>
+         <View style={styles.detailRow}>
+           <Text style={styles.detailHeader}>Age:</Text>
+           <Text style={styles.detailValue}>{donkeyDetails.age}</Text>
+         </View>
+         <View style={styles.detailRow}>
+           <Text style={styles.detailHeader}>Owner:</Text>
+           <Text style={styles.detailValue}>{donkeyDetails.owner}</Text>
+         </View>
+         <View style={styles.detailRow}>
+           <Text style={styles.detailHeader}>Location:</Text>
+           <Text style={styles.detailValue}>{donkeyDetails.location}</Text>
+         </View>
+         <View style={styles.detailRow}>
+           <Text style={styles.detailHeader}>Gender:</Text>
+           <Text style={styles.detailValue}>{donkeyDetails.gender}</Text>
+         </View>
+         <View style={styles.detailRow}>
+           <Text style={styles.detailHeader}>Health Status:</Text>
+           <Text style={styles.detailValue}>{donkeyDetails.health}</Text>
+         </View>
+          {donkeyDetails.treatments.length > 0 ? (
+            donkeyDetails.treatments.map((treatment, index) => (
+              <View key={index} style={styles.treatmentCard}>
+                <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
+                <Text>Medication: {treatment.medication}</Text>
+                <Text>Treatment Given: {treatment.treatmentGiven}</Text>
+              </View>
+            ))
+          ) : (
+            <Text>No treatment records available.</Text>
+          )}
+        </View>
+      )}
+    </ScrollView>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
+  container: {
     flex: 1,
+    padding: 20,
+    backgroundColor: '#f5f5dc', // Consistent with other screens
   },
-  menuStrip: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: 'rgba(173, 149, 126, 0.75)',
-  },
-  menuButton: {
-    padding: 5,
-    borderRadius: 5,
+  customButton: {
     backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 10,
   },
   buttonTextCust: {
     color: '#FFF',
     fontSize: 12,
     textAlign: 'center',
   },
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5dc',
+  menuStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+  },
+  menuButton: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: '#AD957E',
+  },
+  containers: {
+    width: '100%', // Adjust as needed
+    maxWidth: 400, // Maximum width for large screens
+    padding: 20, // Add padding if needed
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
+    borderRadius: 10, // Rounded corners
   },
   input: {
     height: 50,
@@ -209,10 +219,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: '#FFFAF0',
+    backgroundColor: '#FFFAF0', // Light beige background for input
   },
   resultsContainer: {
-    backgroundColor: '#AD957E',
+    backgroundColor: '#AD957E', // Light beige for the results
     borderRadius: 10,
     paddingVertical: 5,
   },
@@ -223,7 +233,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     fontSize: 16,
-    color: '#FFF8E1',
+    color: 'FFF8E1', // Dark brown text for readability
   },
   detailsContainer: {
     marginTop: 20,
@@ -239,9 +249,20 @@ const styles = StyleSheet.create({
   },
   detailHeader: {
     fontWeight: 'bold',
+   // color: '#AD957E',
   },
   detailValue: {
     color: '#5C5346',
+  },
+  detailText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: '#AD957E', // Dark brown color
   },
   treatmentCard: {
     backgroundColor: '#FFFAF0',
@@ -251,8 +272,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: 'red',
-    marginVertical: 10,
-    textAlign: 'center',
+    fontSize: 16,
   },
 });
 

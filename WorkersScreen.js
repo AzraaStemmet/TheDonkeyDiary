@@ -21,7 +21,7 @@ const WorkersScreen = ({ navigation }) => {
     // Example password check - you should replace this with more secure checks or API calls as needed
     const correctPassword = 'secret123'; // You should manage passwords more securely
     if (inputPassword === correctPassword) {
-      navigation.navigate('Reports');
+      navigation.navigate('View Donkey Reports');
     } else {
       Alert.alert('Access Denied', 'The password you entered is incorrect.');
     }
@@ -59,11 +59,7 @@ const WorkersScreen = ({ navigation }) => {
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search by ID</Text>
           </TouchableOpacity>
-<<<<<<< HEAD
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-=======
           <TouchableOpacity style={styles.menuButton} onPress={handleViewReportsPress}>
->>>>>>> dff3e410bbe91474e385b5b9c78a038a18945500
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
