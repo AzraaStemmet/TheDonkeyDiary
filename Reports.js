@@ -7,7 +7,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { printToFileAsync } from 'expo-print';
-import { shareAsync } from 'expo-sharing';
+import { shareAsync } from 'expo-sharing'; // importing dependencies for functionaltities of the applciation 
 
 
 const DonkeyReport = () => {
@@ -15,7 +15,7 @@ const DonkeyReport = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+      navigation.navigate('Home'); // naviagte to home screen after sign o ut
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
@@ -26,6 +26,7 @@ const DonkeyReport = () => {
   const [filterGender, setFilterGender] = useState('');
   const [filterAge, setFilterAge] = useState('');
   const [filterHealthStatus, setFilterHealthStatus] = useState('');
+  // initializing state variables 
 
   useEffect(() => {
     const fetchDonkeys = async () => {
@@ -35,7 +36,7 @@ const DonkeyReport = () => {
       setFilteredDonkeys(donkeyList);
     };
     fetchDonkeys();
-  }, []);
+  }, []); // fetches donkey data from firestore database and the whole donkey list, and filtered donkey list 
 
   useEffect(() => {
     filterDonkeys();
@@ -240,7 +241,12 @@ const DonkeyReport = () => {
               <Text style={styles.cell}>{donkey.age}</Text>
               <Text style={styles.cell}>{donkey.gender}</Text>
               <Text style={styles.cell}>{donkey.health}</Text>
-              <Text style={styles.cellLocation}>{donkey.location}</Text>
+              <Text style={styles.cellLocation}>
+                {typeof donkey.location === 'object'
+                ? '${donkey.location.latitude, ${donkey.location.longtitude}'
+                : donkey.location}
+
+              </Text>
               <Text style={styles.cell}>{donkey.owner}</Text>
               <Text style={styles.cell}>{donkey.id}</Text>
             </ScrollView>
