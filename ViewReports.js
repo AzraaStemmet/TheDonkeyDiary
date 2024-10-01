@@ -10,6 +10,14 @@ const homeBackground = require('./assets/backs.png');
 const DonkeyReportScreen = () => {
   const [donkeys, setDonkeys] = useState([]);
   const navigation = useNavigation();
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Welcome'); // naviagte to home screen after sign o ut
+    } catch (error) {
+      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
+    }
+  };
 
   useEffect(() => {
     const fetchDonkeys = async () => {
@@ -90,7 +98,7 @@ const DonkeyReportScreen = () => {
 
             <TouchableOpacity
               style={styles.customButton}
-              onPress={() => navigation.navigate('EditDonkey', { donkeyId: donkey.id })}
+              onPress={() => navigation.navigate('Edit Donkey Details', { donkeyId: donkey.id })}
             >
               <Text style={styles.buttonText}>Edit</Text>
             </TouchableOpacity>

@@ -18,7 +18,7 @@ const RegisterDonkeyScreen = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+      navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }

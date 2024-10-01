@@ -61,7 +61,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName="Welcome"
         screenOptions={{
           headerRight: () => (
             <Image
@@ -76,10 +76,10 @@ const App = () => {
           headerTintColor: '#333', // Optional: adjust the color of the back button and title
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Welcome" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
-        <Stack.Screen name="Workers" component={WorkersScreen} />
+        <Stack.Screen name="Home" component={WorkersScreen} />
         <Stack.Screen name="Register Donkey" component={RegisterDonkeyScreen} />
         <Stack.Screen name="Search for Donkey" component={SearchDonkey} />
         <Stack.Screen name="Confirmation Screen" component={RegistrationConfirmationScreen} />
