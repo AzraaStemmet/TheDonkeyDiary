@@ -192,7 +192,7 @@ const RegisterDonkeyScreen = () => {
 
   const validateForm = () => {
     if (!name || !gender || !age || !location || !owner) {
-      Alert.alert('Validation Error', 'Please fill in all fields correctly.');
+      Alert.alert('Error', 'Please fill in all fields correctly.');
       return false;
     }
     return true;
@@ -306,15 +306,18 @@ const RegisterDonkeyScreen = () => {
 
       </TouchableOpacity>
       </ScrollView>
-          <Text style={styles.label}>Donkey Picture</Text>
-          <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Pick Image</Text>
-      </TouchableOpacity>
-      {image ? (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-        ) : (
-          <Text>No image selected</Text>
-        )}
+      <Text style={styles.label}>Donkey Picture</Text>
+<TouchableOpacity style={styles.button} onPress={pickImage}>
+  <Text style={styles.buttonText}>Pick Image</Text>
+</TouchableOpacity>
+{image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
+
+) : (
+  <Text>No image selected</Text>
+)}
+    <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
+      <Text style={styles.deleteButtonText}>Remove</Text>
+    </TouchableOpacity>
           <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
@@ -336,7 +339,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
     borderRadius: 10, // Rounded corners
   },
-
+  deleteButton: {
+    backgroundColor: '#d9534f', // Red color for the delete button
+    paddingHorizontal: 20,  // Adds width to the button
+    paddingVertical: 10,    // Adds height to the button
+    borderRadius: 20,       // Rounded corners for the button
+    marginTop: 10,
+    width: 80,
+  },
+  deleteButtonText: {
+    color: '#fff',  // White text
+    fontSize: 9,   // Font size for the text
+    fontWeight: 'bold', // Makes the text bold
+    textAlign: 'center',
+  },
   mapContainer: {
     height: 400,
     width: '100%',
@@ -411,6 +427,15 @@ const pickerSelectStyles = StyleSheet.create({
     paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
+  },
+  donkeyImage: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center', // Center the image horizontally
+    borderWidth: 2,      // Add border
+    borderColor: '#a67c52', // Customize the border color
+    borderRadius: 10,    // Optional: To make rounded corners
+    marginTop: 20,       // Add some margin at the top for spacing
   },
   inputAndroid: {
     fontSize: 16,

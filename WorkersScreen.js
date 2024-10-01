@@ -18,10 +18,7 @@ const WorkersScreen = ({ navigation }) => {
   const background = require('./assets/back.png'); // Ensure the path to your background image is correct
   const [inputPassword, setInputPassword] = useState('');
   const verifyPassword = () => {
-<<<<<<< HEAD
-=======
     // Example password check - you should replace this with more secure checks or API calls as needed
->>>>>>> dff3e410bbe91474e385b5b9c78a038a18945500
     const correctPassword = 'secret123'; // You should manage passwords more securely
     if (inputPassword === correctPassword) {
       navigation.navigate('Reports');

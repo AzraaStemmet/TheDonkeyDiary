@@ -100,81 +100,6 @@ function SearchDonkey() {
 
   return (
     <ScrollView style={styles.scrollView}>
-<<<<<<< HEAD
-        <View style={styles.menuStrip}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
-            <Text style={styles.buttonTextCust}>Register Donkey</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
-            <Text style={styles.buttonTextCust}>Sign Out</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.background}>
-    <ScrollView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={searchKey}
-        onChangeText={setSearchKey}
-        placeholder="Enter Donkey Name or ID"
-        placeholderTextColor="#8A7E72"
-      />
-      {suggestions.length > 0 && (
-        <View style={styles.resultsContainer}>
-          {suggestions.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.suggestionItem} onPress={() => handleSearch(item)}>
-              <Text style={styles.suggestionText}>{item.name} ({item.id})</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      {donkeyDetails && (
-         <View style={styles.detailsContainer}>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Name:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.name}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Age:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.age}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Owner:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.owner}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Location:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.location}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Gender:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.gender}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Health Status:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.health}</Text>
-         </View>
-          {donkeyDetails.treatments.length > 0 ? (
-            donkeyDetails.treatments.map((treatment, index) => (
-              <View key={index} style={styles.treatmentCard}>
-                <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
-                <Text>Medication: {treatment.medication}</Text>
-                <Text>Treatment Given: {treatment.treatmentGiven}</Text>
-              </View>
-            ))
-          ) : (
-            <Text>No treatment records available.</Text>
-          )}
-        </View>
-      )}
-    </ScrollView></View>
-=======
       <View style={styles.menuStrip}>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
@@ -247,7 +172,6 @@ function SearchDonkey() {
           </View>
         )}
       </ScrollView>
->>>>>>> dff3e410bbe91474e385b5b9c78a038a18945500
     </ScrollView>
   );
 }

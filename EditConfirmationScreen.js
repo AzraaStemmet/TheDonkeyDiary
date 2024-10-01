@@ -18,7 +18,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
           <Text style={styles.buttonTextCust}>Search by ID</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Reports')}>
           <Text style={styles.buttonTextCust}>View Reports</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
