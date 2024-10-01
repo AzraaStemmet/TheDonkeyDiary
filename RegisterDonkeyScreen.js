@@ -175,7 +175,7 @@ const RegisterDonkeyScreen = () => {
         const docRef = await addDoc(collection(db, 'donkeys'), donkey);
         
         // Navigate to the confirmation screen
-        navigation.navigate('RegistrationConfirmationScreen', { donkey });
+        navigation.navigate('Confirmation Screen', { donkey });
       } catch (error) {
         Alert.alert('Error', 'Failed to add donkey. Please try again.');
         console.error('Error adding donkey: ', error);
@@ -207,13 +207,13 @@ const RegisterDonkeyScreen = () => {
     <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search by ID</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>

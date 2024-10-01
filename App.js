@@ -80,15 +80,15 @@ const App = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Workers" component={WorkersScreen} />
-        <Stack.Screen name="RegisterDonkey" component={RegisterDonkeyScreen} />
-        <Stack.Screen name="SearchDonkey" component={SearchDonkey} />
-        <Stack.Screen name="RegistrationConfirmationScreen" component={RegistrationConfirmationScreen} />
+        <Stack.Screen name="Register Donkey" component={RegisterDonkeyScreen} />
+        <Stack.Screen name="Search for Donkey" component={SearchDonkey} />
+        <Stack.Screen name="Confirmation Screen" component={RegistrationConfirmationScreen} />
         <Stack.Screen name="DonkeyDetails" component={DonkeyDetails} />
-        <Stack.Screen name="ViewReports" component={DonkeyReportScreen} />
-        <Stack.Screen name="HealthRecordScreen" component={HealthRecordScreen} />
-        <Stack.Screen name='EditDonkey' component={EditDonkeyScreen} />
-        <Stack.Screen name="Reports" component={DonkeyReport} />
-        <Stack.Screen name='EditConfirmation' component={EditConfirmationScreen} />
+        <Stack.Screen name="View Existing Donkeys" component={DonkeyReportScreen} />
+        <Stack.Screen name="Health Records" component={HealthRecordScreen} />
+        <Stack.Screen name='Edit Donkey Details' component={EditDonkeyScreen} />
+        <Stack.Screen name="View Donkey Reports" component={DonkeyReport} />
+        <Stack.Screen name='Edit Confirmation' component={EditConfirmationScreen} />
         
       </Stack.Navigator>
     </NavigationContainer>

@@ -60,13 +60,13 @@ const DonkeyReportScreen = ({ navigation }) => {
             
     <ScrollView style={styles.scrollView}>
     <View style={styles.menuStrip}>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
         <Text style={styles.buttonTextCust}>Register Donkey</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
         <Text style={styles.buttonTextCust}>Search by ID</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
         <Text style={styles.buttonTextCust}>View Reports</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -99,7 +99,7 @@ const DonkeyReportScreen = ({ navigation }) => {
 
               <TouchableOpacity
                 style={styles.customButton}
-                onPress={() => navigation.navigate('EditDonkey', { donkeyId: donkey.id })}
+                onPress={() => navigation.navigate('Edit Donkey Details', { donkeyId: donkey.id })}
               >
                 <Text style={styles.buttonText}>Edit</Text>
               </TouchableOpacity>

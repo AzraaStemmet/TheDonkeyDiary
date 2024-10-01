@@ -21,13 +21,13 @@ const WorkersScreen = ({ navigation }) => {
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       
         <View style={styles.menuStrip}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search by ID</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -36,13 +36,13 @@ const WorkersScreen = ({ navigation }) => {
         </View>
         <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonText}>Register Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('SearchDonkey')}>
+          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonText}>Search by ID</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('ViewReports')}>
+          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
             <Text style={styles.buttonText}>View Existing Donkeys</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Reports')}>

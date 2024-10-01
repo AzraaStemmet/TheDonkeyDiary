@@ -91,7 +91,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
         });
   
         // Navigate to confirmation screen after update
-        navigation.navigate('EditConfirmation', { donkey });
+        navigation.navigate('Edit Confirmation', { donkey });
   
       } else {
         throw new Error("Donkey not found");
@@ -111,13 +111,13 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   return (
     <ScrollView style={styles.scrollView}>
     <View style={styles.menuStrip}>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
         <Text style={styles.buttonTextCust}>Register Donkey</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
         <Text style={styles.buttonTextCust}>Search by ID</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
         <Text style={styles.buttonTextCust}>View Reports</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>

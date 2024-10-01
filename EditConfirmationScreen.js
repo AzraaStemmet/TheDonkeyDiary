@@ -36,14 +36,14 @@ const EditConfirmationScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <View style={styles.navBar}>
       <View style={styles.menuStrip}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
          <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search by ID</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -62,7 +62,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
       <Text>Location: {donkey.location}</Text>
       <Text>Owner: {donkey.owner}</Text>  
       <Text>Health: {donkey.health}</Text>
-      <Button title="Edit Another Donkey" onPress={() => navigation.navigate('ViewReports')} />
+      <Button title="Edit Another Donkey" onPress={() => navigation.navigate('View Reports')} />
       <Button title="Return to Home" onPress={() => navigation.navigate('Workers')} />
     </View>
   );

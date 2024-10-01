@@ -33,7 +33,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
   };
   const handleConfirmDetails = () => {
     // Proceed to health record screen
-    navigation.navigate('HealthRecordScreen', { donkey });
+    navigation.navigate('Health Records', { donkey });
   };
 
   
@@ -41,15 +41,15 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <View style={styles.menuStrip}>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
           <Text style={styles.buttonTextCust}>Search by ID</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
           <Text style={styles.buttonTextCust}>View Reports</Text>
         </TouchableOpacity>
 
