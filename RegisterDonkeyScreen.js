@@ -275,8 +275,8 @@ const RegisterDonkeyScreen = () => {
               { label: '< 12 months', value: '< 12 months' },
               { label: '1-5 years', value: '1-5yrs' },
               { label: '6-10 years', value: '6-10yrs' },
-              { label: 'older than 10 years', value: 'older than 10yrs' },
-              { label: 'unknown', value: 'unknown' },
+              { label: 'Older than 10 years', value: 'older than 10yrs' },
+              { label: 'Unknown', value: 'unknown' },
              
             ]}
             style={pickerSelectStyles}
@@ -323,7 +323,6 @@ const RegisterDonkeyScreen = () => {
   <Text style={styles.buttonText}>Pick Image</Text>
 </TouchableOpacity>
 {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
-
 ) : (
   <Text>No image selected</Text>
 )}
@@ -439,15 +438,6 @@ const pickerSelectStyles = StyleSheet.create({
     paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
-  },
-  donkeyImage: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center', // Center the image horizontally
-    borderWidth: 2,      // Add border
-    borderColor: '#a67c52', // Customize the border color
-    borderRadius: 10,    // Optional: To make rounded corners
-    marginTop: 20,       // Add some margin at the top for spacing
   },
   inputAndroid: {
     fontSize: 16,

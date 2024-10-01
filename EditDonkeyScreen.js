@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore
 import { db } from './firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; 
+import RNPickerSelect from 'react-native-picker-select';
 
 const EditDonkeyScreen = ({ route, navigation }) => {
   const { donkeyId } = route.params;
@@ -117,8 +118,8 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
         <Text style={styles.buttonTextCust}>Search by ID</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
-        <Text style={styles.buttonTextCust}>View Reports</Text>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Workers')}>
+        <Text style={styles.buttonTextCust}>Home</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
         <Text style={styles.buttonTextCust}>Sign Out</Text>
@@ -141,35 +142,47 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       </View>
 
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Age:</Text>
-        <TextInput
-          style={styles.input}
-          value={donkey.age}
-          onChangeText={(text) => setDonkey({ ...donkey, age: text })}
-          placeholder="Age"
-        />
-      </View>
+  <Text style={styles.label}>Age:</Text>
+  <RNPickerSelect
+    onValueChange={(value) => setDonkey({ ...donkey, age: value })}
+    items={[
+      { label: '< 12 months', value: '< 12 months' },
+      { label: '1-5 years', value: '1-5yrs' },
+      { label: '6-10 years', value: '6-10yrs' },
+      { label: 'Older than 10 years', value: 'older than 10yrs' },
+      { label: 'Unknown', value: 'unknown' },
+    ]}
+    style={pickerSelectStyles}
+    value={donkey.age}  // This binds the picker to the age in the donkey state
+  />
+</View>
 
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Gender:</Text>
-        <TextInput
-          style={styles.input}
-          value={donkey.gender}
-          onChangeText={(text) => setDonkey({ ...donkey, gender: text })}
-          placeholder="Gender"
-        />
-      </View>
+  <Text style={styles.label}>Gender:</Text>
+  <RNPickerSelect
+    onValueChange={(value) => setDonkey({ ...donkey, gender: value })}
+    items={[
+      { label: 'Male', value: 'Male' },
+      { label: 'Female', value: 'Female' },
+    ]}
+    style={pickerSelectStyles}
+    value={donkey.gender}  // This binds the picker to the gender in the donkey state
+  />
+</View>
 
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Health Status:</Text>
-        <TextInput
-          style={styles.input}
-          value={donkey.health}
-          onChangeText={(text) => setDonkey({ ...donkey, health: text })}
-          placeholder="Health Status"
-        />
-      </View>
-
+      <Text style={styles.label}>Health Status:</Text>
+  <RNPickerSelect
+    onValueChange={(value) => setDonkey({ ...donkey, health: value })}
+    items={[
+      { label: 'Good', value: 'Good' },
+      { label: 'Mild', value: 'Mild' },
+      { label: 'Serious', value: 'Serious' },
+    ]}
+    style={pickerSelectStyles}
+    value={donkey.health}  // This binds the picker to the health status in the donkey state
+  />
+</View>
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Location:</Text>
         <TextInput
@@ -216,6 +229,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    
   },
   label: {
     width: 100, // Adjust the width as needed
@@ -228,6 +242,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+    backgroundColor: '#fff'
   },
   buttonTextCust: {
     color: '#FFF',
@@ -270,5 +285,31 @@ const styles = StyleSheet.create({
     color: '#FFF8E1',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+});
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: '#fff',
+    marginBottom: 10,
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: '#fff',
+    marginBottom: 10,
   },
 });
