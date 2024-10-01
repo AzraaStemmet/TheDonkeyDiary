@@ -56,19 +56,30 @@ const RegisterDonkeyScreen = () => {
 
   const handleMapPress = async (e) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
-    const locationString = `${latitude}; ${longitude}`;
+    const locationString = `${latitude}, ${longitude}`; // Fix format
     setLocation(locationString); // Save location as string
   
     try {
-      const donkeyDocRef = doc(db, 'donkeys', id); // Ensure 'db' is initialized
-      await updateDoc(donkeyDocRef, {
-        location: locationString // Save the location string
-      });
-      console.log('Location updated successfully!');
+      const donkeyDocRef = doc(db, 'donkeys', id); 
+      
+      // Check if document exists
+      const docSnapshot = await getDoc(donkeyDocRef);
+      if (docSnapshot.exists()) {
+        // Update the existing document with the location
+        await updateDoc(donkeyDocRef, {
+          location: locationString,
+        });
+        console.log('Location updated successfully!');
+      } else {
+        // If the document doesn't exist, create a new one
+        await setDoc(donkeyDocRef, { location: locationString });
+        console.log('Document created and location saved!');
+      }
     } catch (error) {
       console.error('Error updating location:', error);
-    } 
+    }
   };
+  
   
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
@@ -286,6 +297,7 @@ const RegisterDonkeyScreen = () => {
             placeholder="Select a location below"
             value={location}
             onChangeText={setLocation}
+            editable={false} 
           />
           <ScrollView style={styles.container}>
 
