@@ -274,6 +274,10 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 16,
   },
+  background: {
+    flex: 1,
+    backgroundColor: '#f5f5dc',
+  },
 });
 
 export default SearchDonkey;

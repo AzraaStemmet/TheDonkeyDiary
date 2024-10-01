@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, Button, Alert } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+// EditConfirmationScreen.js
+import React from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Button, ScrollView } from 'react-native';
 
 const EditConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
@@ -15,66 +13,104 @@ const EditConfirmationScreen = ({ route, navigation }) => {
     }
   };
 
-  useEffect(() => {
-    if (route.params?.reset) {
-      resetForm();
-    }
-  }, [route.params]);
-
-  const resetForm = () => {
-    setId('');
-    setName('');
-    setGender('');
-    setAge('');
-    setLocation('');
-    setOwner('');
-    setImage('');
-    generateUniqueId(); // Generate a new ID when resetting
-  };  
-
   return (
-    <View style={styles.container}>
-      <View style={styles.navBar}>
+    <ScrollView style={styles.scrollView}>
       <View style={styles.menuStrip}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
-         <Text style={styles.buttonTextCust}>Register Donkey</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
-            <Text style={styles.buttonTextCust}>Sign Out</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Image style={styles.logo} source={require('./assets/bahananwa.jpg')} />
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+          <Text style={styles.buttonTextCust}>Search by ID</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Reports')}>
+          <Text style={styles.buttonTextCust}>View Reports</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.buttonTextCust}>Sign out</Text>
+        </TouchableOpacity>
       </View>
 
+      <View style={styles.container}>
       <Text style={styles.title}>Edit Successful!</Text>
-      <Text>ID: {donkey.id}</Text>
-      <Text>Name: {donkey.name}</Text>
-      <Text>Gender: {donkey.gender}</Text>
-      <Text>Age: {donkey.age}</Text>
-      <Text>Location: {donkey.location}</Text>
-      <Text>Owner: {donkey.owner}</Text>  
-      <Text>Health: {donkey.health}</Text>
-      <Button title="Edit Another Donkey" onPress={() => navigation.navigate('View Reports')} />
-      <Button title="Return to Home" onPress={() => navigation.navigate('Workers')} />
-    </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>ID:</Text>
+        <Text style={styles.value}>{donkey.id}</Text>
+      </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Name:</Text>
+        <Text style={styles.value}>{donkey.name}</Text>
+      </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Gender:</Text>
+        <Text style={styles.value}>{donkey.gender}</Text>
+      </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Breed:</Text>
+        <Text style={styles.value}>{donkey.breed}</Text>
+      </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Age:</Text>
+        <Text style={styles.value}>{donkey.age}</Text>
+      </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Location:</Text>
+        <Text style={styles.value}>{donkey.location}</Text>
+      </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Owner:</Text>
+        <Text style={styles.value}>{donkey.owner}</Text>
+      </View>
+
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Health:</Text>
+        <Text style={styles.value}>{donkey.health}</Text>
+      </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleEditAnotherDonkey}>
+          <Text style={styles.buttonText}>Edit Another Donkey</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('WorkersScreen')}>
+          <Text style={styles.buttonText}>Return to Home</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
+
 export default EditConfirmationScreen;
 
 const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: 'beige',
+  },
+  menuStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+  },
+  menuButton: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: '#AD957E',
+  },
+  buttonTextCust: {
+    color: '#FFF',
+    fontSize: 12,
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    padding: 20,
     alignItems: 'center',
-    padding: 16,
     backgroundColor: 'beige',
   },
   title: {
@@ -82,30 +118,34 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    height: 60,
-  },
-  navButton: {
-    padding: 10,
+  button: {
     backgroundColor: '#AD957E',
-    borderRadius: 5,
-    borderColor: '#000000',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    width: '90%',
   },
   buttonText: {
-    color: '#000000',
+    color: '#FFF8E1',
     fontSize: 16,
+    fontWeight: 'bold',
   },
-  logo: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
+  detailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  buttonContainer: {
+  label: {
+    width: 100, // Adjust the width as needed to align labels properly
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  value: {
     flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+    fontSize: 16,
+    color: '#555',
   },
 });

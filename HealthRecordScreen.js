@@ -72,7 +72,28 @@ const HealthRecordScreen = () => {
       
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.background}>
+
+<View style={styles.menuStrip}>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+  <Text style={styles.buttonTextCust}>Register Donkey</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
+  <Text style={styles.buttonTextCust}>Search by ID</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+  <Text style={styles.buttonTextCust}>View Donkeys</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+  <Text style={styles.buttonTextCust}>Sign Out</Text>
+</TouchableOpacity>
+
+</View>
+<ScrollView style={styles.container}>
             <Text style={styles.label}>Health Status:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
@@ -149,7 +170,7 @@ const HealthRecordScreen = () => {
         <TouchableOpacity style={styles.customButton} onPress={handleSave}>
           <Text style={styles.buttonText}>Save Record</Text>
         </TouchableOpacity>
-        
+        </ScrollView>
         </ScrollView>
     );
 };
@@ -157,7 +178,7 @@ const HealthRecordScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 30,
         backgroundColor: '#f5f5dc',
     },
     label: {
@@ -194,6 +215,14 @@ const styles = StyleSheet.create({
         fontSize: 12,
         textAlign: 'center',
       },
+      menuStrip: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+        width: '100%',
+      },
       customButton: {
         backgroundColor: '#AD957E',
         padding: 15,
@@ -206,6 +235,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
       },
+      background: {
+        flex: 1,
+        backgroundColor: '#f5f5dc',
+      },
+     
 
 });
 

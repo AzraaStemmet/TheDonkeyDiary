@@ -126,49 +126,79 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     </View>
 
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={donkey.name}
-        onChangeText={(text) => setDonkey({ ...donkey, name: text })}
-        placeholder="Donkey Name"
-      />
-      <TextInput
-        style={styles.input}
-        value={donkey.age}
-        onChangeText={(text) => setDonkey({ ...donkey, age: text })}
-        placeholder="Age"
-      />
-      <TextInput
-        style={styles.input}
-        value={donkey.gender}
-        onChangeText={(text) => setDonkey({ ...donkey, gender: text })}
-        placeholder="Gender"
-      />
-      <TextInput
-        style={styles.input}
-        value={donkey.health}
-        onChangeText={(text) => setDonkey({ ...donkey, health: text })}
-        placeholder="Health Status"
-      />
-      <TextInput
-        style={styles.input}
-        value={donkey.location}
-        onChangeText={(text) => setDonkey({ ...donkey, location: text })}
-        placeholder="Location"
-      />
-      <TextInput
-        style={styles.input}
-        value={donkey.owner}
-        onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
-        placeholder="Owner"
-      />
+    <Text style={styles.title}>Edit the donkeys details</Text>
 
+
+    <View style={styles.container}>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Name:</Text>
+        <TextInput
+          style={styles.input}
+          value={donkey.name}
+          onChangeText={(text) => setDonkey({ ...donkey, name: text })}
+          placeholder="Donkey Name"
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Age:</Text>
+        <TextInput
+          style={styles.input}
+          value={donkey.age}
+          onChangeText={(text) => setDonkey({ ...donkey, age: text })}
+          placeholder="Age"
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Gender:</Text>
+        <TextInput
+          style={styles.input}
+          value={donkey.gender}
+          onChangeText={(text) => setDonkey({ ...donkey, gender: text })}
+          placeholder="Gender"
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Health Status:</Text>
+        <TextInput
+          style={styles.input}
+          value={donkey.health}
+          onChangeText={(text) => setDonkey({ ...donkey, health: text })}
+          placeholder="Health Status"
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Location:</Text>
+        <TextInput
+          style={styles.input}
+          value={donkey.location}
+          onChangeText={(text) => setDonkey({ ...donkey, location: text })}
+          placeholder="Location"
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Owner:</Text>
+        <TextInput
+          style={styles.input}
+          value={donkey.owner}
+          onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
+          placeholder="Owner"
+        />
+    </View>
+ 
       <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>
           <Text style={styles.buttonText}>Save Changes</Text>
       </TouchableOpacity>
-     
-    </View>
+        </View>
+        
+  </View>
+
     </ScrollView>
+
   );
 };
 
@@ -179,8 +209,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     height: 800,
-    backgroundColor: '#ffe5b6',
+    
+    backgroundColor: 'beige',
   },
+  fieldContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  label: {
+    width: 100, // Adjust the width as needed
+    fontSize: 16,
+  },
+
   input: {
     height: 40,
     borderColor: '#AD957E',
@@ -212,13 +253,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-
+ title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
   button: {
     backgroundColor: '#AD957E',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
   buttonText: {
     color: '#FFF8E1',

@@ -14,7 +14,6 @@ import WorkersScreen from './WorkersScreen';
 import RegisterDonkeyScreen from './RegisterDonkeyScreen';
 import SearchDonkey from './SearchDonkey';
 import RegistrationConfirmationScreen from './RegistrationConfirmationScreen';
-import DonkeyDetails from './DonkeyDetails';
 import DonkeyReportScreen from './ViewReports';
 import HealthRecordScreen from './HealthRecordScreen';
 import EditDonkeyScreen from './EditDonkeyScreen'; 
