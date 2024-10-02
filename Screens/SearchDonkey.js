@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { TextInput, TouchableOpacity, ScrollView, Text, View, StyleSheet, Alert } from 'react-native';
 import { collection, query, where, getDocs, startAt, endAt, orderBy } from 'firebase/firestore';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { db } from './firebaseConfig';
+import { db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+import { auth } from '../firebaseConfig'; 
+import { printToFileAsync } from 'expo-print';
+import { shareAsync } from 'expo-sharing'; // importing dependencies for functionaltities of the applciation 
+
 
 
 function SearchDonkey() {
@@ -96,6 +99,58 @@ function SearchDonkey() {
       setError('Error searching for donkey');
     }
   };
+  const generatePDF = async () => {
+    if (!donkeyDetails) return;
+
+    const htmlContent = `
+      <html>
+      <head><style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #AD957E; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #AD957E; padding: 10px; }
+        th { background-color: #AD957E; color: white; }
+      </style></head>
+      <body>
+        <h1>Donkey Details</h1>
+        <p><strong>Name:</strong> ${donkeyDetails.name}</p>
+        <p><strong>Age:</strong> ${donkeyDetails.age}</p>
+        <p><strong>Owner:</strong> ${donkeyDetails.owner}</p>
+        <p><strong>Location:</strong> ${donkeyDetails.location}</p>
+        <p><strong>Gender:</strong> ${donkeyDetails.gender}</p>
+        <p><strong>Health Status:</strong> ${donkeyDetails.health}</p>
+        <h2>Treatment Records</h2>
+        <table>
+          <tr>
+            <th>Date</th>
+            <th>Medication</th>
+            <th>Treatment</th>
+          </tr>
+          ${donkeyDetails.treatments.map(treatment => `
+            <tr>
+              <td>${treatment.lastCheckup?.toDate().toLocaleDateString()}</td>
+              <td>${treatment.medication}</td>
+              <td>${treatment.treatmentGiven}</td>
+            </tr>
+          `).join('')}
+        </table>
+      </body>
+      </html>
+    `;
+
+    try {
+      const file = await printToFileAsync({
+        html: htmlContent,
+        base64: false,
+      });
+
+      // Share the generated PDF
+      await shareAsync(file.uri);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      Alert.alert('Error', 'Unable to generate PDF.');
+    }
+  };
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -104,7 +159,7 @@ function SearchDonkey() {
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
+            <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
@@ -168,6 +223,9 @@ function SearchDonkey() {
           ) : (
             <Text>No treatment records available.</Text>
           )}
+          <TouchableOpacity style={styles.pdfButton} onPress={generatePDF}>
+           <Text style={styles.pdfButtonText}>Export as PDF</Text>
+         </TouchableOpacity>
         </View>
       )}
     </ScrollView>
@@ -176,10 +234,26 @@ function SearchDonkey() {
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: '#f5f5dc', // Consistent with other screens
+  },
+  pdfButton: {
+    marginTop:10,
+    backgroundColor: '#AD957E',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+
+  },
+  pdfButtonText: {
+    color: '#FFF8E1',
+    fontSize: 16,
+    fontWeight: 'bold',
+
   },
   customButton: {
     backgroundColor: '#AD957E',
@@ -193,6 +267,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  
   menuStrip: {
     flexDirection: 'row',
     justifyContent: 'space-around',

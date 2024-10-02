@@ -4,28 +4,24 @@ import { StyleSheet, View, Text, TouchableOpacity, Image, Button, ScrollView } f
 
 const EditConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
-    } catch (error) {
-      Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
-    }
+
+  const handleEditAnotherDonkey = () => {
+    navigation.navigate('ViewReports', { reset: true });
   };
 
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.menuStrip}>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-          <Text style={styles.buttonTextCust}>Search by ID</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Reports')}>
-          <Text style={styles.buttonTextCust}>View Reports</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+          <Text style={styles.buttonTextCust}>Search for Donkey</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.buttonTextCust}>Home </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Welcome')}>
           <Text style={styles.buttonTextCust}>Sign out</Text>
         </TouchableOpacity>
       </View>
@@ -48,11 +44,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
         <Text style={styles.value}>{donkey.gender}</Text>
       </View>
 
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Breed:</Text>
-        <Text style={styles.value}>{donkey.breed}</Text>
-      </View>
-
+     
       <View style={styles.detailContainer}>
         <Text style={styles.label}>Age:</Text>
         <Text style={styles.value}>{donkey.age}</Text>
@@ -76,7 +68,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
         <TouchableOpacity style={styles.button} onPress={handleEditAnotherDonkey}>
           <Text style={styles.buttonText}>Edit Another Donkey</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('WorkersScreen')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.buttonText}>Return to Home</Text>
         </TouchableOpacity>
       </View>

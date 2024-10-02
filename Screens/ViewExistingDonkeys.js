@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ImageBackground, Image } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from './firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
+import { db } from '../firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 
-const homeBackground = require('./assets/backs.png');
+const homeBackground = require('../assets/backs.png');
 const DonkeyReportScreen = () => {
   const [donkeys, setDonkeys] = useState([]);
   const navigation = useNavigation();
@@ -57,7 +57,7 @@ const DonkeyReportScreen = () => {
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
+            <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>

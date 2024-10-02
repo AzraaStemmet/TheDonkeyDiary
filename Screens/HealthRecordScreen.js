@@ -3,16 +3,16 @@ import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView,
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { app } from './firebaseConfig';
+import { app } from '../firebaseConfig';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+import { auth } from '../firebaseConfig'; 
 
 const HealthRecordScreen = () => {
     const handleSignOut = async () => {
         try {
           await signOut(auth);
-          navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+          navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
         } catch (error) {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
@@ -76,15 +76,15 @@ const HealthRecordScreen = () => {
 
 <View style={styles.menuStrip}>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
   <Text style={styles.buttonTextCust}>Register Donkey</Text>
 </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-  <Text style={styles.buttonTextCust}>Search by ID</Text>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+  <Text style={styles.buttonTextCust}>Search for Donkey</Text>
 </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
   <Text style={styles.buttonTextCust}>View Donkeys</Text>
 </TouchableOpacity>
 

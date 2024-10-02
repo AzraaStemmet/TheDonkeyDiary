@@ -19,7 +19,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  const loginBackground = require('./assets/back.png');
+  const loginBackground = require('../assets/back.png');
 
   return (
     <ImageBackground

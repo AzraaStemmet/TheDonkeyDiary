@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, pickerSelectStyles, TouchableOpacity, Alert } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from './firebaseConfig';
+import { db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { printToFileAsync } from 'expo-print';
 import { shareAsync } from 'expo-sharing'; // importing dependencies for functionaltities of the applciation 
@@ -164,7 +164,7 @@ const DonkeyReport = () => {
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
+            <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
@@ -176,7 +176,7 @@ const DonkeyReport = () => {
     <ScrollView style={styles.container}>
       <TextInput
         style={styles.searchInput}
-        placeholder="Search by ID..."
+        placeholder="Search by ID"
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -300,11 +300,12 @@ const styles = StyleSheet.create({
     },
     searchInput: {
       height: 40,
-      borderColor: 'gray',
+      borderColor: '#AD957E',
       borderWidth: 1,
       marginBottom: 20,
       paddingHorizontal: 10,
       backgroundColor: '#fff',
+      borderRadius: 6,
     },
     table: {
       minWidth: 700, // Ensure the table has a minimum width
@@ -315,12 +316,15 @@ const styles = StyleSheet.create({
       paddingVertical: 10,
       borderBottomWidth: 1,
       borderBottomColor: '#cccccc',
+      borderRadius: 10,
+
     },
     row: {
       flexDirection: 'row',
       paddingVertical: 10,
       borderBottomWidth: 1,
       borderBottomColor: '#cccccc',
+      borderRadius: 10,
     },
     header: {
       minWidth: 120, // Ensure all headers have a minimum width

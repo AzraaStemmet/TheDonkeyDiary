@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
-import { app } from './firebaseConfig'; // Update the path if necessary
+import { app } from '../firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -10,7 +10,7 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+import { auth } from '../firebaseConfig'; 
 import * as FileSystem from 'expo-file-system';
 
 
@@ -229,7 +229,7 @@ const RegisterDonkeyScreen = () => {
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
+            <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
@@ -239,21 +239,21 @@ const RegisterDonkeyScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.formContainer}>
-          <Text style={styles.label}>Unique ID</Text>
+          <Text style={styles.label}>Unique ID:</Text>
           <TextInput
             style={styles.input}
             placeholder="Unique ID"
             value={id}
             editable={false}
           />
-          <Text style={styles.label}>Name</Text>
+          <Text style={styles.label}>Name:</Text>
           <TextInput
             style={styles.input}
             placeholder="Donkey's Name"
             value={name}
             onChangeText={setName}
           />
-          <Text style={styles.label}>Gender</Text>
+          <Text style={styles.label}>Gender:</Text>
           <RNPickerSelect
             onValueChange={(value) => {
               setGender(value);
@@ -264,9 +264,10 @@ const RegisterDonkeyScreen = () => {
             ]}
             style={pickerSelectStyles}
             value={gender}
+            placeholder={{ label: "Select Gender", value: '' }}
           />
          
-          <Text style={styles.label}>Age</Text>
+          <Text style={styles.label}>Age:</Text>
           <RNPickerSelect
             onValueChange={(value) => {
               setAge(value);
@@ -281,9 +282,10 @@ const RegisterDonkeyScreen = () => {
             ]}
             style={pickerSelectStyles}
             value={age}
+            placeholder={{ label: "Select Age", value: '' }}
           />
 
-          <Text style={styles.label}>Owner's Name</Text>
+          <Text style={styles.label}>Owner's Name:</Text>
           <TextInput
             style={styles.input}
             placeholder="Owner's Name"
@@ -291,7 +293,7 @@ const RegisterDonkeyScreen = () => {
             onChangeText={setOwner}
           />
           
-          <Text style={styles.label}>Location</Text>
+          <Text style={styles.label}>Location:</Text>
           <TextInput
             style={styles.input}
             placeholder="Select a location below"
@@ -318,7 +320,7 @@ const RegisterDonkeyScreen = () => {
 
       </TouchableOpacity>
       </ScrollView>
-      <Text style={styles.label}>Donkey Picture</Text>
+      <Text style={styles.label}>Donkey Picture:</Text>
 <TouchableOpacity style={styles.button} onPress={pickImage}>
   <Text style={styles.buttonText}>Pick Image</Text>
 </TouchableOpacity>
@@ -330,7 +332,11 @@ const RegisterDonkeyScreen = () => {
     <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
       <Text style={styles.deleteButtonText}>Remove</Text>
     </TouchableOpacity>
-          <Button title="Add Donkey" onPress={handleAddDonkey} />
+    <TouchableOpacity style={styles.addDonkeyButton} onPress={handleAddDonkey}>
+          
+          <Text style={styles.addDonkeyText}>Add Donkey</Text>
+
+          </TouchableOpacity>
         </View>
       </ScrollView>
       
@@ -355,15 +361,39 @@ const styles = StyleSheet.create({
     backgroundColor: '#d9534f', // Red color for the delete button
     paddingHorizontal: 20,  // Adds width to the button
     paddingVertical: 10,    // Adds height to the button
-    borderRadius: 20,       // Rounded corners for the button
+    borderRadius: 10,       // Rounded corners for the button
     marginTop: 10,
     width: 80,
   },
   deleteButtonText: {
     color: '#fff',  // White text
-    fontSize: 9,   // Font size for the text
+    fontSize: 10,   // Font size for the text
     fontWeight: 'bold', // Makes the text bold
     textAlign: 'center',
+  },
+  addDonkeyText: {
+    backgroundColor: '#AD957E',
+    padding: 8,
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#fff',
+
+  },
+  addDonkeyButton: {
+    backgroundColor: '#AD957E',
+    padding: 1,
+    borderRadius: 10,
+   
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    
+
   },
   mapContainer: {
     height: 400,
@@ -383,6 +413,10 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     marginTop: 10,
+    fontSize: 15,
+    marginBottom: 5,
+    color: '#AD957E',
+
   },
   button: {
     backgroundColor: '#AD957E',
@@ -392,6 +426,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
+    marginBottom: 10,
+    
+    
+  },
+  buttonText: {
+    fontSize: 15,
+    color: '#fff',
   },
   input: {
     height: 40,
@@ -400,6 +441,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
+    fontSize: 14,
+    borderRadius: 5,
   },
   customButton: {
     backgroundColor: '#AD957E',
@@ -407,6 +450,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 10,
+    
   },
   buttonTextCust: {
     color: '#FFF',
@@ -429,7 +473,7 @@ const styles = StyleSheet.create({
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-    fontSize: 16,
+    fontSize: 14,
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,

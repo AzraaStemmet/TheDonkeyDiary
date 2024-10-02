@@ -7,18 +7,18 @@ import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 
 // Import your screens
-import HomeScreen from './HomeScreen';
-import LoginScreen from './LoginScreen';
-import SignupScreen from './SignupScreen';
-import WorkersScreen from './WorkersScreen';
-import RegisterDonkeyScreen from './RegisterDonkeyScreen';
-import SearchDonkey from './SearchDonkey';
-import RegistrationConfirmationScreen from './RegistrationConfirmationScreen';
-import DonkeyReportScreen from './ViewReports';
-import HealthRecordScreen from './HealthRecordScreen';
-import EditDonkeyScreen from './EditDonkeyScreen'; 
-import DonkeyReport from './Reports';
-import EditConfirmationScreen from './EditConfirmationScreen';
+import WelcomeScreen from './Screens/WelcomeScreen';
+import LoginScreen from './Screens/LoginScreen';
+import SignupScreen from './Screens/SignupScreen';
+import HomeScreen from './Screens/HomeScreen';
+import RegisterDonkeyScreen from './Screens/RegisterDonkeyScreen';
+import SearchDonkey from './Screens/SearchDonkey';
+import RegistrationConfirmationScreen from './Screens/RegistrationConfirmationScreen';
+import ViewExistingDonkeys from './Screens/ViewExistingDonkeys';
+import HealthRecordScreen from './Screens/HealthRecordScreen';
+import EditDonkeyScreen from './Screens/EditDonkeyScreen'; 
+import DonkeyReport from './Screens/Reports';
+import EditConfirmationScreen from './Screens/EditConfirmationScreen';
 
 // Require the logo image properly
 const logoImage = require('./assets/bahananwa.jpg');
@@ -75,15 +75,15 @@ const App = () => {
           headerTintColor: '#333', // Optional: adjust the color of the back button and title
         }}
       >
-        <Stack.Screen name="Welcome" component={HomeScreen} />
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
-        <Stack.Screen name="Home" component={WorkersScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Register Donkey" component={RegisterDonkeyScreen} />
         <Stack.Screen name="Search for Donkey" component={SearchDonkey} />
         <Stack.Screen name="Confirmation Screen" component={RegistrationConfirmationScreen} />
-        <Stack.Screen name="DonkeyDetails" component={DonkeyDetails} />
-        <Stack.Screen name="View Existing Donkeys" component={DonkeyReportScreen} />
+        
+        <Stack.Screen name="View Existing Donkeys" component={ViewExistingDonkeys} />
         <Stack.Screen name="Health Records" component={HealthRecordScreen} />
         <Stack.Screen name='Edit Donkey Details' component={EditDonkeyScreen} />
         <Stack.Screen name="View Donkey Reports" component={DonkeyReport} />
