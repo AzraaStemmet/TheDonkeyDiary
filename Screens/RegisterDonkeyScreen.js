@@ -205,6 +205,14 @@ const onMedicationDateChange = (event, selectedDate) => {
           location,
           owner,
           image,
+          healthStatus,
+          symptoms,
+          medication,
+          medicationDate,
+          treatmentGiven,
+          showMedicationDatePicker,
+          lastCheckup,
+          showDatePicker,
         };
   
         // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
