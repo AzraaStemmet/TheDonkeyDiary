@@ -30,6 +30,7 @@ const HealthRecordScreen = () => {
     const [lastCheckup, setLastCheckup] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || lastCheckup;
         setShowDatePicker(Platform.OS === 'ios');
@@ -43,32 +44,37 @@ const HealthRecordScreen = () => {
     };
 
     const handleSave = async () => {
-        if (!healthStatus || !treatmentGiven) {
-          Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
-          return;
+        const donkeyId = route.params?.donkeyId;
+    
+        if (!donkeyId) {
+            Alert.alert('Error', 'Donkey ID not found. Unable to save health record.');
+            return;
         }
-      
-        const donkeyId = route.params?.donkeyId; // Retrieve the donkey ID from route parameters
-      
+    
+        if (!healthStatus || !treatmentGiven) {
+            Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
+            return;
+        }
+    
         const db = getFirestore(app);
         try {
-          await addDoc(collection(db, 'healthRecords'), {
-            donkeyId,  // Save donkey ID along with health record
-            healthStatus,
-            symptoms,
-            medication,
-            medicationDate,
-            lastCheckup,
-            treatmentGiven,
-          });
-      
-          Alert.alert('Success', 'Health record saved successfully!');
-          navigation.goBack();
+            await addDoc(collection(db, 'healthRecords'), {
+                donkeyId,
+                healthStatus,
+                symptoms,
+                medication,
+                medicationDate,
+                lastCheckup,
+                treatmentGiven,
+            });
+    
+            Alert.alert('Success', 'Health record saved successfully!');
+            navigation.goBack();
         } catch (e) {
-          console.error('Error adding document: ', e);
-          Alert.alert('Error', 'Failed to save health record. Please try again.');
+            console.error('Error adding document: ', e);
+            Alert.alert('Error', 'Failed to save health record. Please try again.');
         }
-    };
+    };    
       
 
     return (

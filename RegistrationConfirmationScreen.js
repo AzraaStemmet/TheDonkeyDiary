@@ -31,10 +31,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
     setImage('');
     generateUniqueId(); // Generate a new ID when resetting
   };
-  const handleConfirmDetails = () => {
-    // Proceed to health record screen
-    navigation.navigate('HealthRecordScreen', { donkey });
-  };
+  
 
   
   return (
@@ -82,7 +79,6 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Add Health Record" color="#AD957E" onPress={handleConfirmDetails} />
           <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Workers')}>
             <Text style={styles.buttonText}>Return to Home</Text>
           </TouchableOpacity>

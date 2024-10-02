@@ -76,27 +76,32 @@ function SearchDonkey() {
   };
 
   // Handle the search of a specific donkey
-  const handleSearch = async (item) => {
-    try {
-      setError(''); // Clear previous errors
-      setDonkeyDetails(null); // Clear previous results
+  // Handle the search of a specific donkey
+const handleSearch = async (item) => {
+  try {
+    setError(''); // Clear previous errors
+    setDonkeyDetails(null); // Clear previous results
 
-      const donkey = suggestions.find(d => d.name === item.name || d.id === item.id);
-      if (donkey) {
-        // Fetch treatment records for the selected donkey
-        const treatmentsSnapshot = await getDocs(
-          query(collection(db, `healthRecords`), where("donkeyId", "==", donkey.id))
-        );
-        const treatments = treatmentsSnapshot.docs.map(doc => doc.data());
-        setDonkeyDetails({ ...donkey, treatments });
-      } else {
-        setError('No matching donkey found.');
-      }
-    } catch (error) {
-      console.error("Error searching for donkey:", error);
-      setError('Error searching for donkey');
+    const donkey = suggestions.find(d => d.name === item.name || d.id === item.id);
+    if (donkey) {
+      // Fetch treatment records for the selected donkey
+      const treatmentsSnapshot = await getDocs(
+        query(collection(db, `healthRecords`), where("donkeyId", "==", donkey.id))
+      );
+
+      // Check if we got any treatments
+      const treatments = treatmentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      console.log("Fetched treatments:", treatments); // Debugging line
+      setDonkeyDetails({ ...donkey, treatments });
+    } else {
+      setError('No matching donkey found.');
     }
-  };
+  } catch (error) {
+    console.error("Error searching for donkey:", error);
+    setError('Error searching for donkey');
+  }
+};
+
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -160,12 +165,12 @@ function SearchDonkey() {
             </View>
             {donkeyDetails.treatments.length > 0 ? (
               donkeyDetails.treatments.map((treatment, index) => (
-                <View key={index} style={styles.treatmentCard}>
-                  <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
-                  <Text>Medication: {treatment.medication}</Text>
-                  <Text>Treatment Given: {treatment.treatmentGiven}</Text>
-                </View>
-              ))
+            <View key={index} style={styles.treatmentCard}>
+              <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
+              <Text>Medication: {treatment.medication}</Text>
+              <Text>Treatment Given: {treatment.treatmentGiven}</Text>
+            </View>
+                  ))
             ) : (
               <Text>No treatment records available.</Text>
             )}

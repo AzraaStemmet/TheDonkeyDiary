@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
 import { app } from './firebaseConfig'; // Update the path if necessary
@@ -12,6 +12,7 @@ import uuid from 'react-native-uuid';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; 
 import * as FileSystem from 'expo-file-system';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const RegisterDonkeyScreen = () => {
@@ -34,6 +35,26 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
+  const [healthStatus, setHealthStatus] = useState('');
+  const [symptoms, setSymptoms] = useState('');
+  const [medication, setMedication] = useState('');
+  const [medicationDate, setMedicationDate] = useState(new Date());
+  const [treatmentGiven, setTreatmentGiven] = useState('');
+  const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
+  const [lastCheckup, setLastCheckup] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const onDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || lastCheckup;
+    setShowDatePicker(Platform.OS === 'ios');
+    setLastCheckup(currentDate);
+};
+
+const onMedicationDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || medicationDate;
+    setShowMedicationDatePicker(Platform.OS === 'ios');
+    setMedicationDate(currentDate);
+};
 
 
   useEffect(() => {
@@ -154,7 +175,6 @@ const RegisterDonkeyScreen = () => {
   };
   
   
-
   const saveImageLocally = async (uri) => {
     try {
       const fileName = `donkey_${id}.jpg`;  // Ensure 'id' is properly set
@@ -174,8 +194,6 @@ const RegisterDonkeyScreen = () => {
     }
   };
   
-
-
   const handleAddDonkey = async () => {
     if (validateForm()) {
       try {
@@ -327,10 +345,83 @@ const RegisterDonkeyScreen = () => {
         ) : (
           <Text>No image selected</Text>
         )}
+
+<Text style={styles.label}>Health Status:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setHealthStatus(value)}
+                items={[
+                    { label: 'Good', value: 'Good' },
+                    { label: 'Mild', value: 'Mild' },
+                    { label: 'Serious', value: 'Serious' },
+                ]}
+                style={pickerSelectStyles}
+                value={healthStatus}
+            />
+
+            <Text style={styles.label}>Symptoms:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setSymptoms(value)}
+                items={[
+                    { label: 'None', value: 'None'},
+                    { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+                    { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+                    { label: 'Wound', value: 'Wound' },
+                    { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+                    { label: 'Skin infection', value: 'Skin infection'},
+                    { label: 'Lame', value: 'Lame'},
+                    { label: 'Misformed hoof', value: 'Misformed hoof'},
+                    { label: 'Infected eye', value: 'Infected eye'},
+                    { label: 'Diarrhoea', value: 'Diarrhoea'},
+                    { label: 'Runny nose', value: 'Runny nose'},
+                    { label: 'Coughing', value: 'Coughing'},
+                ]}
+                style={pickerSelectStyles}
+                value={symptoms}
+            />
+
+            <Text style={styles.label}>Medication:</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter medication name"
+                value={medication}
+                onChangeText={setMedication}
+            />
+
+            <Text style={styles.label}>Date Medication Administered:</Text>
+            <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            {showMedicationDatePicker && (
+                <DateTimePicker
+                    value={medicationDate}
+                    mode="date"
+                    display="default"
+                    onChange={onMedicationDateChange}
+                />
+            )}
+
+            <Text style={styles.label}>Last Check-Up Date:</Text>
+            <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
+            {showDatePicker && (
+                <DateTimePicker
+                    value={lastCheckup}
+                    mode="date"
+                    display="default"
+                    onChange={onDateChange}
+                />
+            )}
+
+            <Text style={styles.label}>Treatment Given:</Text>
+            <TextInput
+                style={styles.textArea}
+                placeholder="Describe the treatment"
+                value={treatmentGiven}
+                onChangeText={setTreatmentGiven}
+                multiline
+                numberOfLines={4}
+            />
+
           <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
-      
     </SafeAreaView>
   );
 };
