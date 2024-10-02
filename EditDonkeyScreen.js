@@ -130,7 +130,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     <Text style={styles.title}>Edit the donkeys details</Text>
 
 
-    <View style={styles.container}>
+    
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Name:</Text>
         <TextInput
@@ -190,6 +190,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           value={donkey.location}
           onChangeText={(text) => setDonkey({ ...donkey, location: text })}
           placeholder="Location"
+          editable={false}
         />
       </View>
 
@@ -208,7 +209,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       </TouchableOpacity>
         </View>
         
-  </View>
+
 
     </ScrollView>
 
@@ -237,12 +238,15 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    height: 40,
+    height: 35,
     borderColor: '#AD957E',
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    borderRadius: 6, // Rounded corners
+    maxWidth: 400, // Maximum width for large screens
+    width: '70%',
   },
   buttonTextCust: {
     color: '#FFF',
@@ -290,26 +294,28 @@ const styles = StyleSheet.create({
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 4,
     color: 'black',
-    paddingRight: 30,
+   // paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
+    width:235,
   },
   inputAndroid: {
     fontSize: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 4,
     color: 'black',
-    paddingRight: 30,
+    //paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
+    width:'100%',
   },
 });
