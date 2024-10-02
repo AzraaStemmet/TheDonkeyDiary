@@ -2,8 +2,8 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, Button, ImageBackground, TouchableOpacity } from 'react-native';
 
-const logoImage = require('./assets/bahananwa.jpg');
-const homeBackground = require('./assets/back.png');
+const logoImage = require('../assets/bahananwa.jpg');
+const homeBackground = require('../assets/back.png');
 
 const HomeScreen = ({ navigation }) => {
   return (
