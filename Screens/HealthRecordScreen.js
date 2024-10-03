@@ -76,16 +76,16 @@ const HealthRecordScreen = () => {
 
 <View style={styles.menuStrip}>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
+  <Text style={styles.buttonTextCust}>Return to Home</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
   <Text style={styles.buttonTextCust}>Register Donkey</Text>
 </TouchableOpacity>
 
 <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
   <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-</TouchableOpacity>
-
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
-  <Text style={styles.buttonTextCust}>View Donkeys</Text>
 </TouchableOpacity>
 
 <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>

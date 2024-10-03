@@ -111,14 +111,14 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   return (
     <ScrollView style={styles.scrollView}>
     <View style={styles.menuStrip}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.buttonTextCust}>Return to Home</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
         <Text style={styles.buttonTextCust}>Register Donkey</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
         <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonTextCust}>Home</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
         <Text style={styles.buttonTextCust}>Sign Out</Text>

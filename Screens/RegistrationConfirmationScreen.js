@@ -41,16 +41,16 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <View style={styles.menuStrip}>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
-          <Text style={styles.buttonTextCust}>Register Donkey</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
+          <Text style={styles.buttonTextCust}>Return to Home</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register for Donkey')}>
+          <Text style={styles.buttonTextCust}>Register for Donkey</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
           <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-          <Text style={styles.buttonTextCust}>View Reports</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>

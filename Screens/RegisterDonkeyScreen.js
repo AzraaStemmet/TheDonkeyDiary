@@ -225,14 +225,14 @@ const RegisterDonkeyScreen = () => {
     <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
@@ -319,6 +319,7 @@ const RegisterDonkeyScreen = () => {
         <Text style={styles.buttonText}>Select Location</Text>
 
       </TouchableOpacity>
+      
       </ScrollView>
       <Text style={styles.label}>Donkey Picture:</Text>
 <TouchableOpacity style={styles.button} onPress={pickImage}>
@@ -333,11 +334,11 @@ const RegisterDonkeyScreen = () => {
       <Text style={styles.deleteButtonText}>Remove</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.addDonkeyButton} onPress={handleAddDonkey}>
-          
-          <Text style={styles.addDonkeyText}>Add Donkey</Text>
-
-          </TouchableOpacity>
+      <Text style={styles.addDonkeyText}>Add Donkey</Text>
+    </TouchableOpacity>
+  
         </View>
+   
       </ScrollView>
       
     </SafeAreaView>
@@ -382,13 +383,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#fff',
+    
 
   },
   addDonkeyButton: {
-    backgroundColor: '#AD957E',
+    backgroundColor: '#ffffff00',
     padding: 1,
     borderRadius: 10,
-   
+    
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
