@@ -1,33 +1,33 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Alert, ScrollView } from 'react-native';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; // Ensure this path is correct
+import { auth } from '../firebaseConfig'; // Ensure this path is correct
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const WorkersScreen = ({ navigation }) => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+      navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
   };
   const route = useRoute();
-  const background = require('./assets/back.png'); // Ensure the path to your background image is correct
+  const background = require('../assets/back.png'); // Ensure the path to your background image is correct
   
 
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       
         <View style={styles.menuStrip}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+            <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -36,17 +36,17 @@ const WorkersScreen = ({ navigation }) => {
         </View>
         <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonText}>Register Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('SearchDonkey')}>
-            <Text style={styles.buttonText}>Search by ID</Text>
+          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Search for Donkey')}>
+            <Text style={styles.buttonText}>Search for Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('ViewReports')}>
+          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
             <Text style={styles.buttonText}>View Existing Donkeys</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Reports')}>
-            <Text style={styles.buttonText}>View Reports</Text>
+          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('View Donkey Reports')}>
+            <Text style={styles.buttonText}>View Donkey Reports</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

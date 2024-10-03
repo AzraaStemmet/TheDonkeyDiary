@@ -1,27 +1,28 @@
+// Importing various dependancies
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { app } from './firebaseConfig';
+import { app } from '../firebaseConfig';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+import { auth } from '../firebaseConfig'; 
+
+
 
 const HealthRecordScreen = () => {
-    const handleSignOut = async () => {
+    const handleSignOut = async () => { // Function to handle signout
         try {
           await signOut(auth);
-          navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+          navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
         } catch (error) {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
-      };
+    };
+
     const navigation = useNavigation();
     const route = useRoute();
-    
-
-
     const [healthStatus, setHealthStatus] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [medication, setMedication] = useState('');
@@ -30,6 +31,7 @@ const HealthRecordScreen = () => {
     const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
     const [lastCheckup, setLastCheckup] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+
 
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || lastCheckup;
@@ -44,11 +46,18 @@ const HealthRecordScreen = () => {
     };
 
     const handleSave = async () => {
+        const donkeyId = route.params?.donkeyId;
+    
+        if (!donkeyId) {
+            Alert.alert('Error', 'Donkey ID not found. Unable to save health record.');
+            return;
+        }
+    
         if (!healthStatus || !treatmentGiven) {
             Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
             return;
         }
-
+    
         const db = getFirestore(app);
         try {
             let imageUrl = '';
@@ -71,6 +80,7 @@ const HealthRecordScreen = () => {
     
             // Save health record (optional: to a separate collection if needed)
             await addDoc(collection(db, 'healthRecords'), {
+                donkeyId,
                 healthStatus,
                 symptoms,
                 medication,
@@ -79,31 +89,38 @@ const HealthRecordScreen = () => {
                 treatmentGiven,
             });
     
-            Alert.alert('Success', 'Donkey and health record saved successfully!');
-    
-            // Navigate to RegistrationConfirmationScreen and pass the treatmentGiven
-            navigation.navigate('RegistrationConfirmationScreen', {
-                donkey: {
-                    id,
-                    name,
-                    gender,
-                    breed,
-                    age,
-                    location,
-                    owner,
-                    health: healthStatus,
-                    treatmentGiven, // Add this line
-                }
-            });
-    
+            Alert.alert('Success', 'Health record saved successfully!');
+            navigation.goBack();
         } catch (e) {
             console.error('Error adding document: ', e);
             Alert.alert('Error', 'Failed to save health record. Please try again.');
         }
-    };
+    };    
+      
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.background}>
+
+<View style={styles.menuStrip}>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
+  <Text style={styles.buttonTextCust}>Register Donkey</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+  <Text style={styles.buttonTextCust}>Search for Donkey</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
+  <Text style={styles.buttonTextCust}>View Donkeys</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+  <Text style={styles.buttonTextCust}>Sign Out</Text>
+</TouchableOpacity>
+
+</View>
+<ScrollView style={styles.container}>
             <Text style={styles.label}>Health Status:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
@@ -120,6 +137,7 @@ const HealthRecordScreen = () => {
             <RNPickerSelect
                 onValueChange={(value) => setSymptoms(value)}
                 items={[
+                    { label: 'None', value: 'None'},
                     { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
                     { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
                     { label: 'Wound', value: 'Wound' },
@@ -146,8 +164,12 @@ const HealthRecordScreen = () => {
 
             <Text style={styles.label}>Date Medication Administered:</Text>
             <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+       
+      </TouchableOpacity>
             {showMedicationDatePicker && (
                 <DateTimePicker
+                
                     value={medicationDate}
                     mode="date"
                     display="default"
@@ -179,7 +201,7 @@ const HealthRecordScreen = () => {
         <TouchableOpacity style={styles.customButton} onPress={handleSave}>
           <Text style={styles.buttonText}>Save Record</Text>
         </TouchableOpacity>
-        
+        </ScrollView>
         </ScrollView>
     );
 };
@@ -187,7 +209,7 @@ const HealthRecordScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 30,
         backgroundColor: '#f5f5dc',
     },
     label: {
@@ -224,6 +246,14 @@ const styles = StyleSheet.create({
         fontSize: 12,
         textAlign: 'center',
       },
+      menuStrip: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+        width: '100%',
+      },
       customButton: {
         backgroundColor: '#AD957E',
         padding: 15,
@@ -236,6 +266,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
       },
+      background: {
+        flex: 1,
+        backgroundColor: '#f5f5dc',
+      },
+     
 
 });
 
