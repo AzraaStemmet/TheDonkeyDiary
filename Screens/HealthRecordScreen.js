@@ -4,10 +4,10 @@ import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView,
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { app } from './firebaseConfig';
+import { app } from '../firebaseConfig';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+import { auth } from '../firebaseConfig'; 
 
 
 
@@ -15,7 +15,7 @@ const HealthRecordScreen = () => {
     const handleSignOut = async () => { // Function to handle signout
         try {
           await signOut(auth);
-          navigation.navigate('Home'); // Navigate to Home screen after sign out
+          navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
         } catch (error) {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
@@ -32,6 +32,7 @@ const HealthRecordScreen = () => {
     const [lastCheckup, setLastCheckup] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || lastCheckup;
         setShowDatePicker(Platform.OS === 'ios');
@@ -45,32 +46,37 @@ const HealthRecordScreen = () => {
     };
 
     const handleSave = async () => {
-        if (!healthStatus || !treatmentGiven) {
-          Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
-          return;
+        const donkeyId = route.params?.donkeyId;
+    
+        if (!donkeyId) {
+            Alert.alert('Error', 'Donkey ID not found. Unable to save health record.');
+            return;
         }
-      
-        const donkeyId = route.params?.donkeyId; // Retrieve the donkey ID from route parameters
-      
+    
+        if (!healthStatus || !treatmentGiven) {
+            Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
+            return;
+        }
+    
         const db = getFirestore(app);
         try {
-          await addDoc(collection(db, 'healthRecords'), {
-            donkeyId,  // Save donkey ID along with health record
-            healthStatus,
-            symptoms,
-            medication,
-            medicationDate,
-            lastCheckup,
-            treatmentGiven,
-          });
-      
-          Alert.alert('Success', 'Health record saved successfully!');
-          navigation.goBack();
+            await addDoc(collection(db, 'healthRecords'), {
+                donkeyId,
+                healthStatus,
+                symptoms,
+                medication,
+                medicationDate,
+                lastCheckup,
+                treatmentGiven,
+            });
+    
+            Alert.alert('Success', 'Health record saved successfully!');
+            navigation.goBack();
         } catch (e) {
-          console.error('Error adding document: ', e);
-          Alert.alert('Error', 'Failed to save health record. Please try again.');
+            console.error('Error adding document: ', e);
+            Alert.alert('Error', 'Failed to save health record. Please try again.');
         }
-    };
+    };    
       
 
     return (
@@ -78,15 +84,15 @@ const HealthRecordScreen = () => {
 
 <View style={styles.menuStrip}>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
   <Text style={styles.buttonTextCust}>Register Donkey</Text>
 </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-  <Text style={styles.buttonTextCust}>Search by ID</Text>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+  <Text style={styles.buttonTextCust}>Search for Donkey</Text>
 </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
   <Text style={styles.buttonTextCust}>View Donkeys</Text>
 </TouchableOpacity>
 

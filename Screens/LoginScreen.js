@@ -10,14 +10,14 @@ const LoginScreen = ({ navigation }) => {
     const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('Workers'); // Adjust based on your navigation
+      navigation.navigate('Home'); // Adjust based on your navigation
     } catch (error) {
       console.error(error);
       Alert.alert('Login failed', 'Please check your credentials.');
     }
   };
 
-  const loginBackground = require('./assets/back.png');
+  const loginBackground = require('../assets/back.png');
 
   return (
     <ImageBackground

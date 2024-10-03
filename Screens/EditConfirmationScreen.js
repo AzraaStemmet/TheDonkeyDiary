@@ -11,17 +11,17 @@ const EditConfirmationScreen = ({ route, navigation }) => {
 
   return ( // Standardized menustrip and below is the labels and textboxes that displays the donkeys information
     <ScrollView style={styles.scrollView}>
-      <View style={styles.menuStrip}> 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+      <View style={styles.menuStrip}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-          <Text style={styles.buttonTextCust}>Search by ID</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Workers')}>
-          <Text style={styles.buttonTextCust}>Home </Text>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+          <Text style={styles.buttonTextCust}>Search for Donkey</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.buttonTextCust}>Home </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Welcome')}>
           <Text style={styles.buttonTextCust}>Sign out</Text>
         </TouchableOpacity>
       </View>
@@ -71,8 +71,15 @@ const EditConfirmationScreen = ({ route, navigation }) => {
   <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Workers')}>
     <Text style={styles.buttonText}>Return to Home</Text>
   </TouchableOpacity>
-</View>
 
+
+        <TouchableOpacity style={styles.button} onPress={handleEditAnotherDonkey}>
+          <Text style={styles.buttonText}>Edit Another Donkey</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.buttonText}>Return to Home</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };

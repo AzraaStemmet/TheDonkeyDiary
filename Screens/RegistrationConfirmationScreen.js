@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Button, Alert, ImageBackground, background} from 'react-native';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+import { auth } from '../firebaseConfig'; 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const RegistrationConfirmationScreen = ({ route, navigation }) => {
@@ -31,26 +31,23 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
     setImage('');
     generateUniqueId(); // Generate a new ID when resetting
   };
-  const handleConfirmDetails = () => {
-    // Proceed to health record screen
-    navigation.navigate('HealthRecordScreen', { donkey });
-  };
+  
 
   
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <View style={styles.menuStrip}>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey', { reset: true })}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-          <Text style={styles.buttonTextCust}>Search by ID</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+          <Text style={styles.buttonTextCust}>Search for Donkey</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
-          <Text style={styles.buttonTextCust}>View Donkeys</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
+          <Text style={styles.buttonTextCust}>View Reports</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -60,8 +57,8 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Donkey Registration Successful</Text>
-        <Text style={styles.label}>Confirm Donkey Details</Text>
+        <Text style={styles.title}>Donkey has been Sucessfully Registered!</Text>
+        <Text style={styles.label}>Please confirm the donkey Details</Text>
         
         <View style={styles.detailsContainer}>
           <View style={styles.column}>
@@ -87,6 +84,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
 </TouchableOpacity>
          
           <TouchableOpacity style={[styles.customButton, { marginTop: 10 }]}  onPress={() => navigation.navigate('Workers')}>
+          
             <Text style={styles.buttonText}>Return to Home</Text>
           </TouchableOpacity>
         </View>

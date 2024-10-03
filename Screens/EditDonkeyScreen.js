@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
-import { db } from './firebaseConfig';
+import { db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; 
 import RNPickerSelect from 'react-native-picker-select';
@@ -14,7 +13,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home screen after sign out
+      navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
@@ -92,7 +91,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
         });
   
         // Navigate to confirmation screen after update
-        navigation.navigate('EditConfirmation', { donkey });
+        navigation.navigate('Edit Confirmation', { donkey });
   
       } else {
         throw new Error("Donkey not found");
@@ -112,13 +111,13 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   return (// Standardized menustrip and below is the labels and textboxes that displays the donkeys information
     <ScrollView style={styles.scrollView}>
     <View style={styles.menuStrip}>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
         <Text style={styles.buttonTextCust}>Register Donkey</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-        <Text style={styles.buttonTextCust}>Search by ID</Text>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+        <Text style={styles.buttonTextCust}>Search for Donkey</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Workers')}>
+      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
         <Text style={styles.buttonTextCust}>Home</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -127,7 +126,10 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     </View>
 
     <View style={styles.container}>
-    <Text style={styles.title}>Edit the donkeys details</Text>
+    <Text style={styles.title}>Edit the Donkey's Details</Text>
+
+
+    <View style={styles.container}>
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Name:</Text>
         <TextInput
@@ -140,7 +142,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       <View style={styles.fieldContainer}>
   <Text style={styles.label}>Age:</Text>
   <RNPickerSelect
-    onValueChange={(value) => setDonkey({ ...donkey, age: value })} // we used a picker for the user to select age for consistency
+    onValueChange={(value) => setDonkey({ ...donkey, age: value })}
     items={[
       { label: '< 12 months', value: '< 12 months' },
       { label: '1-5 years', value: '1-5yrs' },
@@ -174,8 +176,9 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       { label: 'Serious', value: 'Serious' },
     ]}
     style={pickerSelectStyles}
-    value={donkey.health}  />
-    </View>
+    value={donkey.health}  // This binds the picker to the health status in the donkey state
+  />
+</View>
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Location:</Text>
         <TextInput
@@ -218,10 +221,14 @@ const styles = StyleSheet.create({ // Here we edited the UI
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    
   },
   label: {
     width: 100, 
     fontSize: 16,
+    color: '#AD957E',
+    fontWeight: 'bold',
+    marginRight: 10,
   },
   input: {
     height: 35,
@@ -261,7 +268,8 @@ const styles = StyleSheet.create({ // Here we edited the UI
  title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 10,
+    color: '#AD957E'
   },
   button: {
     backgroundColor: '#AD957E',

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
-import { app } from './firebaseConfig'; // Update the path if necessary
+import { app } from '../firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -10,15 +10,16 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import uuid from 'react-native-uuid';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+import { auth } from '../firebaseConfig'; 
 import * as FileSystem from 'expo-file-system';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const RegisterDonkeyScreen = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+      navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
@@ -34,6 +35,26 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
+  const [healthStatus, setHealthStatus] = useState('');
+  const [symptoms, setSymptoms] = useState('');
+  const [medication, setMedication] = useState('');
+  const [medicationDate, setMedicationDate] = useState(new Date());
+  const [treatmentGiven, setTreatmentGiven] = useState('');
+  const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
+  const [lastCheckup, setLastCheckup] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const onDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || lastCheckup;
+    setShowDatePicker(Platform.OS === 'ios');
+    setLastCheckup(currentDate);
+};
+
+const onMedicationDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || medicationDate;
+    setShowMedicationDatePicker(Platform.OS === 'ios');
+    setMedicationDate(currentDate);
+};
 
 
   useEffect(() => {
@@ -154,7 +175,6 @@ const RegisterDonkeyScreen = () => {
   };
   
   
-
   const saveImageLocally = async (uri) => {
     try {
       const fileName = `donkey_${id}.jpg`;  // Ensure 'id' is properly set
@@ -174,8 +194,6 @@ const RegisterDonkeyScreen = () => {
     }
   };
   
-
-
   const handleAddDonkey = async () => {
     if (validateForm()) {
       try {
@@ -187,13 +205,21 @@ const RegisterDonkeyScreen = () => {
           location,
           owner,
           image,
+          healthStatus,
+          symptoms,
+          medication,
+          medicationDate,
+          treatmentGiven,
+          showMedicationDatePicker,
+          lastCheckup,
+          showDatePicker,
         };
   
         // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
         const docRef = await addDoc(collection(db, 'donkeys'), donkey);
         
         // Navigate to the confirmation screen
-        navigation.navigate('RegistrationConfirmationScreen', { donkey });
+        navigation.navigate('Confirmation Screen', { donkey });
       } catch (error) {
         Alert.alert('Error', 'Failed to add donkey. Please try again.');
         console.error('Error adding donkey: ', error);
@@ -225,13 +251,13 @@ const RegisterDonkeyScreen = () => {
     <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('SearchDonkey')}>
-            <Text style={styles.buttonTextCust}>Search by ID</Text>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+            <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('ViewReports')}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
             <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -239,21 +265,21 @@ const RegisterDonkeyScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.formContainer}>
-          <Text style={styles.label}>Unique ID</Text>
+          <Text style={styles.label}>Unique ID:</Text>
           <TextInput
             style={styles.input}
             placeholder="Unique ID"
             value={id}
             editable={false}
           />
-          <Text style={styles.label}>Name</Text>
+          <Text style={styles.label}>Name:</Text>
           <TextInput
             style={styles.input}
             placeholder="Donkey's Name"
             value={name}
             onChangeText={setName}
           />
-          <Text style={styles.label}>Gender</Text>
+          <Text style={styles.label}>Gender:</Text>
           <RNPickerSelect
             onValueChange={(value) => {
               setGender(value);
@@ -264,9 +290,10 @@ const RegisterDonkeyScreen = () => {
             ]}
             style={pickerSelectStyles}
             value={gender}
+            placeholder={{ label: "Select Gender", value: '' }}
           />
          
-          <Text style={styles.label}>Age</Text>
+          <Text style={styles.label}>Age:</Text>
           <RNPickerSelect
             onValueChange={(value) => {
               setAge(value);
@@ -281,9 +308,10 @@ const RegisterDonkeyScreen = () => {
             ]}
             style={pickerSelectStyles}
             value={age}
+            placeholder={{ label: "Select Age", value: '' }}
           />
 
-          <Text style={styles.label}>Owner's Name</Text>
+          <Text style={styles.label}>Owner's Name:</Text>
           <TextInput
             style={styles.input}
             placeholder="Owner's Name"
@@ -291,7 +319,7 @@ const RegisterDonkeyScreen = () => {
             onChangeText={setOwner}
           />
           
-          <Text style={styles.label}>Location</Text>
+          <Text style={styles.label}>Location:</Text>
           <TextInput
             style={styles.input}
             placeholder="Select a location below"
@@ -329,10 +357,92 @@ const RegisterDonkeyScreen = () => {
     <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
       <Text style={styles.deleteButtonText}>Remove</Text>
     </TouchableOpacity>
+          <Text style={styles.label}>Donkey Picture</Text>
+          <TouchableOpacity style={styles.button} onPress={pickImage}>
+        <Text style={styles.buttonText}>Pick Image</Text>
+      </TouchableOpacity>
+      {image ? (
+          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        ) : (
+          <Text>No image selected</Text>
+        )}
+
+<Text style={styles.label}>Health Status:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setHealthStatus(value)}
+                items={[
+                    { label: 'Good', value: 'Good' },
+                    { label: 'Mild', value: 'Mild' },
+                    { label: 'Serious', value: 'Serious' },
+                ]}
+                style={pickerSelectStyles}
+                value={healthStatus}
+            />
+
+            <Text style={styles.label}>Symptoms:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setSymptoms(value)}
+                items={[
+                    { label: 'None', value: 'None'},
+                    { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+                    { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+                    { label: 'Wound', value: 'Wound' },
+                    { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+                    { label: 'Skin infection', value: 'Skin infection'},
+                    { label: 'Lame', value: 'Lame'},
+                    { label: 'Misformed hoof', value: 'Misformed hoof'},
+                    { label: 'Infected eye', value: 'Infected eye'},
+                    { label: 'Diarrhoea', value: 'Diarrhoea'},
+                    { label: 'Runny nose', value: 'Runny nose'},
+                    { label: 'Coughing', value: 'Coughing'},
+                ]}
+                style={pickerSelectStyles}
+                value={symptoms}
+            />
+
+            <Text style={styles.label}>Medication:</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter medication name"
+                value={medication}
+                onChangeText={setMedication}
+            />
+
+            <Text style={styles.label}>Date Medication Administered:</Text>
+            <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            {showMedicationDatePicker && (
+                <DateTimePicker
+                    value={medicationDate}
+                    mode="date"
+                    display="default"
+                    onChange={onMedicationDateChange}
+                />
+            )}
+
+            <Text style={styles.label}>Last Check-Up Date:</Text>
+            <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
+            {showDatePicker && (
+                <DateTimePicker
+                    value={lastCheckup}
+                    mode="date"
+                    display="default"
+                    onChange={onDateChange}
+                />
+            )}
+
+            <Text style={styles.label}>Treatment Given:</Text>
+            <TextInput
+                style={styles.textArea}
+                placeholder="Describe the treatment"
+                value={treatmentGiven}
+                onChangeText={setTreatmentGiven}
+                multiline
+                numberOfLines={4}
+            />
+
           <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
-      
     </SafeAreaView>
   );
 };
@@ -354,15 +464,39 @@ const styles = StyleSheet.create({
     backgroundColor: '#d9534f', // Red color for the delete button
     paddingHorizontal: 20,  // Adds width to the button
     paddingVertical: 10,    // Adds height to the button
-    borderRadius: 20,       // Rounded corners for the button
+    borderRadius: 10,       // Rounded corners for the button
     marginTop: 10,
     width: 80,
   },
   deleteButtonText: {
     color: '#fff',  // White text
-    fontSize: 9,   // Font size for the text
+    fontSize: 10,   // Font size for the text
     fontWeight: 'bold', // Makes the text bold
     textAlign: 'center',
+  },
+  addDonkeyText: {
+    backgroundColor: '#AD957E',
+    padding: 8,
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#fff',
+
+  },
+  addDonkeyButton: {
+    backgroundColor: '#AD957E',
+    padding: 1,
+    borderRadius: 10,
+   
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    
+
   },
   mapContainer: {
     height: 400,
@@ -382,6 +516,10 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     marginTop: 10,
+    fontSize: 15,
+    marginBottom: 5,
+    color: '#AD957E',
+
   },
   button: {
     backgroundColor: '#AD957E',
@@ -391,6 +529,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
+    marginBottom: 10,
+    
+    
+  },
+  buttonText: {
+    fontSize: 15,
+    color: '#fff',
   },
   input: {
     height: 40,
@@ -399,6 +544,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
+    fontSize: 14,
+    borderRadius: 5,
   },
   customButton: {
     backgroundColor: '#AD957E',
@@ -406,6 +553,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 10,
+    
   },
   buttonTextCust: {
     color: '#FFF',
@@ -428,7 +576,7 @@ const styles = StyleSheet.create({
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-    fontSize: 16,
+    fontSize: 14,
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,

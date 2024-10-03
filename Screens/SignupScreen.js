@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, ImageBackgr
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { initializeApp, getApps } from 'firebase/app';
-import firebaseConfig from './firebaseConfig'; // Import your Firebase config
+import firebaseConfig from '../firebaseConfig'; // Import your Firebase config
 
 // Initialize Firebase
 if (getApps().length === 0) {
@@ -35,7 +35,7 @@ const SignupScreen = ({ navigation }) => {
       Alert.alert('Error', error.message);
     }
   };
-  const signupBackground = require('./assets/back.png'); // Adjust the path as needed
+  const signupBackground = require('../assets/back.png'); // Adjust the path as needed
 
   return (
     <ImageBackground
