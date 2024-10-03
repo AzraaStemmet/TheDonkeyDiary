@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
 import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
 import { app } from '../firebaseConfig'; // Update the path if necessary
@@ -12,6 +12,7 @@ import uuid from 'react-native-uuid';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
 import * as FileSystem from 'expo-file-system';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const RegisterDonkeyScreen = () => {
@@ -34,6 +35,26 @@ const RegisterDonkeyScreen = () => {
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
   const [image, setImage] = useState('');
+  const [healthStatus, setHealthStatus] = useState('');
+  const [symptoms, setSymptoms] = useState('');
+  const [medication, setMedication] = useState('');
+  const [medicationDate, setMedicationDate] = useState(new Date());
+  const [treatmentGiven, setTreatmentGiven] = useState('');
+  const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
+  const [lastCheckup, setLastCheckup] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const onDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || lastCheckup;
+    setShowDatePicker(Platform.OS === 'ios');
+    setLastCheckup(currentDate);
+};
+
+const onMedicationDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || medicationDate;
+    setShowMedicationDatePicker(Platform.OS === 'ios');
+    setMedicationDate(currentDate);
+};
 
 
   useEffect(() => {
@@ -85,9 +106,16 @@ const RegisterDonkeyScreen = () => {
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+    longitudeDelta: 0.0421,});
+
   
+   
+      
+    
+
+
+
+
 
   const uploadImage = async (uri) => {
     try {
@@ -154,7 +182,6 @@ const RegisterDonkeyScreen = () => {
   };
   
   
-
   const saveImageLocally = async (uri) => {
     try {
       const fileName = `donkey_${id}.jpg`;  // Ensure 'id' is properly set
@@ -174,8 +201,6 @@ const RegisterDonkeyScreen = () => {
     }
   };
   
-
-
   const handleAddDonkey = async () => {
     if (validateForm()) {
       try {
@@ -187,6 +212,14 @@ const RegisterDonkeyScreen = () => {
           location,
           owner,
           image,
+          healthStatus,
+          symptoms,
+          medication,
+          medicationDate,
+          treatmentGiven,
+          showMedicationDatePicker,
+          lastCheckup,
+          showDatePicker,
         };
   
         // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
@@ -217,7 +250,7 @@ const RegisterDonkeyScreen = () => {
     setLocation('');
     setOwner('');
     setImage('');
-    generateUniqueId(); // Generate a new ID when resetting
+    generateUniqueId(); 
   };
 
   return (
@@ -276,8 +309,8 @@ const RegisterDonkeyScreen = () => {
               { label: '< 12 months', value: '< 12 months' },
               { label: '1-5 years', value: '1-5yrs' },
               { label: '6-10 years', value: '6-10yrs' },
-              { label: 'older than 10 years', value: 'older than 10yrs' },
-              { label: 'unknown', value: 'unknown' },
+              { label: 'Older than 10 years', value: 'older than 10yrs' },
+              { label: 'Unknown', value: 'unknown' },
              
             ]}
             style={pickerSelectStyles}
@@ -321,12 +354,11 @@ const RegisterDonkeyScreen = () => {
       </TouchableOpacity>
       
       </ScrollView>
-      <Text style={styles.label}>Donkey Picture:</Text>
+      <Text style={styles.label}>Donkey Picture</Text>
 <TouchableOpacity style={styles.button} onPress={pickImage}>
   <Text style={styles.buttonText}>Pick Image</Text>
 </TouchableOpacity>
 {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
-
 ) : (
   <Text>No image selected</Text>
 )}
@@ -340,7 +372,6 @@ const RegisterDonkeyScreen = () => {
         </View>
    
       </ScrollView>
-      
     </SafeAreaView>
   );
 };
@@ -485,15 +516,6 @@ const pickerSelectStyles = StyleSheet.create({
     paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
-  },
-  donkeyImage: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center', // Center the image horizontally
-    borderWidth: 2,      // Add border
-    borderColor: '#a67c52', // Customize the border color
-    borderRadius: 10,    // Optional: To make rounded corners
-    marginTop: 20,       // Add some margin at the top for spacing
   },
   inputAndroid: {
     fontSize: 16,

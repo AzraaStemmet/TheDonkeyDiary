@@ -31,10 +31,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
     setImage('');
     generateUniqueId(); // Generate a new ID when resetting
   };
-  const handleConfirmDetails = () => {
-    // Proceed to health record screen
-    navigation.navigate('Health Records', { donkey });
-  };
+  
 
   
   return (
@@ -82,8 +79,12 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Add Health Record" color="#AD957E" onPress={handleConfirmDetails} />
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Workers')}>
+        <TouchableOpacity style={styles.customButton} onPress={handleConfirmDetails}>
+  <Text style={styles.buttonText}>Add Health Record</Text>
+</TouchableOpacity>
+         
+          <TouchableOpacity style={[styles.customButton, { marginTop: 10 }]}  onPress={() => navigation.navigate('Workers')}>
+          
             <Text style={styles.buttonText}>Return to Home</Text>
           </TouchableOpacity>
         </View>
@@ -127,14 +128,13 @@ const styles = StyleSheet.create({
       justifyContent: 'space-around',
       paddingTop: 10,
       paddingBottom: 10,
-      backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+      backgroundColor: 'rgba(173, 149, 126, 0.75)', // consistent menustrip
     },
     menuButton: {
       padding: 5,
       borderRadius: 5,
       backgroundColor: '#AD957E',
-    },
-    
+    }, 
     buttonTextCust: {
       color: '#FFF',
       fontSize: 12,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     },
     detailsContainer: {
       flexDirection: 'row',      // Align two columns side by side
-      justifyContent: 'center',  // Center the content
+      justifyContent: 'center',  
       paddingVertical: 10,
       marginBottom: 20,
     },
@@ -162,24 +162,21 @@ const styles = StyleSheet.create({
     },
     detailsText: {
       fontSize: 16,              // Label font size
-      color: '#000000',             // White text for contrast
-      marginBottom: 10,          // Spacing between each detail line
+      color: '#000000',             // White text 
+      marginBottom: 10,          
       textAlign: 'left', 
       paddingVertical: 12,       // Align labels to the right
     },
     detailsValue: {
-      fontSize: 16,              // Value font size
-      color: '#000000',             // White text for contrast
-      marginBottom: 10,          // Spacing between each value line
-      textAlign: 'left',         // Align values to the left
-      borderWidth: 1,            // Thin border width
+      fontSize: 16,              
+      color: '#000000',             
+      marginBottom: 10,          
+      textAlign: 'left',         
+      borderWidth: 1,            
       borderColor: '#000',       // Black border color
-      padding: 8,                // Padding inside the border to give it some space
-      borderRadius: 5,           // Rounded corners for a more polished look
-
-
+      padding: 8,                
+      borderRadius: 5,           // Rounded corners 
     },
-    
     customButton: {
       backgroundColor: '#AD957E',
       padding: 15,

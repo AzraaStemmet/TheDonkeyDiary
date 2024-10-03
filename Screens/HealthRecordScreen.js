@@ -1,3 +1,4 @@
+// Importing various dependancies
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -8,8 +9,10 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
 
+
+
 const HealthRecordScreen = () => {
-    const handleSignOut = async () => {
+    const handleSignOut = async () => { // Function to handle signout
         try {
           await signOut(auth);
           navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
@@ -17,7 +20,6 @@ const HealthRecordScreen = () => {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
     };
-
 
     const navigation = useNavigation();
     const route = useRoute();
@@ -29,6 +31,7 @@ const HealthRecordScreen = () => {
     const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
     const [lastCheckup, setLastCheckup] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+
 
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || lastCheckup;
@@ -43,32 +46,56 @@ const HealthRecordScreen = () => {
     };
 
     const handleSave = async () => {
-        if (!healthStatus || !treatmentGiven) {
-          Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
-          return;
+        const donkeyId = route.params?.donkeyId;
+    
+        if (!donkeyId) {
+            Alert.alert('Error', 'Donkey ID not found. Unable to save health record.');
+            return;
         }
-      
-        const donkeyId = route.params?.donkeyId; // Retrieve the donkey ID from route parameters
-      
+    
+        if (!healthStatus || !treatmentGiven) {
+            Alert.alert('Validation Error', 'Please select health status and enter treatment details.');
+            return;
+        }
+    
         const db = getFirestore(app);
         try {
-          await addDoc(collection(db, 'healthRecords'), {
-            donkeyId,  // Save donkey ID along with health record
-            healthStatus,
-            symptoms,
-            medication,
-            medicationDate,
-            lastCheckup,
-            treatmentGiven,
-          });
-      
-          Alert.alert('Success', 'Health record saved successfully!');
-          navigation.goBack();
+            let imageUrl = '';
+            if (image) {
+                imageUrl = await uploadImage(image);
+            }
+    
+            // Register donkey after adding health record
+            await addDoc(collection(db, 'donkeys'), {
+                id,
+                name,
+                gender,
+                breed,
+                age,
+                location,
+                owner,
+                health: healthStatus,
+                imageUrl,
+            });
+    
+            // Save health record (optional: to a separate collection if needed)
+            await addDoc(collection(db, 'healthRecords'), {
+                donkeyId,
+                healthStatus,
+                symptoms,
+                medication,
+                medicationDate,
+                lastCheckup,
+                treatmentGiven,
+            });
+    
+            Alert.alert('Success', 'Health record saved successfully!');
+            navigation.goBack();
         } catch (e) {
-          console.error('Error adding document: ', e);
-          Alert.alert('Error', 'Failed to save health record. Please try again.');
+            console.error('Error adding document: ', e);
+            Alert.alert('Error', 'Failed to save health record. Please try again.');
         }
-    };
+    };    
       
 
     return (
@@ -137,8 +164,12 @@ const HealthRecordScreen = () => {
 
             <Text style={styles.label}>Date Medication Administered:</Text>
             <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+       
+      </TouchableOpacity>
             {showMedicationDatePicker && (
                 <DateTimePicker
+                
                     value={medicationDate}
                     mode="date"
                     display="default"
