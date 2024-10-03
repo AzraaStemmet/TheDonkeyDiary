@@ -18,7 +18,6 @@ import DonkeyDetails from './DonkeyDetails';
 import DonkeyReportScreen from './ViewReports';
 import HealthRecordScreen from './HealthRecordScreen';
 import EditDonkeyScreen from './EditDonkeyScreen'; 
-import DonkeyReport from './Reports';
 import EditConfirmationScreen from './EditConfirmationScreen';
 
 // Require the logo image properly
@@ -87,9 +86,7 @@ const App = () => {
         <Stack.Screen name="ViewReports" component={DonkeyReportScreen} />
         <Stack.Screen name="HealthRecordScreen" component={HealthRecordScreen} />
         <Stack.Screen name='EditDonkey' component={EditDonkeyScreen} />
-        <Stack.Screen name="Reports" component={DonkeyReport} />
         <Stack.Screen name='EditConfirmation' component={EditConfirmationScreen} />
-        
       </Stack.Navigator>
     </NavigationContainer>
   );
