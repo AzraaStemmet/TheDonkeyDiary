@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert, FlatList } from 'react-native';
+import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert, FlatList, ScrollView } from 'react-native';
 import { collection, query, where, getDocs, startAt, endAt, orderBy } from 'firebase/firestore';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { db } from '../firebaseConfig';
@@ -188,8 +188,7 @@ function SearchDonkey() {
           <Text>Location: {donkeyDetails.location}</Text>
           <Text>Breed: {donkeyDetails.breed}</Text>
           <Text>Gender: {donkeyDetails.gender}</Text>
-          <Text>Health Status: {donkeyDetails.health}</Text>
-          
+          <Text>Health Status: {donkeyDetails.health}</Text>         
           <Text style={styles.subtitle}>Treatment Records:</Text>
           {donkeyDetails.treatments && donkeyDetails.treatments.length > 0 ? (
             donkeyDetails.treatments.map((treatment, index) => (
@@ -209,8 +208,7 @@ function SearchDonkey() {
       ) : (
         <Text>No donkey details to display</Text>
       )}
-    </ScrollView>
-    
+    </ScrollView>    
     </ScrollView>
   );
 }
@@ -229,13 +227,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   pdfButtonText: {
     color: '#FFF8E1',
     fontSize: 16,
     fontWeight: 'bold',
-
   },
   customButton: {
     backgroundColor: '#AD957E',
@@ -248,8 +244,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     textAlign: 'center',
-  },
-  
+  }, 
   menuStrip: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -263,11 +258,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#AD957E',
   },
   containers: {
-    width: '100%', // Adjust as needed
-    maxWidth: 400, // Maximum width for large screens
-    padding: 20, // Add padding if needed
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
-    borderRadius: 10, // Rounded corners
+    width: '100%', 
+    maxWidth: 400, 
+    padding: 20, 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    borderRadius: 10, 
   },
   input: {
     height: 50,
@@ -306,7 +301,6 @@ const styles = StyleSheet.create({
   },
   detailHeader: {
     fontWeight: 'bold',
-   // color: '#AD957E',
   },
   detailValue: {
     color: '#5C5346',

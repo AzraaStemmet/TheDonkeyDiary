@@ -73,12 +73,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
   </TouchableOpacity>
 
 
-        <TouchableOpacity style={styles.button} onPress={handleEditAnotherDonkey}>
-          <Text style={styles.buttonText}>Edit Another Donkey</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.buttonText}>Return to Home</Text>
-        </TouchableOpacity>
+        
       </View>
     </ScrollView>
   );

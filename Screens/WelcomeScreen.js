@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, Button, ImageBackground, TouchableOpacity } from 'react-native';
 
-const homeBackground = require('./assets/back.png');
+const homeBackground = require('../assets/back.png');
 
 const HomeScreen = ({ navigation }) => {
   return (

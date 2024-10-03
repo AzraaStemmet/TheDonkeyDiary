@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db, auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig'; 
+//import { auth, db } from './firebaseConfig'; 
 import RNPickerSelect from 'react-native-picker-select';
 
 const EditDonkeyScreen = ({ route, navigation }) => {
@@ -203,6 +203,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>  
           <Text style={styles.buttonText}>Save Changes</Text> 
       </TouchableOpacity>
+   </View>
    </View>
  </ScrollView>
   );

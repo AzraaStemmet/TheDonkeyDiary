@@ -81,14 +81,12 @@ const App = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Register Donkey" component={RegisterDonkeyScreen} />
         <Stack.Screen name="Search for Donkey" component={SearchDonkey} />
-        <Stack.Screen name="Confirmation Screen" component={RegistrationConfirmationScreen} />
-        
+        <Stack.Screen name="Confirmation Screen" component={RegistrationConfirmationScreen} />       
         <Stack.Screen name="View Existing Donkeys" component={ViewExistingDonkeys} />
         <Stack.Screen name="Health Records" component={HealthRecordScreen} />
         <Stack.Screen name='Edit Donkey Details' component={EditDonkeyScreen} />
         <Stack.Screen name="View Donkey Reports" component={DonkeyReport} />
         <Stack.Screen name='Edit Confirmation' component={EditConfirmationScreen} />
-        
       </Stack.Navigator>
     </NavigationContainer>
   );
