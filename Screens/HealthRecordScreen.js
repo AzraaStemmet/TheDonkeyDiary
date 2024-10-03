@@ -60,6 +60,25 @@ const HealthRecordScreen = () => {
     
         const db = getFirestore(app);
         try {
+            let imageUrl = '';
+            if (image) {
+                imageUrl = await uploadImage(image);
+            }
+    
+            // Register donkey after adding health record
+            await addDoc(collection(db, 'donkeys'), {
+                id,
+                name,
+                gender,
+                breed,
+                age,
+                location,
+                owner,
+                health: healthStatus,
+                imageUrl,
+            });
+    
+            // Save health record (optional: to a separate collection if needed)
             await addDoc(collection(db, 'healthRecords'), {
                 donkeyId,
                 healthStatus,

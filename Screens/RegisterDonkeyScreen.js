@@ -106,9 +106,16 @@ const onMedicationDateChange = (event, selectedDate) => {
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+    longitudeDelta: 0.0421,});
+
   
+   
+      
+    
+
+
+
+
 
   const uploadImage = async (uri) => {
     try {
@@ -243,7 +250,7 @@ const onMedicationDateChange = (event, selectedDate) => {
     setLocation('');
     setOwner('');
     setImage('');
-    generateUniqueId(); // Generate a new ID when resetting
+    generateUniqueId(); 
   };
 
   return (
