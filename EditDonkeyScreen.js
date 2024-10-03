@@ -14,7 +14,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+      navigation.navigate('Home'); // Navigate to Home screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
@@ -26,7 +26,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     }
   }, [route.params]);
 
-  const resetForm = () => {
+  const resetForm = () => { // Emptying the fields function
     setId('');
     setName('');
     setGender('');
@@ -42,15 +42,15 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const fetchDonkey = async () => {
-      try {
-        console.log("Fetching donkey with ID:", donkeyId); // Debug log
+      try { // fetch the donkeys details
+        console.log("Fetching donkey with ID:", donkeyId);
         const donkeysRef = collection(db, "donkeys");
         const q = query(donkeysRef, where("id", "==", donkeyId));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
           const docSnapshot = querySnapshot.docs[0];
-          console.log("Document data:", docSnapshot.data()); // Debug log
+          console.log("Document data:", docSnapshot.data()); 
           setDonkey({ firestoreId: docSnapshot.id, ...docSnapshot.data() });
         } else {
           console.log("No such document!");
@@ -58,7 +58,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           navigation.goBack();
         }
       } catch (error) {
-        console.error("Error fetching donkey:", error); // More detailed error log
+        console.error("Error fetching donkey:", error); 
         Alert.alert("Error", "Failed to fetch donkey details: " + error.message);
       } finally {
         setLoading(false);
@@ -106,10 +106,10 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   };
   
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) return <Text>Loading... </Text>; // this is the loading screen when a user clicks the edit button and save changes button
   if (!donkey) return <Text>No donkey data available</Text>;
 
-  return (
+  return (// Standardized menustrip and below is the labels and textboxes that displays the donkeys information
     <ScrollView style={styles.scrollView}>
     <View style={styles.menuStrip}>
       <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
@@ -128,23 +128,19 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
     <View style={styles.container}>
     <Text style={styles.title}>Edit the donkeys details</Text>
-
-
-    
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Name:</Text>
         <TextInput
           style={styles.input}
           value={donkey.name}
           onChangeText={(text) => setDonkey({ ...donkey, name: text })}
-          placeholder="Donkey Name"
-        />
+          placeholder="Donkey Name" />
       </View>
 
       <View style={styles.fieldContainer}>
   <Text style={styles.label}>Age:</Text>
   <RNPickerSelect
-    onValueChange={(value) => setDonkey({ ...donkey, age: value })}
+    onValueChange={(value) => setDonkey({ ...donkey, age: value })} // we used a picker for the user to select age for consistency
     items={[
       { label: '< 12 months', value: '< 12 months' },
       { label: '1-5 years', value: '1-5yrs' },
@@ -153,36 +149,33 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       { label: 'Unknown', value: 'unknown' },
     ]}
     style={pickerSelectStyles}
-    value={donkey.age}  // This binds the picker to the age in the donkey state
-  />
-</View>
+    value={donkey.age}  />
+    </View>
 
-      <View style={styles.fieldContainer}>
+    <View style={styles.fieldContainer}>
   <Text style={styles.label}>Gender:</Text>
   <RNPickerSelect
-    onValueChange={(value) => setDonkey({ ...donkey, gender: value })}
+    onValueChange={(value) => setDonkey({ ...donkey, gender: value })} // we used a picker for the user to select the gender for consistency
     items={[
       { label: 'Male', value: 'Male' },
       { label: 'Female', value: 'Female' },
     ]}
     style={pickerSelectStyles}
-    value={donkey.gender}  // This binds the picker to the gender in the donkey state
-  />
-</View>
+    value={donkey.gender}  />
+    </View>
 
       <View style={styles.fieldContainer}>
       <Text style={styles.label}>Health Status:</Text>
   <RNPickerSelect
-    onValueChange={(value) => setDonkey({ ...donkey, health: value })}
+    onValueChange={(value) => setDonkey({ ...donkey, health: value })} // we used a picker here for the health status for consistency purposes and validation purposes
     items={[
       { label: 'Good', value: 'Good' },
       { label: 'Mild', value: 'Mild' },
       { label: 'Serious', value: 'Serious' },
     ]}
     style={pickerSelectStyles}
-    value={donkey.health}  // This binds the picker to the health status in the donkey state
-  />
-</View>
+    value={donkey.health}  />
+    </View>
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Location:</Text>
         <TextInput
@@ -190,7 +183,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           value={donkey.location}
           onChangeText={(text) => setDonkey({ ...donkey, location: text })}
           placeholder="Location"
-          editable={false}
+          editable={false} // This was made read only because we were not able to display the location on the map and give the user a option to change location
         />
       </View>
 
@@ -202,41 +195,34 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
           placeholder="Owner"
         />
-    </View>
+      </View>
  
-      <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>
-          <Text style={styles.buttonText}>Save Changes</Text>
+      <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>  
+          <Text style={styles.buttonText}>Save Changes</Text> 
       </TouchableOpacity>
-        </View>
-        
-
-
-    </ScrollView>
-
+   </View>
+ </ScrollView>
   );
 };
 
 export default EditDonkeyScreen;
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ // Here we edited the UI
   container: {
     flex: 1,
     padding: 20,
-    height: 800,
-    
+    height: 800,   
     backgroundColor: 'beige',
   },
   fieldContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    
   },
   label: {
-    width: 100, // Adjust the width as needed
+    width: 100, 
     fontSize: 16,
   },
-
   input: {
     height: 35,
     borderColor: '#AD957E',
@@ -244,8 +230,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     backgroundColor: '#fff',
-    borderRadius: 6, // Rounded corners
-    maxWidth: 400, // Maximum width for large screens
+    borderRadius: 6, 
+    maxWidth: 400,
     width: '70%',
   },
   buttonTextCust: {
@@ -258,7 +244,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+    backgroundColor: 'rgba(173, 149, 126, 0.75)', 
   },
   menuButton: {
     padding: 5,
@@ -300,7 +286,6 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 4,
     color: 'black',
-   // paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
     width:235,
@@ -313,7 +298,6 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 4,
     color: 'black',
-    //paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
     width:'100%',

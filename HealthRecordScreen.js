@@ -1,3 +1,4 @@
+// Importing various dependancies
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -8,16 +9,17 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig'; 
 
+
+
 const HealthRecordScreen = () => {
-    const handleSignOut = async () => {
+    const handleSignOut = async () => { // Function to handle signout
         try {
           await signOut(auth);
-          navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+          navigation.navigate('Home'); // Navigate to Home screen after sign out
         } catch (error) {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
     };
-
 
     const navigation = useNavigation();
     const route = useRoute();
@@ -137,8 +139,12 @@ const HealthRecordScreen = () => {
 
             <Text style={styles.label}>Date Medication Administered:</Text>
             <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+       
+      </TouchableOpacity>
             {showMedicationDatePicker && (
                 <DateTimePicker
+                
                     value={medicationDate}
                     mode="date"
                     display="default"

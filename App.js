@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 
-// Import your screens
+// We importing the screens here 
 import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
@@ -20,7 +20,7 @@ import EditDonkeyScreen from './EditDonkeyScreen';
 import DonkeyReport from './Reports';
 import EditConfirmationScreen from './EditConfirmationScreen';
 
-// Require the logo image properly
+// Loading screen image
 const logoImage = require('./assets/bahananwa.jpg');
 
 const Stack = createStackNavigator();
@@ -70,9 +70,9 @@ const App = () => {
           ),
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#f5f5f5', // Optional: adjust the header background
+            backgroundColor: '#f5f5f5', 
           },
-          headerTintColor: '#333', // Optional: adjust the color of the back button and title
+          headerTintColor: '#333',
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />

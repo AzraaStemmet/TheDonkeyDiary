@@ -1,4 +1,4 @@
-// EditConfirmationScreen.js
+
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, Button, ScrollView } from 'react-native';
 
@@ -9,9 +9,9 @@ const EditConfirmationScreen = ({ route, navigation }) => {
     navigation.navigate('ViewReports', { reset: true });
   };
 
-  return (
+  return ( // Standardized menustrip and below is the labels and textboxes that displays the donkeys information
     <ScrollView style={styles.scrollView}>
-      <View style={styles.menuStrip}>
+      <View style={styles.menuStrip}> 
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('RegisterDonkey')}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
@@ -78,7 +78,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
 };
 
 export default EditConfirmationScreen;
-
+// Below is editing code, edit the UI. We have a standard color scheme
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'beige',
@@ -103,15 +103,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    //alignItems: 'center',
     backgroundColor: 'beige',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
-    textAlign: 'center',
-    
+    textAlign: 'center', 
   },
   button: {
     backgroundColor: '#AD957E',
@@ -129,7 +127,6 @@ const styles = StyleSheet.create({
   },
   detailContainerColumn: {
     textAlignVertical:'center',
-    //alignItems: 'flex-start', // Align labels and values to the left
     marginBottom: 10,
   },
   input: {
@@ -137,8 +134,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 5,
-    textAlignVertical: 'center', // Centers text vertically
-    textAlign: 'left', // Optional, for horizontal alignment
+    textAlignVertical: 'center', 
+    textAlign: 'left', 
     paddingHorizontal: 10,
     paddingTop: 10,
     backgroundColor: '#fff',
@@ -153,6 +150,6 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 16,
-    color: '#555',
+    color: '#555', // White 
   },
 });
