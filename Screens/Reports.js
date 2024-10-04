@@ -240,7 +240,16 @@ const DonkeyReport = () => {
               <Text style={styles.cell}>{donkey.name}</Text>
               <Text style={styles.cell}>{donkey.age}</Text>
               <Text style={styles.cell}>{donkey.gender}</Text>
-              <Text style={styles.cell}>{donkey.health}</Text>
+              <Text
+    style={[
+      styles.cell,
+      donkey.health === 'Good' && { backgroundColor: '#86B049' },
+      donkey.health === 'Mild' && { backgroundColor: '#FFBF00' },
+      donkey.health === 'Serious' && { backgroundColor: '#FF0000' }
+    ]}
+  >
+    {donkey.health}
+  </Text>
               <Text style={styles.cellLocation}>
                 {typeof donkey.location === 'object'
                 ? '${donkey.location.latitude, ${donkey.location.longtitude}'

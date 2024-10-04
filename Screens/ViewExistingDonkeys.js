@@ -62,7 +62,7 @@ const DonkeyReportScreen = () => {
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={async () => await signOut(auth)}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Welcome')}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
           </TouchableOpacity>
         </View>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
   },
   menuStrip: {
     flexDirection: 'row',

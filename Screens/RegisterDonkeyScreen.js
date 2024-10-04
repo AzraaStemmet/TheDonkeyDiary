@@ -99,24 +99,12 @@ const onMedicationDateChange = (event, selectedDate) => {
     } catch (error) {
       console.error('Error updating location:', error);
     }
-  };
-  
-  
+  }; 
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,});
-
-  
-   
-      
-    
-
-
-
-
-
   const uploadImage = async (uri) => {
     try {
       const storage = getStorage(app);
@@ -365,10 +353,109 @@ const onMedicationDateChange = (event, selectedDate) => {
     <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
       <Text style={styles.deleteButtonText}>Remove</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.addDonkeyButton} onPress={handleAddDonkey}>
-      <Text style={styles.addDonkeyText}>Add Donkey</Text>
-    </TouchableOpacity>
-  
+    <Text style={styles.label}>Health Status:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setHealthStatus(value)}
+                items={[
+                    { label: 'Good', value: 'Good' },
+                    { label: 'Mild', value: 'Mild' },
+                    { label: 'Serious', value: 'Serious' },
+                ]}
+                style={pickerSelectStyles}
+                value={healthStatus}
+                placeholder={{ label: "Select Health Status", value: '' }}
+            />
+
+            <Text style={styles.label}>Symptoms:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setSymptoms(value)}
+                items={[
+                    { label: 'None', value: 'None'},
+                    { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+                    { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+                    { label: 'Wound', value: 'Wound' },
+                    { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+                    { label: 'Skin infection', value: 'Skin infection'},
+                    { label: 'Lame', value: 'Lame'},
+                    { label: 'Misformed hoof', value: 'Misformed hoof'},
+                    { label: 'Infected eye', value: 'Infected eye'},
+                    { label: 'Diarrhoea', value: 'Diarrhoea'},
+                    { label: 'Runny nose', value: 'Runny nose'},
+                    { label: 'Coughing', value: 'Coughing'},
+                ]}
+                style={pickerSelectStyles}
+                value={symptoms}
+                placeholder={{ label: "Select a Symptom", value: '' }}
+            />
+             <Text style={styles.label}>Symptoms:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setSymptoms(value)}
+                items={[
+                    { label: 'None', value: 'None'},
+                    { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+                    { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+                    { label: 'Wound', value: 'Wound' },
+                    { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+                    { label: 'Skin infection', value: 'Skin infection'},
+                    { label: 'Lame', value: 'Lame'},
+                    { label: 'Misformed hoof', value: 'Misformed hoof'},
+                    { label: 'Infected eye', value: 'Infected eye'},
+                    { label: 'Diarrhoea', value: 'Diarrhoea'},
+                    { label: 'Runny nose', value: 'Runny nose'},
+                    { label: 'Coughing', value: 'Coughing'},
+                ]}
+                style={pickerSelectStyles}
+                value={symptoms}
+                placeholder={{ label: "Select Another Symptom (Optional)", value: '' }}
+            />
+
+            <Text style={styles.label}>Medication:</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter Medication Name"
+                value={medication}
+                onChangeText={setMedication}
+            />
+
+            <Text style={styles.label}>Date Medication Administered:</Text>
+            <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+              <Text style={styles.buttonText}>Select Date</Text>
+            </TouchableOpacity>
+            {showMedicationDatePicker && (
+                <DateTimePicker
+              
+                    value={medicationDate}
+                    mode="date"
+                    display="default"
+                    onChange={onMedicationDateChange}
+                />
+            )}
+
+            <Text style={styles.label}>Last Check-Up Date:</Text>
+            <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
+                <Text style={styles.buttonText}>Select Date</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+                <DateTimePicker
+                    value={lastCheckup}
+                    mode="date"
+                    display="default"
+                    onChange={onDateChange}
+                />
+            )}
+
+            <Text style={styles.label}>Treatment Given:</Text>
+            <TextInput
+                style={styles.textArea}
+                placeholder="Describe the Treatment"
+                value={treatmentGiven}
+                onChangeText={setTreatmentGiven}
+                multiline
+                numberOfLines={4}
+            />
+             <TouchableOpacity style={styles.button} onPress={handleAddDonkey}>
+               <Text style={styles.buttonText}>Add Donkey</Text>
+             </TouchableOpacity>
         </View>
    
       </ScrollView>
