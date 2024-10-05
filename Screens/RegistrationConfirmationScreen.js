@@ -6,10 +6,11 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 
 const RegistrationConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
+  
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Home'); // Navigate to Home or Login screen after sign out
+      navigation.navigate('HomeScreen'); // Navigate to Home or Login screen after sign out
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
@@ -68,6 +69,12 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
             <Text style={styles.detailsText}>   Age:</Text>
             <Text style={styles.detailsText}>   Location:</Text>
             <Text style={styles.detailsText}>   Owner:</Text>
+            <Text style={styles.detailsText}>   Health Status:</Text>
+            <Text style={styles.detailsText}>   Symptoms:</Text>
+            <Text style={styles.detailsText}>   Medication:</Text>
+            <Text style={styles.detailsText}>   Medication Date:</Text>
+            <Text style={styles.detailsText}>   Medical Record:</Text>
+            <Text style={styles.detailsText}>   Last Checkup Date:</Text>
           </View>
           <View style={styles.column}>
             <Text style={styles.detailsValue}>{donkey.id}</Text>
@@ -76,6 +83,13 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
             <Text style={styles.detailsValue}>{donkey.age}</Text>
             <Text style={styles.detailsValue}>{donkey.location}</Text>
             <Text style={styles.detailsValue}>{donkey.owner}</Text>
+            <Text style={styles.detailsValue}>{donkey.healthStatus}</Text>
+            <Text style={styles.detailsValue}>{donkey.symptoms}</Text>
+            <Text style={styles.detailsValue}>{donkey.medication}</Text>
+            <Text style={styles.detailsValue}>{donkey.medicationDate?.toLocaleDateString()}</Text>
+            <Text style={styles.detailsValue}>{donkey.medicalRecord}</Text>
+            <Text style={styles.detailsValue}>{donkey.lastCheckup?.toLocaleDateString()}</Text>
+
           </View>
         </View>
         <View style={styles.buttonContainer}>

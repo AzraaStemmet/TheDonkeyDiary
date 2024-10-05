@@ -39,7 +39,7 @@ const RegisterDonkeyScreen = () => {
   const [symptoms, setSymptoms] = useState('');
   const [medication, setMedication] = useState('');
   const [medicationDate, setMedicationDate] = useState(new Date());
-  const [treatmentGiven, setTreatmentGiven] = useState('');
+  const [medicalRecord, setMedicalRecord] = useState('');
   const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
   const [lastCheckup, setLastCheckup] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -55,7 +55,6 @@ const onMedicationDateChange = (event, selectedDate) => {
     setShowMedicationDatePicker(Platform.OS === 'ios');
     setMedicationDate(currentDate);
 };
-
 
   useEffect(() => {
     checkPermissions();
@@ -209,7 +208,7 @@ const onMedicationDateChange = (event, selectedDate) => {
           symptoms,
           medication,
           medicationDate,
-          treatmentGiven,
+          medicalRecord,
           showMedicationDatePicker,
           lastCheckup,
           showDatePicker,
@@ -419,12 +418,12 @@ const onMedicationDateChange = (event, selectedDate) => {
                 />
             )}
 
-            <Text style={styles.label}>Treatment Given:</Text>
+            <Text style={styles.label}>Medical Record:</Text>
             <TextInput
                 style={styles.textArea}
-                placeholder="Describe the treatment"
-                value={treatmentGiven}
-                onChangeText={setTreatmentGiven}
+                placeholder="Describe the previous treatments / operations"
+                value={medicalRecord}
+                onChangeText={setMedicalRecord}
                 multiline
                 numberOfLines={4}
             />
