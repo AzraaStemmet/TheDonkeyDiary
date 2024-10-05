@@ -53,16 +53,16 @@ const DonkeyReportScreen = () => {
     >
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={async () => await signOut(auth)}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Welcome')}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
           </TouchableOpacity>
         </View>
@@ -114,13 +114,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
   },
   menuStrip: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: 'rgba(173, 149, 126, 0.75)',
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+    
   },
   menuButton: {
     padding: 5,

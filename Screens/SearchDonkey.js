@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, TouchableOpacity, ScrollView, Text, View, StyleSheet, Alert } from 'react-native';
+import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert, FlatList, ScrollView } from 'react-native';
 import { collection, query, where, getDocs, startAt, endAt, orderBy } from 'firebase/firestore';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { db } from '../firebaseConfig';
@@ -9,12 +9,15 @@ import { printToFileAsync } from 'expo-print';
 import { shareAsync } from 'expo-sharing'; // importing dependencies for functionaltities of the applciation 
 
 
-
 function SearchDonkey() {
   const [searchKey, setSearchKey] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [donkeyDetails, setDonkeyDetails] = useState(null);
   const [error, setError] = useState('');
+  
+  const navigation = useNavigation();
+  const route = useRoute();
+
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -23,8 +26,6 @@ function SearchDonkey() {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
   };
-  const navigation = useNavigation();
-  const route = useRoute();
 
   useEffect(() => {
     if (route.params?.reset) {
@@ -33,21 +34,14 @@ function SearchDonkey() {
   }, [route.params]);
 
   const resetForm = () => {
-    setId('');
-    setName('');
-    setGender('');
-    setAge('');
-    setLocation('');
-    setOwner('');
-    setImage('');
-    generateUniqueId(); // Generate a new ID when resetting
+    // Reset form logic
   };
 
   useEffect(() => {
     if (searchKey.length >= 2) {
       fetchSuggestions(searchKey);
     } else {
-      setSuggestions([]); // Clear suggestions when input is less than 3 characters
+      setSuggestions([]); // Clear suggestions when input is less than 2 characters
     }
   }, [searchKey]);
 
@@ -87,7 +81,6 @@ function SearchDonkey() {
 
       const donkey = suggestions.find(d => d.name === item.name || d.id === item.id);
       if (donkey) {
-        // Fetch treatment records for the selected donkey
         const treatmentsSnapshot = await getDocs(collection(db, `healthRecords`), where("donkeyId", "==", donkey.id));
         const treatments = treatmentsSnapshot.docs.map(doc => doc.data());
         setDonkeyDetails({ ...donkey, treatments });
@@ -155,14 +148,14 @@ function SearchDonkey() {
   return (
     <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
@@ -174,49 +167,34 @@ function SearchDonkey() {
         value={searchKey}
         onChangeText={setSearchKey}
         placeholder="Enter Donkey Name or ID"
-        placeholderTextColor="#8A7E72"
       />
-      {suggestions.length > 0 && (
-        <View style={styles.resultsContainer}>
-          {suggestions.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.suggestionItem} onPress={() => handleSearch(item)}>
-              <Text style={styles.suggestionText}>{item.name} ({item.id})</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      {donkeyDetails && (
-         <View style={styles.detailsContainer}>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Name:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.name}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Age:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.age}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Owner:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.owner}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Location:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.location}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Gender:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.gender}</Text>
-         </View>
-         <View style={styles.detailRow}>
-           <Text style={styles.detailHeader}>Health Status:</Text>
-           <Text style={styles.detailValue}>{donkeyDetails.health}</Text>
-         </View>
-          {donkeyDetails.treatments.length > 0 ? (
+      
+      <FlatList
+        data={suggestions}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Text style={styles.suggestionItem} onPress={() => handleSearch(item)}>
+            {item.name} ({item.id})
+          </Text>
+        )}
+      />
+      
+      {error ? <Text>{error}</Text> : null}
+      {donkeyDetails ? (
+        <View>
+          <Text>Donkey Name: {donkeyDetails.name}</Text>
+          <Text>Donkey Age: {donkeyDetails.age}</Text>
+          <Text>Donkey Owner: {donkeyDetails.owner}</Text>
+          <Text>Location: {donkeyDetails.location}</Text>
+          <Text>Breed: {donkeyDetails.breed}</Text>
+          <Text>Gender: {donkeyDetails.gender}</Text>
+          <Text>Health Status: {donkeyDetails.health}</Text>         
+          <Text style={styles.subtitle}>Treatment Records:</Text>
+          {donkeyDetails.treatments && donkeyDetails.treatments.length > 0 ? (
             donkeyDetails.treatments.map((treatment, index) => (
               <View key={index} style={styles.treatmentCard}>
                 <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
-                <Text>Medication: {treatment.medication}</Text>
+                <Text>Health Status: {treatment.healthStatus}</Text>
                 <Text>Treatment Given: {treatment.treatmentGiven}</Text>
               </View>
             ))
@@ -227,8 +205,10 @@ function SearchDonkey() {
            <Text style={styles.pdfButtonText}>Export as PDF</Text>
          </TouchableOpacity>
         </View>
+      ) : (
+        <Text>No donkey details to display</Text>
       )}
-    </ScrollView>
+    </ScrollView>    
     </ScrollView>
   );
 }
@@ -247,13 +227,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-
   },
   pdfButtonText: {
     color: '#FFF8E1',
     fontSize: 16,
     fontWeight: 'bold',
-
   },
   customButton: {
     backgroundColor: '#AD957E',
@@ -266,8 +244,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     textAlign: 'center',
-  },
-  
+  }, 
   menuStrip: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -281,11 +258,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#AD957E',
   },
   containers: {
-    width: '100%', // Adjust as needed
-    maxWidth: 400, // Maximum width for large screens
-    padding: 20, // Add padding if needed
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
-    borderRadius: 10, // Rounded corners
+    width: '100%', 
+    maxWidth: 400, 
+    padding: 20, 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    borderRadius: 10, 
   },
   input: {
     height: 50,
@@ -324,7 +301,6 @@ const styles = StyleSheet.create({
   },
   detailHeader: {
     fontWeight: 'bold',
-   // color: '#AD957E',
   },
   detailValue: {
     color: '#5C5346',

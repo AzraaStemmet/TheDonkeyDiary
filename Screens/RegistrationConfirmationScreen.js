@@ -39,16 +39,16 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <View style={styles.menuStrip}>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
-          <Text style={styles.buttonTextCust}>Register Donkey</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
+          <Text style={styles.buttonTextCust}>Return to Home</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register for Donkey')}>
+          <Text style={styles.buttonTextCust}>Register for Donkey</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
           <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-          <Text style={styles.buttonTextCust}>View Reports</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -93,7 +93,12 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Workers')}>
+        <TouchableOpacity style={styles.customButton} onPress={handleConfirmDetails}>
+  <Text style={styles.buttonText}>Add Health Record</Text>
+</TouchableOpacity>
+         
+          <TouchableOpacity style={[styles.customButton, { marginTop: 10 }]}  onPress={() => navigation.navigate('Workers')}>
+          
             <Text style={styles.buttonText}>Return to Home</Text>
           </TouchableOpacity>
         </View>
@@ -137,14 +142,13 @@ const styles = StyleSheet.create({
       justifyContent: 'space-around',
       paddingTop: 10,
       paddingBottom: 10,
-      backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+      backgroundColor: 'rgba(173, 149, 126, 0.75)', // consistent menustrip
     },
     menuButton: {
       padding: 5,
       borderRadius: 5,
       backgroundColor: '#AD957E',
-    },
-    
+    }, 
     buttonTextCust: {
       color: '#FFF',
       fontSize: 12,
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
     },
     detailsContainer: {
       flexDirection: 'row',      // Align two columns side by side
-      justifyContent: 'center',  // Center the content
+      justifyContent: 'center',  
       paddingVertical: 10,
       marginBottom: 20,
     },
@@ -172,24 +176,21 @@ const styles = StyleSheet.create({
     },
     detailsText: {
       fontSize: 16,              // Label font size
-      color: '#000000',             // White text for contrast
-      marginBottom: 10,          // Spacing between each detail line
+      color: '#000000',             // White text 
+      marginBottom: 10,          
       textAlign: 'left', 
       paddingVertical: 12,       // Align labels to the right
     },
     detailsValue: {
-      fontSize: 16,              // Value font size
-      color: '#000000',             // White text for contrast
-      marginBottom: 10,          // Spacing between each value line
-      textAlign: 'left',         // Align values to the left
-      borderWidth: 1,            // Thin border width
+      fontSize: 16,              
+      color: '#000000',             
+      marginBottom: 10,          
+      textAlign: 'left',         
+      borderWidth: 1,            
       borderColor: '#000',       // Black border color
-      padding: 8,                // Padding inside the border to give it some space
-      borderRadius: 5,           // Rounded corners for a more polished look
-
-
+      padding: 8,                
+      borderRadius: 5,           // Rounded corners 
     },
-    
     customButton: {
       backgroundColor: '#AD957E',
       padding: 15,

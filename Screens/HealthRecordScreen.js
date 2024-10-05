@@ -1,3 +1,4 @@
+// Importing various dependancies
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -8,8 +9,10 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
 
+
+
 const HealthRecordScreen = () => {
-    const handleSignOut = async () => {
+    const handleSignOut = async () => { // Function to handle signout
         try {
           await signOut(auth);
           navigation.navigate('Welcome'); // Navigate to Home or Login screen after sign out
@@ -17,7 +20,6 @@ const HealthRecordScreen = () => {
           Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
         }
     };
-
 
     const navigation = useNavigation();
     const route = useRoute();
@@ -58,6 +60,25 @@ const HealthRecordScreen = () => {
     
         const db = getFirestore(app);
         try {
+            let imageUrl = '';
+            if (image) {
+                imageUrl = await uploadImage(image);
+            }
+    
+            // Register donkey after adding health record
+            await addDoc(collection(db, 'donkeys'), {
+                id,
+                name,
+                gender,
+                breed,
+                age,
+                location,
+                owner,
+                health: healthStatus,
+                imageUrl,
+            });
+    
+            // Save health record (optional: to a separate collection if needed)
             await addDoc(collection(db, 'healthRecords'), {
                 donkeyId,
                 healthStatus,
@@ -82,16 +103,16 @@ const HealthRecordScreen = () => {
 
 <View style={styles.menuStrip}>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey', { reset: true })}>
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
+  <Text style={styles.buttonTextCust}>Return to Home</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
   <Text style={styles.buttonTextCust}>Register Donkey</Text>
 </TouchableOpacity>
 
 <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
   <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-</TouchableOpacity>
-
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
-  <Text style={styles.buttonTextCust}>View Donkeys</Text>
 </TouchableOpacity>
 
 <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
@@ -143,8 +164,12 @@ const HealthRecordScreen = () => {
 
             <Text style={styles.label}>Date Medication Administered:</Text>
             <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+       
+      </TouchableOpacity>
             {showMedicationDatePicker && (
                 <DateTimePicker
+                
                     value={medicationDate}
                     mode="date"
                     display="default"

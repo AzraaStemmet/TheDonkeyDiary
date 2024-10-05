@@ -20,7 +20,7 @@ import EditDonkeyScreen from './Screens/EditDonkeyScreen';
 import DonkeyReport from './Screens/Reports';
 import EditConfirmationScreen from './Screens/EditConfirmationScreen';
 
-// Require the logo image properly
+// Loading screen image
 const logoImage = require('./assets/bahananwa.jpg');
 
 const Stack = createStackNavigator();
@@ -70,9 +70,9 @@ const App = () => {
           ),
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#f5f5f5', // Optional: adjust the header background
+            backgroundColor: '#f5f5f5', 
           },
-          headerTintColor: '#333', // Optional: adjust the color of the back button and title
+          headerTintColor: '#333',
         }}
       >
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -81,14 +81,12 @@ const App = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Register Donkey" component={RegisterDonkeyScreen} />
         <Stack.Screen name="Search for Donkey" component={SearchDonkey} />
-        <Stack.Screen name="Confirmation Screen" component={RegistrationConfirmationScreen} />
-        
+        <Stack.Screen name="Confirmation Screen" component={RegistrationConfirmationScreen} />       
         <Stack.Screen name="View Existing Donkeys" component={ViewExistingDonkeys} />
         <Stack.Screen name="Health Records" component={HealthRecordScreen} />
         <Stack.Screen name='Edit Donkey Details' component={EditDonkeyScreen} />
         <Stack.Screen name="View Donkey Reports" component={DonkeyReport} />
         <Stack.Screen name='Edit Confirmation' component={EditConfirmationScreen} />
-        
       </Stack.Navigator>
     </NavigationContainer>
   );

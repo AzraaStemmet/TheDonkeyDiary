@@ -98,17 +98,12 @@ const onMedicationDateChange = (event, selectedDate) => {
     } catch (error) {
       console.error('Error updating location:', error);
     }
-  };
-  
-  
+  }; 
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-  
-
+    longitudeDelta: 0.0421,});
   const uploadImage = async (uri) => {
     try {
       const storage = getStorage(app);
@@ -242,7 +237,7 @@ const onMedicationDateChange = (event, selectedDate) => {
     setLocation('');
     setOwner('');
     setImage('');
-    generateUniqueId(); // Generate a new ID when resetting
+    generateUniqueId(); 
   };
 
   return (
@@ -250,14 +245,14 @@ const onMedicationDateChange = (event, selectedDate) => {
     <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
@@ -301,8 +296,8 @@ const onMedicationDateChange = (event, selectedDate) => {
               { label: '< 12 months', value: '< 12 months' },
               { label: '1-5 years', value: '1-5yrs' },
               { label: '6-10 years', value: '6-10yrs' },
-              { label: 'older than 10 years', value: 'older than 10yrs' },
-              { label: 'unknown', value: 'unknown' },
+              { label: 'Older than 10 years', value: 'older than 10yrs' },
+              { label: 'Unknown', value: 'unknown' },
              
             ]}
             style={pickerSelectStyles}
@@ -344,18 +339,20 @@ const onMedicationDateChange = (event, selectedDate) => {
         <Text style={styles.buttonText}>Select Location</Text>
 
       </TouchableOpacity>
+      
       </ScrollView>
-          <Text style={styles.label}>Donkey Picture</Text>
-          <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Pick Image</Text>
-      </TouchableOpacity>
-      {image ? (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-        ) : (
-          <Text>No image selected</Text>
-        )}
-
-<Text style={styles.label}>Health Status:</Text>
+      <Text style={styles.label}>Donkey Picture</Text>
+<TouchableOpacity style={styles.button} onPress={pickImage}>
+  <Text style={styles.buttonText}>Pick Image</Text>
+</TouchableOpacity>
+{image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
+) : (
+  <Text>No image selected</Text>
+)}
+    <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
+      <Text style={styles.deleteButtonText}>Remove</Text>
+    </TouchableOpacity>
+    <Text style={styles.label}>Health Status:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
                 items={[
@@ -365,6 +362,7 @@ const onMedicationDateChange = (event, selectedDate) => {
                 ]}
                 style={pickerSelectStyles}
                 value={healthStatus}
+                placeholder={{ label: "Select Health Status", value: '' }}
             />
 
             <Text style={styles.label}>Symptoms:</Text>
@@ -386,20 +384,45 @@ const onMedicationDateChange = (event, selectedDate) => {
                 ]}
                 style={pickerSelectStyles}
                 value={symptoms}
+                placeholder={{ label: "Select a Symptom", value: '' }}
+            />
+             <Text style={styles.label}>Symptoms:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setSymptoms(value)}
+                items={[
+                    { label: 'None', value: 'None'},
+                    { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+                    { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+                    { label: 'Wound', value: 'Wound' },
+                    { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+                    { label: 'Skin infection', value: 'Skin infection'},
+                    { label: 'Lame', value: 'Lame'},
+                    { label: 'Misformed hoof', value: 'Misformed hoof'},
+                    { label: 'Infected eye', value: 'Infected eye'},
+                    { label: 'Diarrhoea', value: 'Diarrhoea'},
+                    { label: 'Runny nose', value: 'Runny nose'},
+                    { label: 'Coughing', value: 'Coughing'},
+                ]}
+                style={pickerSelectStyles}
+                value={symptoms}
+                placeholder={{ label: "Select Another Symptom (Optional)", value: '' }}
             />
 
             <Text style={styles.label}>Medication:</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Enter medication name"
+                placeholder="Enter Medication Name"
                 value={medication}
                 onChangeText={setMedication}
             />
 
             <Text style={styles.label}>Date Medication Administered:</Text>
-            <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+              <Text style={styles.buttonText}>Select Date</Text>
+            </TouchableOpacity>
             {showMedicationDatePicker && (
                 <DateTimePicker
+              
                     value={medicationDate}
                     mode="date"
                     display="default"
@@ -408,7 +431,9 @@ const onMedicationDateChange = (event, selectedDate) => {
             )}
 
             <Text style={styles.label}>Last Check-Up Date:</Text>
-            <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
+                <Text style={styles.buttonText}>Select Date</Text>
+            </TouchableOpacity>
             {showDatePicker && (
                 <DateTimePicker
                     value={lastCheckup}
@@ -427,9 +452,11 @@ const onMedicationDateChange = (event, selectedDate) => {
                 multiline
                 numberOfLines={4}
             />
-
-          <Button title="Add Donkey" onPress={handleAddDonkey} />
+             <TouchableOpacity style={styles.button} onPress={handleAddDonkey}>
+               <Text style={styles.buttonText}>Add Donkey</Text>
+             </TouchableOpacity>
         </View>
+   
       </ScrollView>
     </SafeAreaView>
   );
@@ -473,13 +500,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#fff',
+    
 
   },
   addDonkeyButton: {
-    backgroundColor: '#AD957E',
+    backgroundColor: '#ffffff00',
     padding: 1,
     borderRadius: 10,
-   
+    
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
@@ -574,15 +602,6 @@ const pickerSelectStyles = StyleSheet.create({
     paddingRight: 30,
     backgroundColor: '#fff',
     marginBottom: 10,
-  },
-  donkeyImage: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center', // Center the image horizontally
-    borderWidth: 2,      // Add border
-    borderColor: '#a67c52', // Customize the border color
-    borderRadius: 10,    // Optional: To make rounded corners
-    marginTop: 20,       // Add some margin at the top for spacing
   },
   inputAndroid: {
     fontSize: 16,
