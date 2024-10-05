@@ -60,7 +60,14 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Donkey has been Sucessfully Registered!</Text>
         <Text style={styles.label}>Please confirm the donkey Details</Text>
-        
+        {donkey.imageUrl ? (
+          <Image
+            source={{ uri: donkey.imageUrl }}
+            style={styles.donkeyImage}
+          />
+        ) : (
+          <Text>No image available</Text>
+        )}
         <View style={styles.detailsContainer}>
           <View style={styles.column}>
             <Text style={styles.detailsText}>   ID:</Text>
@@ -71,6 +78,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
             <Text style={styles.detailsText}>   Owner:</Text>
             <Text style={styles.detailsText}>   Health Status:</Text>
             <Text style={styles.detailsText}>   Symptoms:</Text>
+            <Text style={styles.detailsText}>   Other Symptoms:</Text>
             <Text style={styles.detailsText}>   Medication:</Text>
             <Text style={styles.detailsText}>   Medication Date:</Text>
             <Text style={styles.detailsText}>   Medical Record:</Text>
@@ -85,6 +93,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
             <Text style={styles.detailsValue}>{donkey.owner}</Text>
             <Text style={styles.detailsValue}>{donkey.healthStatus}</Text>
             <Text style={styles.detailsValue}>{donkey.symptoms}</Text>
+            <Text style={styles.detailsValue}>{donkey.othersymptoms}</Text>
             <Text style={styles.detailsValue}>{donkey.medication}</Text>
             <Text style={styles.detailsValue}>{donkey.medicationDate?.toLocaleDateString()}</Text>
             <Text style={styles.detailsValue}>{donkey.medicalRecord}</Text>
@@ -93,12 +102,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
           </View>
         </View>
         <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.customButton} onPress={handleConfirmDetails}>
-  <Text style={styles.buttonText}>Add Health Record</Text>
-</TouchableOpacity>
-         
-          <TouchableOpacity style={[styles.customButton, { marginTop: 10 }]}  onPress={() => navigation.navigate('Workers')}>
-          
+          <TouchableOpacity style={[styles.customButton, { marginTop: 10 }]}  onPress={() => navigation.navigate('Home')}>
             <Text style={styles.buttonText}>Return to Home</Text>
           </TouchableOpacity>
         </View>
@@ -114,10 +118,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5dc', // Consistent background color
   },
-    background: {
-    flex: 1,
-    justifyContent: 'center',
+  donkeyImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    marginBottom: 10,
   },
+    
   scrollContent: {
     padding: 20,
   },

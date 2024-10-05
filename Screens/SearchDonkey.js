@@ -182,11 +182,17 @@ function SearchDonkey() {
       {error ? <Text>{error}</Text> : null}
       {donkeyDetails ? (
         <View>
+          {donkeyDetails.imageUrl && (
+            <Image
+              source={{ uri: donkeyDetails.imageUrl }}
+              style={styles.donkeyImage}
+            />
+          )}
+          
           <Text>Donkey Name: {donkeyDetails.name}</Text>
           <Text>Donkey Age: {donkeyDetails.age}</Text>
           <Text>Donkey Owner: {donkeyDetails.owner}</Text>
           <Text>Location: {donkeyDetails.location}</Text>
-          <Text>Breed: {donkeyDetails.breed}</Text>
           <Text>Gender: {donkeyDetails.gender}</Text>
           <Text>Health Status: {donkeyDetails.health}</Text>         
           <Text style={styles.subtitle}>Treatment Records:</Text>
@@ -219,6 +225,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f5f5dc', // Consistent with other screens
+  },
+  donkeyImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+    marginBottom: 10,
   },
   pdfButton: {
     marginTop:10,

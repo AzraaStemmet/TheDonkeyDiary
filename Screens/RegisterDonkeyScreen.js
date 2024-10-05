@@ -37,6 +37,7 @@ const RegisterDonkeyScreen = () => {
   const [image, setImage] = useState('');
   const [healthStatus, setHealthStatus] = useState('');
   const [symptoms, setSymptoms] = useState('');
+  const [othersymptoms, setOtherSymptoms] = useState('');
   const [medication, setMedication] = useState('');
   const [medicationDate, setMedicationDate] = useState(new Date());
   const [medicalRecord, setMedicalRecord] = useState('');
@@ -104,6 +105,7 @@ const onMedicationDateChange = (event, selectedDate) => {
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,});
+    
   const uploadImage = async (uri) => {
     try {
       const storage = getStorage(app);
@@ -191,6 +193,10 @@ const onMedicationDateChange = (event, selectedDate) => {
   const handleAddDonkey = async () => {
     if (validateForm()) {
       try {
+        let imageUrl = '';
+        if (image) {
+          imageUrl = await uploadImage(image);
+        } 
         const donkey = {
           id,
           name,
@@ -198,19 +204,17 @@ const onMedicationDateChange = (event, selectedDate) => {
           age,
           location,
           owner,
-          image,
+          imageUrl, // Add this line
           healthStatus,
           symptoms,
+          othersymptoms,
           medication,
           medicationDate,
           medicalRecord,
-          showMedicationDatePicker,
           lastCheckup,
-          showDatePicker,
         };
-  
         // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
-        const docRef = await addDoc(collection(db, 'donkeys'), donkey);
+          const docRef = await addDoc(collection(db, 'donkeys'), donkey);
         
         // Navigate to the confirmation screen
         navigation.navigate('Confirmation Screen', { donkey });
@@ -386,9 +390,9 @@ const onMedicationDateChange = (event, selectedDate) => {
                 value={symptoms}
                 placeholder={{ label: "Select a Symptom", value: '' }}
             />
-             <Text style={styles.label}>Symptoms:</Text>
+             <Text style={styles.label}>Other Symptoms:</Text>
             <RNPickerSelect
-                onValueChange={(value) => setSymptoms(value)}
+                onValueChange={(value) => setOtherSymptoms(value)}
                 items={[
                     { label: 'None', value: 'None'},
                     { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
@@ -404,7 +408,7 @@ const onMedicationDateChange = (event, selectedDate) => {
                     { label: 'Coughing', value: 'Coughing'},
                 ]}
                 style={pickerSelectStyles}
-                value={symptoms}
+                value={othersymptoms}
                 placeholder={{ label: "Select Another Symptom (Optional)", value: '' }}
             />
 
