@@ -154,7 +154,7 @@ function SearchDonkey() {
     <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
-            <Text style={styles.buttonTextCust}>Return to Home</Text>
+            <Text style={styles.buttonTextCust}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, Button, ImageBackground, KeyboardAvoidingView, Platform, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TextInput, ImageBackground, Alert, TouchableOpacity } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
