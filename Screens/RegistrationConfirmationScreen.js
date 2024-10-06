@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Alert, ImageBackground, background, Image } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
+import Toast from 'react-native-toast-message';
 
 const RegistrationConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
+
+  useEffect(() => {
+    Toast.show({
+      type: 'success',
+      text1: 'Success',
+      text2: 'Donkey loaded successfully',
+      visibilityTime: 3000,
+      autoHide: true,
+      topOffset: 30,
+      bottomOffset: 40,
+    });
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -86,6 +99,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
           <Text style={styles.customButtonText}>Return to Home</Text>
         </TouchableOpacity>
       </ScrollView>
+      <Toast />
     </ImageBackground>
   );
 };

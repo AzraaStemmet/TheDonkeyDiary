@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
 import { getFirestore, collection, getDoc, doc, updateDoc, addDoc, setDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
 import { app } from '../firebaseConfig'; // Update the path if necessary
@@ -14,6 +13,8 @@ import { auth } from '../firebaseConfig';
 import * as FileSystem from 'expo-file-system';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
+import { useState, useEffect } from 'react';
+
 
 
 const RegisterDonkeyScreen = () => {
@@ -46,6 +47,7 @@ const RegisterDonkeyScreen = () => {
   const [lastCheckup, setLastCheckup] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === 'ios');
@@ -173,6 +175,7 @@ const RegisterDonkeyScreen = () => {
   
   const handleAddDonkey = async () => {
     if (validateForm()) {
+      setIsLoading(true);
       try {
         let imageUrl = '';
         if (image) {
@@ -211,9 +214,11 @@ const RegisterDonkeyScreen = () => {
 
         console.log('Donkey added successfully with ID: ', docRef.id);
 
+        setIsLoading(false);
         // Navigate to the confirmation screen
         navigation.navigate('Confirmation Screen', { donkey });
       } catch (error) {
+        setIsLoading(false);
         Alert.alert('Error', 'Failed to add donkey. Please try again.');
         console.error('Error adding donkey: ', error);
       }
@@ -458,9 +463,16 @@ const RegisterDonkeyScreen = () => {
                 multiline
                 numberOfLines={4}
             />
-             <TouchableOpacity style={styles.button} onPress={handleAddDonkey}>
-               <Text style={styles.buttonText}>Add Donkey</Text>
-             </TouchableOpacity>
+             {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#AD957E" />
+            <Text style={styles.loadingText}>Adding Donkey...</Text>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleAddDonkey}>
+            <Text style={styles.buttonText}>Add Donkey</Text>
+          </TouchableOpacity>
+        )}
         </View>
    
       </ScrollView>
@@ -599,6 +611,15 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
     color: '#333',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#AD957E',
+    fontSize: 16,
   },
 });
 
