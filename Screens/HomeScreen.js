@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Alert, ScrollView } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; // Ensure this path is correct
@@ -15,7 +15,39 @@ const WorkersScreen = ({ navigation }) => {
   };
   const route = useRoute();
   const background = require('../assets/back.png'); // Ensure the path to your background image is correct
-  
+  const [inputPassword, setInputPassword] = useState('');
+  const verifyPassword = () => {
+    // change the password in the line below
+    const correctPassword = 'secret123'; // You should manage passwords more securely
+    if (inputPassword === correctPassword) {
+      navigation.navigate('View Donkey Reports');
+    } else {
+      Alert.alert('Access Denied', 'The password you entered is incorrect.');
+    }
+  };
+
+  const handleViewReportsPress = () => {
+    Alert.prompt(
+      'Enter Password',
+      'This section is password protected. Please enter your password to continue.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => console.log('Password prompt cancelled'),
+        },
+        {
+          text: 'OK',
+          onPress: password => {
+            setInputPassword(password);
+            verifyPassword();
+          },
+        },
+      ],
+      'secure-text' // This makes the input password style
+    );
+  };
+
 
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
@@ -45,7 +77,7 @@ const WorkersScreen = ({ navigation }) => {
           <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('View Existing Donkeys')}>
             <Text style={styles.buttonText}>View Existing Donkeys</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('View Donkey Reports')}>
+          <TouchableOpacity style={styles.customButton} onPress={handleViewReportsPress}>
             <Text style={styles.buttonText}>View Donkey Reports</Text>
           </TouchableOpacity>
         </View>
