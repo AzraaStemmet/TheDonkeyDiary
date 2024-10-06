@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ImageBackground, Image } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebaseConfig'; // Ensure db is correctly imported from your Firebase configuration
+import { db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 
 const homeBackground = require('../assets/backs.png');
+
 const DonkeyReportScreen = () => {
   const [donkeys, setDonkeys] = useState([]);
   const navigation = useNavigation();
+
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Welcome'); // naviagte to home screen after sign o ut
+      navigation.navigate('Welcome');
     } catch (error) {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
@@ -53,16 +55,16 @@ const DonkeyReportScreen = () => {
     >
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={async () => await signOut(auth)}>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
           </TouchableOpacity>
         </View>
@@ -75,26 +77,24 @@ const DonkeyReportScreen = () => {
             <Text>Location: {renderLocation(donkey.location)}</Text>
             <Text>Owner: {donkey.owner}</Text>
             <Text>ID: {donkey.id}</Text>
+            <Text>Health Status: {donkey.healthStatus}</Text>
 
             {/* Display the donkey's image */}
-            {donkey.imageURL ? (
-              <Image source={{ uri: donkey.imageURL }} style={styles.image} />
+            {donkey.imageUrl ? (
+              <Image source={{ uri: donkey.imageUrl }} style={styles.image} />
             ) : (
               <Text>No image available</Text>
             )}
 
-            <Text style={styles.subtitle}>Treatment Records:</Text>
-            {donkey.treatments.length > 0 ? (
-              donkey.treatments.map((treatment, index) => (
-                <View key={index} style={styles.treatmentCard}>
-                  <Text>Date: {treatment.date}</Text>
-                  <Text>Type: {treatment.type}</Text>
-                  <Text>Notes: {treatment.notes}</Text>
-                </View>
-              ))
-            ) : (
-              <Text>No treatment records available.</Text>
-            )}
+            <Text>Health Status: {donkey.healthStatus}</Text>
+            <Text>Symptoms:  {donkey.symptoms} </Text>
+            <Text>Other Symptoms: {donkey.othersymptoms}</Text>
+            <Text>Medication: {donkey.medication}</Text>
+            <Text>Medication Date: {donkey.medicationDate}</Text>
+            <Text>Medical Record: {donkey.medicalRecord}</Text>
+            <Text>Last Checkup Date:{donkey.lastCheckup}</Text>
+
+
 
             <TouchableOpacity
               style={styles.customButton}
@@ -113,13 +113,20 @@ const styles = StyleSheet.create({
   homeBackground: {
     flex: 1,
   },
+  donkeyImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+    marginBottom: 10,
+  },
   scrollView: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
   },
   menuStrip: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
     backgroundColor: 'rgba(173, 149, 126, 0.75)',
   },
   menuButton: {
@@ -145,6 +152,8 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginTop: 10,
+    resizeMode: 'cover',
+    borderRadius: 10,
   },
   subtitle: {
     fontWeight: 'bold',

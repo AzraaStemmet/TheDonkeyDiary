@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
-import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
+import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
+import { getFirestore, collection, getDoc, doc, updateDoc, addDoc, setDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
 import { app } from '../firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
@@ -13,6 +12,9 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
 import * as FileSystem from 'expo-file-system';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
+import { useState, useEffect } from 'react';
+
 
 const RegisterDonkeyScreen = () => {
   const handleSignOut = async () => {
@@ -35,24 +37,29 @@ const RegisterDonkeyScreen = () => {
   const [image, setImage] = useState('');
   const [healthStatus, setHealthStatus] = useState('');
   const [symptoms, setSymptoms] = useState('');
+  const [othersymptoms, setOtherSymptoms] = useState('');
   const [medication, setMedication] = useState('');
-  const [medicationDate, setMedicationDate] = useState(new Date());
-  const [treatmentGiven, setTreatmentGiven] = useState('');
+  const [medicationDate, setMedicationDate] = useState(null);
+  const [medicalRecord, setMedicalRecord] = useState('');
   const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
-  const [lastCheckup, setLastCheckup] = useState(new Date());
+  const [lastCheckup, setLastCheckup] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || lastCheckup;
     setShowDatePicker(Platform.OS === 'ios');
-    setLastCheckup(currentDate);
-};
+    if (selectedDate) {
+      setLastCheckup(selectedDate);
+    }
+  };
 
   const onMedicationDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || medicationDate;
     setShowMedicationDatePicker(Platform.OS === 'ios');
-    setMedicationDate(currentDate);
-};
+    if (selectedDate) {
+      setMedicationDate(selectedDate);
+    }
+  };
 
   useEffect(() => {
     checkPermissions();
@@ -72,38 +79,17 @@ const RegisterDonkeyScreen = () => {
     setId(newId);
   };
 
-  const handleMapPress = async (e) => {
+  const handleMapPress = (e) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
-    const locationString = `${latitude}, ${longitude}`; // Fix format
-    setLocation(locationString); // Save location as string
-  
-    try {
-      const donkeyDocRef = doc(db, 'donkeys', id); 
-      
-      // Check if document exists
-      const docSnapshot = await getDoc(donkeyDocRef);
-      if (docSnapshot.exists()) {
-        // Update the existing document with the location
-        await updateDoc(donkeyDocRef, {
-          location: locationString,
-        });
-        console.log('Location updated successfully!');
-      } else {
-        // If the document doesn't exist, create a new one
-        await setDoc(donkeyDocRef, { location: locationString });
-        console.log('Document created and location saved!');
-      }
-    } catch (error) {
-      console.error('Error updating location:', error);
-    }
+    setSelectedLocation({ latitude, longitude });
+    setLocation(`${latitude}, ${longitude}`);
   };
-   
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,});
-
+    
   const uploadImage = async (uri) => {
     try {
       const storage = getStorage(app);
@@ -119,14 +105,11 @@ const RegisterDonkeyScreen = () => {
   
       console.log('File available at', imageUrl);
   
-      // Save the imageUrl to Firestore
-      const donkeyDocRef = doc(db, 'donkeys', id);
-      await updateDoc(donkeyDocRef, { imageURL: imageUrl });
-  
-      Alert.alert('Upload Success', 'Image uploaded successfully!');
+      return imageUrl;
     } catch (error) {
       console.error("Error uploading image:", error);
       Alert.alert('Upload Error', error.message);
+      throw error;
     }
   };
 
@@ -158,7 +141,6 @@ const RegisterDonkeyScreen = () => {
       console.log('Image URI:', imageUri);  // Log the URI for debugging
       setImage(imageUri);  // Update the image state with the URI
       await saveImageLocally(imageUri);  // Save image locally
-      await uploadImage(imageUri);  // Upload image to Firebase
     } else {
       console.log("Image picking cancelled");
     }
@@ -185,7 +167,13 @@ const RegisterDonkeyScreen = () => {
   
   const handleAddDonkey = async () => {
     if (validateForm()) {
+      setIsLoading(true);
       try {
+        let imageUrl = '';
+        if (image) {
+          imageUrl = await uploadImage(image);
+        }
+
         const donkey = {
           id,
           name,
@@ -193,21 +181,36 @@ const RegisterDonkeyScreen = () => {
           age,
           location,
           owner,
-          image,
+          imageUrl, // Changed from 'imageURL' to 'imageUrl'
           healthStatus,
           symptoms,
+          othersymptoms,
           medication,
-          medicationDate,
-          treatmentGiven,
-          showMedicationDatePicker,
-          lastCheckup,
-          showDatePicker,
+          medicationDate: medicationDate ? medicationDate.toISOString() : null,
+          medicalRecord,
+          lastCheckup: lastCheckup ? lastCheckup.toISOString() : null,
         };
-        // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
+
+        // Add donkey details to Firebase
         const docRef = await addDoc(collection(db, 'donkeys'), donkey);
-        
+
+        // Update the document with the location
+        await updateDoc(docRef, {
+          location: location,
+        });
+
+        // If there's an image, update the document with the image URL
+        if (imageUrl) {
+          await updateDoc(docRef, { imageUrl: imageUrl }); // Changed from 'imageURL' to 'imageUrl'
+        }
+
+        console.log('Donkey added successfully with ID: ', docRef.id);
+
+        setIsLoading(false);
+        // Navigate to the confirmation screen
         navigation.navigate('Confirmation Screen', { donkey });
       } catch (error) {
+        setIsLoading(false);
         Alert.alert('Error', 'Failed to add donkey. Please try again.');
         console.error('Error adding donkey: ', error);
       }
@@ -233,18 +236,24 @@ const RegisterDonkeyScreen = () => {
     generateUniqueId(); 
   };
 
-  return (    
+  const formatDate = (date) => {
+    if (!date) return 'No date selected';
+    return format(date, 'MMMM d, yyyy');
+  };
+
+  return (
+    
     <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
@@ -319,39 +328,30 @@ const RegisterDonkeyScreen = () => {
             initialRegion={region}
             onPress={handleMapPress}
           >
-            {location && <Marker coordinate={{ latitude: parseFloat(location.split(', ')[0]), longitude: parseFloat(location.split(', ')[1]) }} />}
+            {selectedLocation && <Marker coordinate={selectedLocation} />}
           </MapView>
         </View>
 
         <Text style={styles.label}>Selected Location:</Text>
-        <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
+        <Text>{selectedLocation ? `${selectedLocation.latitude}, ${selectedLocation.longitude}` : 'No location selected'}</Text>
         <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
         <Text style={styles.buttonText}>Select Location</Text>
 
       </TouchableOpacity>
+      
       </ScrollView>
-        <Text style={styles.label}>Donkey Picture</Text>
-      <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Pick Image</Text>
-      </TouchableOpacity>
-            {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
-            ) : (
-       <Text>No image selected</Text>
-      )}
-    <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
-      <Text style={styles.deleteButtonText}>Remove</Text>
-    </TouchableOpacity>
-          <Text style={styles.label}>Donkey Picture</Text>
-          <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Pick Image</Text>
-      </TouchableOpacity>
-      {image ? (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+      <Text style={styles.label}>Donkey Picture</Text>
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <Text style={styles.buttonText}>Pick Image</Text>
+        </TouchableOpacity>
+        {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
         ) : (
           <Text>No image selected</Text>
         )}
-
-          <Text style={styles.label}>Health Status:</Text>
+         <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
+      <Text style={styles.deleteButtonText}>Remove</Text>
+        </TouchableOpacity>
+      <Text style={styles.label}>Health Status:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
                 items={[
@@ -361,6 +361,7 @@ const RegisterDonkeyScreen = () => {
                 ]}
                 style={pickerSelectStyles}
                 value={healthStatus}
+                placeholder={{ label: "Select Health Status", value: '' }}
             />
             <Text style={styles.label}>Symptoms:</Text>
             <RNPickerSelect
@@ -381,20 +382,46 @@ const RegisterDonkeyScreen = () => {
                 ]}
                 style={pickerSelectStyles}
                 value={symptoms}
+                placeholder={{ label: "Select a Symptom", value: '' }}
+            />
+             <Text style={styles.label}>Other Symptoms:</Text>
+            <RNPickerSelect
+                onValueChange={(value) => setOtherSymptoms(value)}
+                items={[
+                    { label: 'None', value: 'None'},
+                    { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+                    { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+                    { label: 'Wound', value: 'Wound' },
+                    { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+                    { label: 'Skin infection', value: 'Skin infection'},
+                    { label: 'Lame', value: 'Lame'},
+                    { label: 'Misformed hoof', value: 'Misformed hoof'},
+                    { label: 'Infected eye', value: 'Infected eye'},
+                    { label: 'Diarrhoea', value: 'Diarrhoea'},
+                    { label: 'Runny nose', value: 'Runny nose'},
+                    { label: 'Coughing', value: 'Coughing'},
+                ]}
+                style={pickerSelectStyles}
+                value={othersymptoms}
+                placeholder={{ label: "Select Another Symptom (Optional)", value: '' }}
             />
             <Text style={styles.label}>Medication:</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Enter medication name"
+                placeholder="Enter Medication Name"
                 value={medication}
                 onChangeText={setMedication}
             />
 
             <Text style={styles.label}>Date Medication Administered:</Text>
-            <Button title="Select Date" onPress={() => setShowMedicationDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+              <Text style={styles.buttonText}>Select Date</Text>
+            </TouchableOpacity>
+            <Text style={styles.dateDisplay}>{formatDate(medicationDate)}</Text>
             {showMedicationDatePicker && (
                 <DateTimePicker
-                    value={medicationDate}
+              
+                    value={medicationDate || new Date()}
                     mode="date"
                     display="default"
                     onChange={onMedicationDateChange}
@@ -402,27 +429,40 @@ const RegisterDonkeyScreen = () => {
             )}
 
             <Text style={styles.label}>Last Check-Up Date:</Text>
-            <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
+            <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
+                <Text style={styles.buttonText}>Select Date</Text>
+            </TouchableOpacity>
+            <Text style={styles.dateDisplay}>{formatDate(lastCheckup)}</Text>
             {showDatePicker && (
                 <DateTimePicker
-                    value={lastCheckup}
+                    value={lastCheckup || new Date()}
                     mode="date"
                     display="default"
                     onChange={onDateChange}
                 />
             )}
 
-            <Text style={styles.label}>Treatment Given:</Text>
+            <Text style={styles.label}>Medical Record:</Text>
             <TextInput
                 style={styles.textArea}
-                placeholder="Describe the treatment"
-                value={treatmentGiven}
-                onChangeText={setTreatmentGiven}
+                placeholder="Describe the previous treatments / operations"
+                value={medicalRecord}
+                onChangeText={setMedicalRecord}
                 multiline
                 numberOfLines={4}
             />
-          <Button title="Add Donkey" onPress={handleAddDonkey} />
+             {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#AD957E" />
+            <Text style={styles.loadingText}>Adding Donkey...</Text>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleAddDonkey}>
+            <Text style={styles.buttonText}>Add Donkey</Text>
+          </TouchableOpacity>
+        )}
         </View>
+   
       </ScrollView>
     </SafeAreaView>
   );
@@ -466,11 +506,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#fff',
+    
+
   },
   addDonkeyButton: {
-    backgroundColor: '#AD957E',
+    backgroundColor: '#ffffff00',
     padding: 1,
     borderRadius: 10,
+    
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
@@ -544,6 +587,21 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     backgroundColor: '#AD957E',
+  },
+  dateDisplay: {
+    fontSize: 16,
+    marginTop: 5,
+    marginBottom: 10,
+    color: '#333',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#AD957E',
+    fontSize: 16,
   },
 });
 

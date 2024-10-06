@@ -12,14 +12,14 @@ const EditConfirmationScreen = ({ route, navigation }) => {
   return ( // Standardized menustrip and below is the labels and textboxes that displays the donkeys information
     <ScrollView style={styles.scrollView}>
       <View style={styles.menuStrip}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+          <Text style={styles.buttonTextCust}>Return to Home</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
           <Text style={styles.buttonTextCust}>Register Donkey</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-          <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.buttonTextCust}>Home </Text>
+          <Text style={styles.buttonTextCust}>Search for Donkey </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Welcome')}>
           <Text style={styles.buttonTextCust}>Sign out</Text>
@@ -50,17 +50,17 @@ const EditConfirmationScreen = ({ route, navigation }) => {
   </View>
 
   <View style={styles.detailContainerColumn}>
+    <Text style={styles.label}>Owner's Name:</Text>
+    <Text style={styles.input}>{donkey.owner}</Text>
+  </View>
+
+  <View style={styles.detailContainerColumn}>
     <Text style={styles.label}>Location:</Text>
     <Text style={styles.input}>{donkey.location}</Text>
   </View>
 
   <View style={styles.detailContainerColumn}>
-    <Text style={styles.label}>Owner:</Text>
-    <Text style={styles.input}>{donkey.owner}</Text>
-  </View>
-
-  <View style={styles.detailContainerColumn}>
-    <Text style={styles.label}>Health:</Text>
+    <Text style={styles.label}>Health Status:</Text>
     <Text style={styles.input}>{donkey.health}</Text>
   </View>
 
@@ -68,7 +68,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
     <Text style={styles.buttonText}>Edit Another Donkey</Text>
   </TouchableOpacity>
 
-  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Workers')}>
+  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
     <Text style={styles.buttonText}>Return to Home</Text>
   </TouchableOpacity>
 
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#AD957E',
     marginBottom: 5, // Add some space between label and value
   },
   value: {

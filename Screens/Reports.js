@@ -160,14 +160,14 @@ const DonkeyReport = () => {
   return (
     <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
             <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('View Donkey Reports')}>
-            <Text style={styles.buttonTextCust}>View Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
           <Text style={styles.buttonTextCust}>Sign Out</Text>
@@ -240,7 +240,16 @@ const DonkeyReport = () => {
               <Text style={styles.cell}>{donkey.name}</Text>
               <Text style={styles.cell}>{donkey.age}</Text>
               <Text style={styles.cell}>{donkey.gender}</Text>
-              <Text style={styles.cell}>{donkey.health}</Text>
+              <Text
+    style={[
+      styles.cell,
+      donkey.health === 'Good' && { backgroundColor: '#86B049' },
+      donkey.health === 'Mild' && { backgroundColor: '#FFBF00' },
+      donkey.health === 'Serious' && { backgroundColor: '#FF0000' }
+    ]}
+  >
+    {donkey.health}
+  </Text>
               <Text style={styles.cellLocation}>
                 {typeof donkey.location === 'object'
                 ? '${donkey.location.latitude, ${donkey.location.longtitude}'
