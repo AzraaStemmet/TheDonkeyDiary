@@ -6,13 +6,17 @@ import { signOut } from 'firebase/auth';
 //import { auth, db } from './firebaseConfig'; 
 import RNPickerSelect from 'react-native-picker-select';
 import MapView, { Marker } from 'react-native-maps';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 
 const EditDonkeyScreen = ({ route, navigation }) => {
   const { donkeyId } = route.params;
   const [donkey, setDonkey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  
+  const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
+  const [showLastCheckupPicker, setShowLastCheckupPicker] = useState(false);
+
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -61,12 +65,21 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           const docSnapshot = querySnapshot.docs[0];
           const donkeyData = docSnapshot.data();
           //console.log("Document data:", docSnapshot.data()); 
-          setDonkey({ firestoreId: docSnapshot.id, ...donkeyData,
+          setDonkey({ 
+            firestoreId: docSnapshot.id, 
+            ...donkeyData,
             location: donkeyData.location ? {
               latitude: parseFloat(donkeyData.location.split(',')[0]),
               longitude: parseFloat(donkeyData.location.split(',')[1])
-            } : null
-           });
+            } : null,
+            medicationDate: donkeyData.medicationDate ? new Date(donkeyData.medicationDate) : null,
+            lastCheckup: donkeyData.lastCheckup ? new Date(donkeyData.lastCheckup) : null,
+            healthStatus: donkeyData.healthStatus || '',
+            symptoms: donkeyData.symptoms || '',
+            othersymptoms: donkeyData.othersymptoms || '',
+            medication: donkeyData.medication || '',
+            medicalRecord: donkeyData.medicalRecord || '',
+          });
            setSelectedLocation(donkeyData.location ? {
             latitude: parseFloat(donkeyData.location.split(',')[0]),
             longitude: parseFloat(donkeyData.location.split(',')[1])
@@ -114,8 +127,15 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           name: donkey.name,
           age: donkey.age,
           gender: donkey.gender,
-          health: donkey.healthStatus,
+          healthStatus: donkey.healthStatus,
           owner: donkey.owner,
+          symptoms: donkey.symptoms,
+          othersymptoms: donkey.othersymptoms,
+          medication: donkey.medication,
+          medicationDate: donkey.medicationDate ? donkey.medicationDate.toISOString() : null,
+          medicalRecord: donkey.medicalRecord,
+          lastCheckup: donkey.lastCheckup ? donkey.lastCheckup.toISOString() : null,
+          location: donkey.location,
 
         });
         // Navigate to confirmation screen after update
@@ -132,6 +152,10 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     }
   };
   
+  const formatDate = (date) => {
+    if (!date) return 'No date selected';
+    return format(date, 'MMMM d, yyyy');
+  };
 
   if (loading) return <Text>Loading... </Text>; // this is the loading screen when a user clicks the edit button and save changes button
   if (!donkey) return <Text>No donkey data available</Text>;
@@ -176,18 +200,18 @@ const EditDonkeyScreen = ({ route, navigation }) => {
    
 
       
-  <Text style={styles.label}>Age:</Text>
-  <RNPickerSelect
-    onValueChange={(value) => setDonkey({ ...donkey, age: value })}
-    items={[
-      { label: '< 12 months', value: '< 12 months' },
-      { label: '1-5 years', value: '1-5yrs' },
-      { label: '6-10 years', value: '6-10yrs' },
-      { label: 'Older than 10 years', value: 'older than 10yrs' },
-      { label: 'Unknown', value: 'unknown' },
-    ]}
-    style={pickerSelectStyles}
-    value={donkey.age}  />
+        <Text style={styles.label}>Age:</Text>
+        <RNPickerSelect
+          onValueChange={(value) => setDonkey({ ...donkey, age: value })}
+          items={[
+            { label: '< 12 months', value: '< 12 months' },
+            { label: '1-5 years', value: '1-5yrs' },
+            { label: '6-10 years', value: '6-10yrs' },
+            { label: 'Older than 10 years', value: 'older than 10yrs' },
+            { label: 'Unknown', value: 'unknown' },
+          ]}
+          style={pickerSelectStyles}
+          value={donkey.age}  />
         <Text style={styles.label}>Owner's Name:</Text>
         <TextInput
           style={styles.input}
@@ -195,13 +219,13 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
           placeholder="Owner's Name"
         />
-      <Text style={styles.label}>Location:</Text>
-        <TextInput
-          style={styles.input}
-          value={donkey.location}
-          editable={false}
-          placeholder="Select location on map"
-        />
+        <Text style={styles.label}>Location:</Text>
+          <TextInput
+            style={styles.input}
+            value={donkey.location}
+            editable={false}
+            placeholder="Select location on map"
+          />
         <MapView
             style={styles.map}
             initialRegion={{
@@ -214,26 +238,123 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           >
             {selectedLocation && <Marker coordinate={selectedLocation} />}
         </MapView> 
-      <Text style={styles.label}>Health Status:</Text>
-  <RNPickerSelect
-    onValueChange={(value) => setDonkey({ ...donkey, health: value })} // we used a picker here for the health status for consistency purposes and validation purposes
-    items={[
-      { label: 'Good', value: 'Good' },
-      { label: 'Mild', value: 'Mild' },
-      { label: 'Serious', value: 'Serious' },
-    ]}
-    style={pickerSelectStyles}
-    value={donkey.health}  // This binds the picker to the health status in the donkey state
-  />
- 
-     
- <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>  
-          <Text style={styles.buttonText}>Save Changes</Text> 
-      </TouchableOpacity>
-   
-   </View>
-   
- </ScrollView>
+        <Text style={styles.label}>Health Status:</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setDonkey({ ...donkey, health: value })} // we used a picker here for the health status for consistency purposes and validation purposes
+            items={[
+              { label: 'Good', value: 'Good' },
+              { label: 'Mild', value: 'Mild' },
+              { label: 'Serious', value: 'Serious' },
+            ]}
+            style={pickerSelectStyles}
+            value={donkey.health}  // This binds the picker to the health status in the donkey state
+          />
+
+<Text style={styles.label}>Symptoms:</Text>
+        <RNPickerSelect
+          onValueChange={(value) => setDonkey({ ...donkey, symptoms: value })}
+          items={[
+            { label: 'None', value: 'None'},
+            { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+            { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+            { label: 'Wound', value: 'Wound' },
+            { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+            { label: 'Skin infection', value: 'Skin infection'},
+            { label: 'Lame', value: 'Lame'},
+            { label: 'Misformed hoof', value: 'Misformed hoof'},
+            { label: 'Infected eye', value: 'Infected eye'},
+            { label: 'Diarrhoea', value: 'Diarrhoea'},
+            { label: 'Runny nose', value: 'Runny nose'},
+            { label: 'Coughing', value: 'Coughing'},
+          ]}
+          style={pickerSelectStyles}
+          value={donkey.symptoms} />
+          
+          <Text style={styles.label}>Other Symptoms:</Text>
+        <RNPickerSelect
+          onValueChange={(value) => setDonkey({ ...donkey, othersymptoms: value })}
+          items={[
+            { label: 'None', value: 'None'},
+            { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+            { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+            { label: 'Wound', value: 'Wound' },
+            { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+            { label: 'Skin infection', value: 'Skin infection'},
+            { label: 'Lame', value: 'Lame'},
+            { label: 'Misformed hoof', value: 'Misformed hoof'},
+            { label: 'Infected eye', value: 'Infected eye'},
+            { label: 'Diarrhoea', value: 'Diarrhoea'},
+            { label: 'Runny nose', value: 'Runny nose'},
+            { label: 'Coughing', value: 'Coughing'},
+          ]}
+          style={pickerSelectStyles}
+          value={donkey.othersymptoms} />
+
+        <Text style={styles.label}>Medication:</Text>
+        <TextInput
+          style={styles.input}
+          value={donkey.medication}
+          onChangeText={(text) => setDonkey({ ...donkey, medication: text })}
+          placeholder="Enter Medication Name"
+        />
+
+        <Text style={styles.label}>Date Medication Administered:</Text>
+          <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
+            <Text style={styles.buttonText}>Select Date</Text>
+          </TouchableOpacity>
+          <Text style={styles.dateDisplay}>{formatDate(donkey.medicationDate)}</Text>
+          {showMedicationDatePicker && (
+            <DateTimePicker
+              value={donkey.medicationDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setShowMedicationDatePicker(Platform.OS === 'ios');
+                if (selectedDate) {
+                  setDonkey({ ...donkey, medicationDate: selectedDate });
+                }
+              }}
+            />
+        )}
+
+        <Text style={styles.label}>Last Check-Up Date:</Text>
+          <TouchableOpacity style={styles.button} onPress={() => setShowLastCheckupPicker(true)}>
+            <Text style={styles.buttonText}>Select Date</Text>
+          </TouchableOpacity>
+          <Text style={styles.dateDisplay}>{formatDate(donkey.lastCheckup)}</Text>
+          {showLastCheckupPicker && (
+            <DateTimePicker
+              value={donkey.lastCheckup || new Date()}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setShowLastCheckupPicker(Platform.OS === 'ios');
+                if (selectedDate) {
+                  setDonkey({ ...donkey, lastCheckup: selectedDate });
+                }
+              }}
+            />
+        )}
+
+        <Text style={styles.label}>Medical Record:</Text>
+          <TextInput
+            style={styles.textArea}
+            value={donkey.medicalRecord}
+            onChangeText={(text) => setDonkey({ ...donkey, medicalRecord: text })}
+            placeholder="Describe the previous treatments / operations"
+            multiline
+            numberOfLines={4}
+        />
+
+
+
+        <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>  
+                  <Text style={styles.buttonText}>Save Changes</Text> 
+              </TouchableOpacity>
+          
+          </View>
+          
+        </ScrollView>
   );
 };
 

@@ -351,17 +351,17 @@ const RegisterDonkeyScreen = () => {
       
       </ScrollView>
       <Text style={styles.label}>Donkey Picture</Text>
-<TouchableOpacity style={styles.button} onPress={pickImage}>
-  <Text style={styles.buttonText}>Pick Image</Text>
-</TouchableOpacity>
-{image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
-) : (
-  <Text>No image selected</Text>
-)}
-    <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <Text style={styles.buttonText}>Pick Image</Text>
+        </TouchableOpacity>
+        {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
+        ) : (
+          <Text>No image selected</Text>
+        )}
+         <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
       <Text style={styles.deleteButtonText}>Remove</Text>
-    </TouchableOpacity>
-    <Text style={styles.label}>Health Status:</Text>
+        </TouchableOpacity>
+      <Text style={styles.label}>Health Status:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
                 items={[

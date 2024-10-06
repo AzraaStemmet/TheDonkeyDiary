@@ -86,18 +86,15 @@ const DonkeyReportScreen = () => {
               <Text>No image available</Text>
             )}
 
-            <Text style={styles.subtitle}>Treatment Records:</Text>
-            {donkey.treatments && donkey.treatments.length > 0 ? (
-              donkey.treatments.map((treatment, index) => (
-                <View key={index} style={styles.treatmentCard}>
-                  <Text>Date: {treatment.date}</Text>
-                  <Text>Type: {treatment.type}</Text>
-                  <Text>Notes: {treatment.notes}</Text>
-                </View>
-              ))
-            ) : (
-              <Text>No treatment records available.</Text>
-            )}
+            <Text>Health Status: {donkey.healthStatus}</Text>
+            <Text>Symptoms:  {donkey.symptoms} </Text>
+            <Text>Other Symptoms: {donkey.othersymptoms}</Text>
+            <Text>Medication: {donkey.medication}</Text>
+            <Text>Medication Date: {donkey.medicationDate}</Text>
+            <Text>Medical Record: {donkey.medicalRecord}</Text>
+            <Text>Last Checkup Date:{donkey.lastCheckup}</Text>
+
+
 
             <TouchableOpacity
               style={styles.customButton}
