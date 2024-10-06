@@ -19,6 +19,9 @@ import HealthRecordScreen from './Screens/HealthRecordScreen';
 import EditDonkeyScreen from './Screens/EditDonkeyScreen'; 
 import DonkeyReport from './Screens/Reports';
 import EditConfirmationScreen from './Screens/EditConfirmationScreen';
+import ResetPasswordScreen from './Screens/ResetPassword';
+
+
 
 // Loading screen image
 const logoImage = require('./assets/bahananwa.jpg');
@@ -87,6 +90,7 @@ const App = () => {
         <Stack.Screen name='Edit Donkey Details' component={EditDonkeyScreen} />
         <Stack.Screen name="View Donkey Reports" component={DonkeyReport} />
         <Stack.Screen name='Edit Confirmation' component={EditConfirmationScreen} />
+        <Stack.Screen name='Reset Password' component={ResetPasswordScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

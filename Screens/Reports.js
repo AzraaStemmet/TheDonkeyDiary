@@ -26,18 +26,6 @@ const DonkeyReport = () => {
   const [filterGender, setFilterGender] = useState('');
   const [filterAge, setFilterAge] = useState('');
   const [filterHealthStatus, setFilterHealthStatus] = useState('');
-  const getHealthStatusStyle = (health) => {
-    switch (health) {
-      case 'Good':
-        return { backgroundColor: '#86B049', color: 'white' };
-      case 'Mild':
-        return { backgroundColor: '#FFBF00', color: 'black' };
-      case 'Serious':
-        return { backgroundColor: '#FF0000', color: 'white' };
-      default:
-        return {};
-    }
-  };
   // initializing state variables 
 
   useEffect(() => {
@@ -60,7 +48,7 @@ const DonkeyReport = () => {
         (donkey.name && donkey.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
         (filterGender ? donkey.gender && donkey.gender.toLowerCase() === filterGender.toLowerCase() : true) &&
         (filterAge ? checkAgeRange(donkey.age, filterAge) : true) &&
-        (filterHealthStatus ? donkey.health && donkey.health.toLowerCase() === filterHealthStatus.toLowerCase() : true)
+        (filterHealthStatus ? donkey.healthStatus && donkey.healthStatus.toLowerCase() === filterHealthStatus.toLowerCase() : true)
       );
     });
     setFilteredDonkeys(filtered);
@@ -87,6 +75,15 @@ const DonkeyReport = () => {
       </p>
     `;
   
+    const healthStatusColor = (status) => {
+      switch (status) {
+        case 'Good': return '#93dc5c'; // Green
+        case 'Mild': return '#fbad3c'; // Orange
+        case 'Serious': return '#df2c14'; // Red
+        default: return '#ffffff'; // Default color (white)
+      }
+    };
+  
     return `
      <html>
        <head>
@@ -102,7 +99,7 @@ const DonkeyReport = () => {
              border: 1px solid #cccccc;
            }
            th {
-             background-color: #AD957E; /* Match your app's menu strip color */
+             background-color: #623d23; 
              color: white;
              padding: 10px;
              text-align: center;
@@ -112,10 +109,10 @@ const DonkeyReport = () => {
              text-align: center;
            }
            tr:nth-child(even) {
-             background-color: #f5f5dc; /* Light background for alternate rows */
+             background-color: #f5f5dc; 
            }
            tr:nth-child(odd) {
-             background-color: #ffffff; /* White background for alternate rows */
+             background-color: #ffffff; 
            }
            h2 {
              text-align: center;
@@ -139,6 +136,8 @@ const DonkeyReport = () => {
                <th>Age</th>
                <th>Gender</th>
                <th>Health Status</th>
+               <th>Owner</th>
+               <th>Healthcare Worker</th>
                <th>Location</th>
              </tr>
            </thead>
@@ -149,8 +148,13 @@ const DonkeyReport = () => {
                  <td>${donkey.name}</td>
                  <td>${donkey.age}</td>
                  <td>${donkey.gender}</td>
-                 <td>${donkey.health}</td>
-                 <td>${donkey.location}</td>
+                 <td style="background-color: ${healthStatusColor(donkey.healthStatus)};">${donkey.healthStatus}</td>
+                 <td>${donkey.owner}</td>
+                 <td>${donkey.healthcareWorker}</td>
+                 <td>${typeof donkey.location === 'object' 
+                       ? `${donkey.location.latitude}, ${donkey.location.longitude}` 
+                       : donkey.location}
+                 </td>
                </tr>
              `).join('')}
            </tbody>
@@ -159,6 +163,8 @@ const DonkeyReport = () => {
      </html>
    `;
   };
+  
+  
   
   let generatePDF = async () => {
     const htmlContent = generateTable(filteredDonkeys, filterGender, filterAge, filterHealthStatus); // Pass the filters
@@ -173,7 +179,7 @@ const DonkeyReport = () => {
     <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
-            <Text style={styles.buttonTextCust}>Home</Text>
+            <Text style={styles.buttonTextCust}>Return to Home</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
@@ -188,7 +194,7 @@ const DonkeyReport = () => {
     <ScrollView style={styles.container}>
       <TextInput
         style={styles.searchInput}
-        placeholder="Search by ID"
+        placeholder="Search by Name"
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -242,31 +248,37 @@ const DonkeyReport = () => {
               <Text style={styles.header}>Age</Text>
               <Text style={styles.header}>Gender</Text>
               <Text style={styles.header}>Health Status</Text>
-              <Text style={styles.headerLocation}>Location</Text>
               <Text style={styles.header}>Owner</Text>
-              <Text style={styles.header}>Health care worker</Text>
+              <Text style={styles.header}>Healthcare Worker</Text>
+              <Text style={styles.headerLocation}>Location</Text>
               <Text style={styles.headerID}>ID</Text>
             </View>
           </ScrollView>
           {filteredDonkeys.map((donkey) => (
-            <ScrollView horizontal={true} key={donkey.id} style={styles.row}>
-              <Text style={styles.cell}>{donkey.name}</Text>
-              <Text style={styles.cell}>{donkey.age}</Text>
-              <Text style={styles.cell}>{donkey.gender}</Text>
-              <Text style={[styles.cell, getHealthStatusStyle(donkey.health)]}>
-                {donkey.health}
-              </Text>
-              <Text style={styles.cellLocation}>
-                {typeof donkey.location === 'object'
-                ? '${donkey.location.latitude, ${donkey.location.longtitude}'
-                : donkey.location}
-
-              </Text>
-              <Text style={styles.cell}>{donkey.owner}</Text>
-              <Text style={styles.cell}>{donkey.healthcareWorker}</Text>
-              <Text style={styles.cell}>{donkey.id}</Text>
-            </ScrollView>
-          ))}
+  <ScrollView horizontal={true} key={donkey.id} style={styles.row}>
+    <Text style={styles.cell}>{donkey.name}</Text>
+    <Text style={styles.cell}>{donkey.age}</Text>
+    <Text style={styles.cell}>{donkey.gender}</Text>
+    <Text
+      style={[
+        styles.cell,
+        donkey.healthStatus === 'Good' && { backgroundColor: '#93dc5c' },
+        donkey.healthStatus === 'Mild' && { backgroundColor: '#fbad3c' },
+        donkey.healthStatus === 'Serious' && { backgroundColor: '#df2c14' }
+      ]}
+    >
+      {donkey.healthStatus}
+    </Text>
+    <Text style={styles.cell}>{donkey.owner}</Text>
+    <Text style={styles.cell}>{donkey.healthcareWorker}</Text>
+    <Text style={styles.cellLocation}>
+      {typeof donkey.location === 'object'
+        ? `${donkey.location.latitude}, ${donkey.location.longitude}`
+        : donkey.location}
+    </Text>
+    <Text style={styles.cell}>{donkey.id}</Text>
+  </ScrollView>
+))}
         </View>
       </ScrollView>
       <TouchableOpacity style={styles.customButton} onPress={generatePDF}>
@@ -284,11 +296,11 @@ const styles = StyleSheet.create({
       backgroundColor: '#f5f5dc',
     },
     containers: {
-      width: '100%', // Adjust as needed
-      maxWidth: 400, // Maximum width for large screens
-      padding: 20, // Add padding if needed
-      backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
-      borderRadius: 10, // Rounded corners
+      width: '100%', 
+      maxWidth: 400, 
+      padding: 20,
+      backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+      borderRadius: 10, 
     },
     customButton: {
       backgroundColor: '#AD957E',
@@ -307,7 +319,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-around',
       paddingTop: 10,
       paddingBottom: 10,
-      backgroundColor: 'rgba(173, 149, 126, 0.75)', // Semi-transparent background for the menu
+      backgroundColor: 'rgba(173, 149, 126, 0.75)', 
     },
     menuButton: {
       padding: 5,
@@ -324,7 +336,7 @@ const styles = StyleSheet.create({
       borderRadius: 6,
     },
     table: {
-      minWidth: 700, // Ensure the table has a minimum width
+      minWidth: 700, 
     },
     headerRow: {
       flexDirection: 'row',
@@ -343,7 +355,7 @@ const styles = StyleSheet.create({
       borderRadius: 10,
     },
     header: {
-      minWidth: 120, // Ensure all headers have a minimum width
+      minWidth: 120, 
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center',
@@ -358,8 +370,9 @@ const styles = StyleSheet.create({
       padding: 5,
       minWidth: 120,
     },
+    
     headerLocation: {
-      minWidth: 300, // Ensure all headers have a minimum width
+      minWidth: 300, 
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center',
@@ -376,7 +389,7 @@ const styles = StyleSheet.create({
 
     },
     headerID:{
-      minWidth: 300, // Ensure all headers have a minimum width
+      minWidth: 300, 
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center',

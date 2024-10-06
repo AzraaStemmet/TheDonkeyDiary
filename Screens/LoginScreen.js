@@ -45,6 +45,9 @@ const LoginScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Reset Password')}>
+          <Text style={styles.linkText}>Forgot Password?</Text>
+       </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -79,6 +82,11 @@ const styles = StyleSheet.create({
     color: '#AD957E', // A soft, earthy brown
     marginBottom: 20,
     textAlign: 'center',
+  },
+  linkText: {
+    marginTop: 10,
+    color: '#AD957E',
+
   },
   button: {
     backgroundColor: '#AD957E',
