@@ -57,43 +57,76 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
         ) : (
           <Text>No image available</Text>
         )}
+<View style={styles.detailsContainer}>
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>ID:</Text>
+    <Text style={styles.detailsValue}>{donkey.id}</Text>
+  </View>
 
-        <View style={styles.detailsContainer}>
-          <View style={styles.column}>
-            <Text style={styles.detailsText}>ID:</Text>
-            <Text style={styles.detailsText}>Name:</Text>
-            <Text style={styles.detailsText}>Gender:</Text>
-            <Text style={styles.detailsText}>Age:</Text>
-            <Text style={styles.detailsText}>Location:</Text>
-            <Text style={styles.detailsText}>Owner:</Text>
-            <Text style={styles.detailsText}>Health Status:</Text>
-            <Text style={styles.detailsText}>Symptoms:</Text>
-            <Text style={styles.detailsText}>Other Symptoms:</Text>
-            <Text style={styles.detailsText}>Medication:</Text>
-            <Text style={styles.detailsText}>Medication Date:</Text>
-            <Text style={styles.detailsText}>Medical Record:</Text>
-            <Text style={styles.detailsText}>Last Checkup Date:</Text>
-          </View>
-          <View style={styles.column}>
-            <Text style={styles.detailsValue}>{donkey.id}</Text>
-            <Text style={styles.detailsValue}>{donkey.name}</Text>
-            <Text style={styles.detailsValue}>{donkey.gender}</Text>
-            <Text style={styles.detailsValue}>{donkey.age}</Text>
-            <Text style={styles.detailsValue}>{donkey.location}</Text>
-            <Text style={styles.detailsValue}>{donkey.owner}</Text>
-            <Text style={styles.detailsValue}>{donkey.healthStatus}</Text>
-            <Text style={styles.detailsValue}>{donkey.symptoms}</Text>
-            <Text style={styles.detailsValue}>{donkey.othersymptoms}</Text>
-            <Text style={styles.detailsValue}>{donkey.medication}</Text>
-            <Text style={styles.detailsValue}>
-              {donkey.medicationDate ? new Date(donkey.medicationDate).toLocaleDateString() : 'Not specified'}
-            </Text>
-            <Text style={styles.detailsValue}>{donkey.medicalRecord}</Text>
-            <Text style={styles.detailsValue}>
-              {donkey.lastCheckup ? new Date(donkey.lastCheckup).toLocaleDateString() : 'Not specified'}
-            </Text>
-          </View>
-        </View>
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Name:</Text>
+    <Text style={styles.detailsValue}>{donkey.name}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Gender:</Text>
+    <Text style={styles.detailsValue}>{donkey.gender}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Age:</Text>
+    <Text style={styles.detailsValue}>{donkey.age}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Location:</Text>
+    <Text style={styles.detailsValue}>{donkey.location}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Owner:</Text>
+    <Text style={styles.detailsValue}>{donkey.owner}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Health Status:</Text>
+    <Text style={styles.detailsValue}>{donkey.healthStatus}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Symptoms:</Text>
+    <Text style={styles.detailsValue}>{donkey.symptoms}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Other Symptoms:</Text>
+    <Text style={styles.detailsValue}>{donkey.othersymptoms}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Medication:</Text>
+    <Text style={styles.detailsValue}>{donkey.medication}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Medication Date:</Text>
+    <Text style={styles.detailsValue}>
+      {donkey.medicationDate ? new Date(donkey.medicationDate).toLocaleDateString() : 'Not specified'}
+    </Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Medical Record:</Text>
+    <Text style={styles.detailsValue}>{donkey.medicalRecord}</Text>
+  </View>
+
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>Last Checkup Date:</Text>
+    <Text style={styles.detailsValue}>
+      {donkey.lastCheckup ? new Date(donkey.lastCheckup).toLocaleDateString() : 'Not specified'}
+    </Text>
+  </View>
+</View>
 
         <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.customButtonText}>Return to Home</Text>
@@ -130,11 +163,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     backgroundColor: '#f5f5dc',
   },
-  row: {
-    flexDirection: 'row',    // Makes the text and value in the same line
-    justifyContent: 'space-between', // Add space between the text and value
-    marginBottom: 10,        // Add some space between each row
-  },
+ 
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -155,27 +184,36 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
+  column: {
+    flex: 1,                          // Ensure both columns take equal space
+    paddingHorizontal: 10,
+  },
   detailsContainer: {
-    flexDirection: 'row',
+    paddingHorizontal: 6,
     marginBottom: 20,
   },
-  column: {
-    flex: 1,
-    paddingHorizontal: 10,
+  row: {
+    flexDirection: 'row',          // Make sure each field has label and value in one row
+    alignItems: 'flex-start',      // Align items to the top in case of multi-line text
+    marginBottom: 10,
   },
   detailsText: {
     fontSize: 16,
     color: '#000',
-    marginBottom: 10,
+    width: 130,                   // Fixed width for labels to prevent overlap
+    textAlign: 'left',            // Align text to the left
+    marginTop: 4,
   },
   detailsValue: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#000',
-    marginBottom: 10,
+    flex: 1,                      // Let values take up the remaining space
     borderWidth: 1,
     borderColor: '#000',
     padding: 8,
     borderRadius: 5,
+    textAlign: 'right',           // Align values to the right
+    flexWrap: 'wrap',             // Ensure multi-line values wrap correctly
   },
   customButton: {
     backgroundColor: '#AD957E',
