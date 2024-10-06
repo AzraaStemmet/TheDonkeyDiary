@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, SafeAreaView, View, TextInput, Image, Button, Text, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
-import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDoc, doc, updateDoc, addDoc, setDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, imageURL } from 'firebase/storage';
 import { app } from '../firebaseConfig'; // Update the path if necessary
 import RNPickerSelect from 'react-native-picker-select';
@@ -13,6 +13,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
 import * as FileSystem from 'expo-file-system';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 
 
 const RegisterDonkeyScreen = () => {
@@ -39,23 +40,26 @@ const RegisterDonkeyScreen = () => {
   const [symptoms, setSymptoms] = useState('');
   const [othersymptoms, setOtherSymptoms] = useState('');
   const [medication, setMedication] = useState('');
-  const [medicationDate, setMedicationDate] = useState(new Date());
+  const [medicationDate, setMedicationDate] = useState(null);
   const [medicalRecord, setMedicalRecord] = useState('');
   const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
-  const [lastCheckup, setLastCheckup] = useState(new Date());
+  const [lastCheckup, setLastCheckup] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || lastCheckup;
     setShowDatePicker(Platform.OS === 'ios');
-    setLastCheckup(currentDate);
-};
+    if (selectedDate) {
+      setLastCheckup(selectedDate);
+    }
+  };
 
-const onMedicationDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || medicationDate;
+  const onMedicationDateChange = (event, selectedDate) => {
     setShowMedicationDatePicker(Platform.OS === 'ios');
-    setMedicationDate(currentDate);
-};
+    if (selectedDate) {
+      setMedicationDate(selectedDate);
+    }
+  };
 
   useEffect(() => {
     checkPermissions();
@@ -75,31 +79,12 @@ const onMedicationDateChange = (event, selectedDate) => {
     setId(newId);
   };
 
-  const handleMapPress = async (e) => {
+  const handleMapPress = (e) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
-    const locationString = `${latitude}, ${longitude}`; // Fix format
-    setLocation(locationString); // Save location as string
-  
-    try {
-      const donkeyDocRef = doc(db, 'donkeys', id); 
-      
-      // Check if document exists
-      const docSnapshot = await getDoc(donkeyDocRef);
-      if (docSnapshot.exists()) {
-        // Update the existing document with the location
-        await updateDoc(donkeyDocRef, {
-          location: locationString,
-        });
-        console.log('Location updated successfully!');
-      } else {
-        // If the document doesn't exist, create a new one
-        await setDoc(donkeyDocRef, { location: locationString });
-        console.log('Document created and location saved!');
-      }
-    } catch (error) {
-      console.error('Error updating location:', error);
-    }
-  }; 
+    setSelectedLocation({ latitude, longitude });
+    setLocation(`${latitude}, ${longitude}`);
+  };
+
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
@@ -121,14 +106,11 @@ const onMedicationDateChange = (event, selectedDate) => {
   
       console.log('File available at', imageUrl);
   
-      // Save the imageUrl to Firestore
-      const donkeyDocRef = doc(db, 'donkeys', id);
-      await updateDoc(donkeyDocRef, { imageURL: imageUrl });
-  
-      Alert.alert('Upload Success', 'Image uploaded successfully!');
+      return imageUrl;
     } catch (error) {
       console.error("Error uploading image:", error);
       Alert.alert('Upload Error', error.message);
+      throw error;
     }
   };
   
@@ -164,7 +146,6 @@ const onMedicationDateChange = (event, selectedDate) => {
       console.log('Image URI:', imageUri);  // Log the URI for debugging
       setImage(imageUri);  // Update the image state with the URI
       await saveImageLocally(imageUri);  // Save image locally
-      await uploadImage(imageUri);  // Upload image to Firebase
     } else {
       console.log("Image picking cancelled");
     }
@@ -196,7 +177,8 @@ const onMedicationDateChange = (event, selectedDate) => {
         let imageUrl = '';
         if (image) {
           imageUrl = await uploadImage(image);
-        } 
+        }
+
         const donkey = {
           id,
           name,
@@ -204,18 +186,31 @@ const onMedicationDateChange = (event, selectedDate) => {
           age,
           location,
           owner,
-          imageUrl, // Add this line
+          imageUrl, // Changed from 'imageURL' to 'imageUrl'
           healthStatus,
           symptoms,
           othersymptoms,
           medication,
-          medicationDate,
+          medicationDate: medicationDate ? medicationDate.toISOString() : null,
           medicalRecord,
-          lastCheckup,
+          lastCheckup: lastCheckup ? lastCheckup.toISOString() : null,
         };
-        // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
-          const docRef = await addDoc(collection(db, 'donkeys'), donkey);
-        
+
+        // Add donkey details to Firebase
+        const docRef = await addDoc(collection(db, 'donkeys'), donkey);
+
+        // Update the document with the location
+        await updateDoc(docRef, {
+          location: location,
+        });
+
+        // If there's an image, update the document with the image URL
+        if (imageUrl) {
+          await updateDoc(docRef, { imageUrl: imageUrl }); // Changed from 'imageURL' to 'imageUrl'
+        }
+
+        console.log('Donkey added successfully with ID: ', docRef.id);
+
         // Navigate to the confirmation screen
         navigation.navigate('Confirmation Screen', { donkey });
       } catch (error) {
@@ -242,6 +237,11 @@ const onMedicationDateChange = (event, selectedDate) => {
     setOwner('');
     setImage('');
     generateUniqueId(); 
+  };
+
+  const formatDate = (date) => {
+    if (!date) return 'No date selected';
+    return format(date, 'MMMM d, yyyy');
   };
 
   return (
@@ -333,12 +333,12 @@ const onMedicationDateChange = (event, selectedDate) => {
             initialRegion={region}
             onPress={handleMapPress}
           >
-            {location && <Marker coordinate={{ latitude: parseFloat(location.split(', ')[0]), longitude: parseFloat(location.split(', ')[1]) }} />}
+            {selectedLocation && <Marker coordinate={selectedLocation} />}
           </MapView>
         </View>
 
         <Text style={styles.label}>Selected Location:</Text>
-        <Text>{location ? `${location.latitude}, ${location.longitude}` : 'No location selected'}</Text>
+        <Text>{selectedLocation ? `${selectedLocation.latitude}, ${selectedLocation.longitude}` : 'No location selected'}</Text>
         <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
         <Text style={styles.buttonText}>Select Location</Text>
 
@@ -424,10 +424,11 @@ const onMedicationDateChange = (event, selectedDate) => {
             <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
               <Text style={styles.buttonText}>Select Date</Text>
             </TouchableOpacity>
+            <Text style={styles.dateDisplay}>{formatDate(medicationDate)}</Text>
             {showMedicationDatePicker && (
                 <DateTimePicker
               
-                    value={medicationDate}
+                    value={medicationDate || new Date()}
                     mode="date"
                     display="default"
                     onChange={onMedicationDateChange}
@@ -438,9 +439,10 @@ const onMedicationDateChange = (event, selectedDate) => {
             <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
                 <Text style={styles.buttonText}>Select Date</Text>
             </TouchableOpacity>
+            <Text style={styles.dateDisplay}>{formatDate(lastCheckup)}</Text>
             {showDatePicker && (
                 <DateTimePicker
-                    value={lastCheckup}
+                    value={lastCheckup || new Date()}
                     mode="date"
                     display="default"
                     onChange={onDateChange}
@@ -591,6 +593,12 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     backgroundColor: '#AD957E',
+  },
+  dateDisplay: {
+    fontSize: 16,
+    marginTop: 5,
+    marginBottom: 10,
+    color: '#333',
   },
 });
 
