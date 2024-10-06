@@ -98,26 +98,26 @@ const HealthRecordScreen = () => {
     return (
         <ScrollView style={styles.background}>
 
-<View style={styles.menuStrip}>
+    <View style={styles.menuStrip}>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
-  <Text style={styles.buttonTextCust}>Home</Text>
-</TouchableOpacity>
+    <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
+    <Text style={styles.buttonTextCust}>Home</Text>
+    </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
-  <Text style={styles.buttonTextCust}>Register Donkey</Text>
-</TouchableOpacity>
+    <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
+    <Text style={styles.buttonTextCust}>Register Donkey</Text>
+    </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-  <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-</TouchableOpacity>
+    <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+    <Text style={styles.buttonTextCust}>Search for Donkey</Text>
+    </TouchableOpacity>
 
-<TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
-  <Text style={styles.buttonTextCust}>Sign Out</Text>
-</TouchableOpacity>
+    <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+    <Text style={styles.buttonTextCust}>Sign Out</Text>
+    </TouchableOpacity>
 
-</View>
-<ScrollView style={styles.container}>
+    </View>
+    <ScrollView style={styles.container}>
             <Text style={styles.label}>Health Status:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Alert, ScrollView } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; // Ensure this path is correct
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 const WorkersScreen = ({ navigation }) => {
   const handleSignOut = async () => {
@@ -20,7 +20,7 @@ const WorkersScreen = ({ navigation }) => {
   return (
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       
-        <View style={styles.menuStrip}>
+      <View style={styles.menuStrip}>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
             <Text style={styles.buttonTextCust}>Home</Text>
           </TouchableOpacity>
@@ -33,8 +33,8 @@ const WorkersScreen = ({ navigation }) => {
           <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
             <Text style={styles.buttonTextCust}>Sign Out</Text>
           </TouchableOpacity>
-        </View>
-        <ScrollView contentContainerStyle={styles.container}>
+      </View>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonText}>Register Donkey</Text>

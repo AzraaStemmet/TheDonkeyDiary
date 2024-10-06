@@ -43,6 +43,8 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     setLocation({ latitude: defaultLatitude, longitude: defaultLongitude });
     setOwner('');
     setImage('');
+    setShowLastCheckupPicker('');
+    setShowMedicationDatePicker('');
     generateUniqueId(); // Generate a new ID when resetting
   };
 
@@ -190,73 +192,71 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
   return (// Standardized menustrip and below is the labels and textboxes that displays the donkeys information
     <ScrollView style={styles.scrollView}>
-    <View style={styles.menuStrip}>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonTextCust}>Home</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
-        <Text style={styles.buttonTextCust}>Register Donkey</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
-        <Text style={styles.buttonTextCust}>Search for Donkey</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
-        <Text style={styles.buttonTextCust}>Sign Out</Text>
-      </TouchableOpacity>
-    </View>
+        <View style={styles.menuStrip}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.buttonTextCust}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
+            <Text style={styles.buttonTextCust}>Register Donkey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Search for Donkey')}>
+            <Text style={styles.buttonTextCust}>Search for Donkey</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={handleSignOut}>
+            <Text style={styles.buttonTextCust}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
 
-    <View style={styles.container}>
-    <Text style={styles.title}>Edit the Donkey's Details</Text>
+        <View style={styles.container}>
+          <Text style={styles.title}>Edit the Donkey's Details</Text>
 
-    <Text style={styles.label}>Donkey Picture:</Text>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.donkeyImage} />
-        ) : (
-          <Text>No image available</Text>
-        )}
-        <TouchableOpacity style={styles.button} onPress={pickImage}>
-          <Text style={styles.buttonText}>{image ? 'Change Image' : 'Add Image'}</Text>
-        </TouchableOpacity>
-      
-        <Text style={styles.label}>Name:</Text>
-        <TextInput
-          style={styles.input}
-          value={donkey.name}
-          onChangeText={(text) => setDonkey({ ...donkey, name: text })}
-          placeholder="Donkey's Name" />
+          <Text style={styles.label}>Donkey Picture:</Text>
+              {image ? (
+                <Image source={{ uri: image }} style={styles.donkeyImage} />
+              ) : (
+                <Text>No image available</Text>
+              )}
+              <TouchableOpacity style={styles.button} onPress={pickImage}>
+                <Text style={styles.buttonText}>{image ? 'Change Image' : 'Add Image'}</Text>
+              </TouchableOpacity>
+            
+              <Text style={styles.label}>Name:</Text>
+              <TextInput
+                style={styles.input}
+                value={donkey.name}
+                onChangeText={(text) => setDonkey({ ...donkey, name: text })}
+                placeholder="Donkey's Name" />
 
 
-        <Text style={styles.label}>Gender:</Text>
-         <RNPickerSelect
-          onValueChange={(value) => setDonkey({ ...donkey, gender: value })} // we used a picker for the user to select the gender for consistency
-          items={[
-         { label: 'Male', value: 'Male' },
-         { label: 'Female', value: 'Female' },
-         ]}
-          style={pickerSelectStyles}
-          value={donkey.gender}  />
+          <Text style={styles.label}>Gender:</Text>
+            <RNPickerSelect
+              onValueChange={(value) => setDonkey({ ...donkey, gender: value })} // we used a picker for the user to select the gender for consistency
+              items={[
+            { label: 'Male', value: 'Male' },
+            { label: 'Female', value: 'Female' },
+            ]}
+              style={pickerSelectStyles}
+              value={donkey.gender}  />
    
-
-      
-        <Text style={styles.label}>Age:</Text>
-        <RNPickerSelect
-          onValueChange={(value) => setDonkey({ ...donkey, age: value })}
-          items={[
-            { label: '< 12 months', value: '< 12 months' },
-            { label: '1-5 years', value: '1-5yrs' },
-            { label: '6-10 years', value: '6-10yrs' },
-            { label: 'Older than 10 years', value: 'older than 10yrs' },
-            { label: 'Unknown', value: 'unknown' },
-          ]}
-          style={pickerSelectStyles}
-          value={donkey.age}  />
-        <Text style={styles.label}>Owner's Name:</Text>
-        <TextInput
-          style={styles.input}
-          value={donkey.owner}
-          onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
-          placeholder="Owner's Name"
-        />
+          <Text style={styles.label}>Age:</Text>
+            <RNPickerSelect
+              onValueChange={(value) => setDonkey({ ...donkey, age: value })}
+              items={[
+                { label: '< 12 months', value: '< 12 months' },
+                { label: '1-5 years', value: '1-5yrs' },
+                { label: '6-10 years', value: '6-10yrs' },
+                { label: 'Older than 10 years', value: 'older than 10yrs' },
+                { label: 'Unknown', value: 'unknown' },
+              ]}
+              style={pickerSelectStyles}
+              value={donkey.age}  />
+          <Text style={styles.label}>Owner's Name:</Text>
+            <TextInput
+              style={styles.input}
+              value={donkey.owner}
+              onChangeText={(text) => setDonkey({ ...donkey, owner: text })}
+              placeholder="Owner's Name"
+            />
         <Text style={styles.label}>Location:</Text>
           <TextInput
             style={styles.input}
@@ -288,53 +288,53 @@ const EditDonkeyScreen = ({ route, navigation }) => {
             value={donkey.health}  // This binds the picker to the health status in the donkey state
           />
 
-<Text style={styles.label}>Symptoms:</Text>
-        <RNPickerSelect
-          onValueChange={(value) => setDonkey({ ...donkey, symptoms: value })}
-          items={[
-            { label: 'None', value: 'None'},
-            { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
-            { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
-            { label: 'Wound', value: 'Wound' },
-            { label: 'Loss of Appetite', value: 'loss_of_appetite' },
-            { label: 'Skin infection', value: 'Skin infection'},
-            { label: 'Lame', value: 'Lame'},
-            { label: 'Misformed hoof', value: 'Misformed hoof'},
-            { label: 'Infected eye', value: 'Infected eye'},
-            { label: 'Diarrhoea', value: 'Diarrhoea'},
-            { label: 'Runny nose', value: 'Runny nose'},
-            { label: 'Coughing', value: 'Coughing'},
-          ]}
-          style={pickerSelectStyles}
-          value={donkey.symptoms} />
+        <Text style={styles.label}>Symptoms:</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setDonkey({ ...donkey, symptoms: value })}
+            items={[
+              { label: 'None', value: 'None'},
+              { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+              { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+              { label: 'Wound', value: 'Wound' },
+              { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+              { label: 'Skin infection', value: 'Skin infection'},
+              { label: 'Lame', value: 'Lame'},
+              { label: 'Misformed hoof', value: 'Misformed hoof'},
+              { label: 'Infected eye', value: 'Infected eye'},
+              { label: 'Diarrhoea', value: 'Diarrhoea'},
+              { label: 'Runny nose', value: 'Runny nose'},
+              { label: 'Coughing', value: 'Coughing'},
+            ]}
+            style={pickerSelectStyles}
+            value={donkey.symptoms} />
           
-          <Text style={styles.label}>Other Symptoms:</Text>
-        <RNPickerSelect
-          onValueChange={(value) => setDonkey({ ...donkey, othersymptoms: value })}
-          items={[
-            { label: 'None', value: 'None'},
-            { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
-            { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
-            { label: 'Wound', value: 'Wound' },
-            { label: 'Loss of Appetite', value: 'loss_of_appetite' },
-            { label: 'Skin infection', value: 'Skin infection'},
-            { label: 'Lame', value: 'Lame'},
-            { label: 'Misformed hoof', value: 'Misformed hoof'},
-            { label: 'Infected eye', value: 'Infected eye'},
-            { label: 'Diarrhoea', value: 'Diarrhoea'},
-            { label: 'Runny nose', value: 'Runny nose'},
-            { label: 'Coughing', value: 'Coughing'},
-          ]}
-          style={pickerSelectStyles}
-          value={donkey.othersymptoms} />
+        <Text style={styles.label}>Other Symptoms:</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setDonkey({ ...donkey, othersymptoms: value })}
+            items={[
+              { label: 'None', value: 'None'},
+              { label: 'Chafe marks (from tack)', value: 'Chafe marks (from tack)' },
+              { label: 'Lying down/ not able to stand', value: 'Lying down/ not able to stand' },
+              { label: 'Wound', value: 'Wound' },
+              { label: 'Loss of Appetite', value: 'loss_of_appetite' },
+              { label: 'Skin infection', value: 'Skin infection'},
+              { label: 'Lame', value: 'Lame'},
+              { label: 'Misformed hoof', value: 'Misformed hoof'},
+              { label: 'Infected eye', value: 'Infected eye'},
+              { label: 'Diarrhoea', value: 'Diarrhoea'},
+              { label: 'Runny nose', value: 'Runny nose'},
+              { label: 'Coughing', value: 'Coughing'},
+            ]}
+            style={pickerSelectStyles}
+            value={donkey.othersymptoms} />
 
         <Text style={styles.label}>Medication:</Text>
-        <TextInput
-          style={styles.input}
-          value={donkey.medication}
-          onChangeText={(text) => setDonkey({ ...donkey, medication: text })}
-          placeholder="Enter Medication Name"
-        />
+          <TextInput
+            style={styles.input}
+            value={donkey.medication}
+            onChangeText={(text) => setDonkey({ ...donkey, medication: text })}
+            placeholder="Enter Medication Name"
+          />
 
         <Text style={styles.label}>Date Medication Administered:</Text>
           <TouchableOpacity style={styles.button} onPress={() => setShowMedicationDatePicker(true)}>
@@ -384,15 +384,11 @@ const EditDonkeyScreen = ({ route, navigation }) => {
             numberOfLines={4}
         />
 
-
-
         <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>  
                   <Text style={styles.buttonText}>Save Changes</Text> 
               </TouchableOpacity>
-          
           </View>
-          
-        </ScrollView>
+    </ScrollView>
   );
 };
 
