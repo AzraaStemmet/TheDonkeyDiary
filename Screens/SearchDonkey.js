@@ -194,20 +194,68 @@ function SearchDonkey() {
             />
           )}
           
-          <Text>Donkey Details</Text>
-            <Text>Donkey Name: {donkeyDetails.name}</Text>
-            <Text>Donkey Age: {donkeyDetails.age}</Text>
-            <Text>Donkey Owner: {donkeyDetails.owner}</Text>
-            <Text>Location: {donkeyDetails.location}</Text>
-            <Text>Gender: {donkeyDetails.gender}</Text>
-            <Text>          Health Details         </Text>
-            <Text>Health Status: {donkeyDetails.healthStatus}</Text>
-            <Text>Symptoms: {donkeyDetails.symptoms}</Text>
-            <Text>Other Symptoms: {donkeyDetails.othersymptoms}</Text>
-            <Text>Medication: {donkeyDetails.medication}</Text>
-            <Text>Medication Date: {donkeyDetails.medicationDate ? new Date(donkeyDetails.medicationDate).toLocaleDateString() : 'N/A'}</Text>
-            <Text>Medical Record: {donkeyDetails.medicalRecord}</Text>
-            
+          <View style={styles.container}>
+  <Text style={styles.header}>Donkey Details</Text>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Donkey Name:</Text>
+    <Text style={styles.value}>{donkeyDetails.name}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Donkey Age:</Text>
+    <Text style={styles.value}>{donkeyDetails.age}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Donkey Owner:</Text>
+    <Text style={styles.value}>{donkeyDetails.owner}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Location:</Text>
+    <Text style={styles.value}>{donkeyDetails.location}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Gender:</Text>
+    <Text style={styles.value}>{donkeyDetails.gender}</Text>
+  </View>
+
+  <Text style={styles.header}>Health Details</Text>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Health Status:</Text>
+    <Text style={styles.value}>{donkeyDetails.healthStatus}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Symptoms:</Text>
+    <Text style={styles.value}>{donkeyDetails.symptoms}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Other Symptoms:</Text>
+    <Text style={styles.value}>{donkeyDetails.othersymptoms}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Medication:</Text>
+    <Text style={styles.value}>{donkeyDetails.medication}</Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Medication Date:</Text>
+    <Text style={styles.value}>
+      {donkeyDetails.medicationDate ? new Date(donkeyDetails.medicationDate).toLocaleDateString() : 'N/A'}
+    </Text>
+  </View>
+
+  <View style={styles.detailRow}>
+    <Text style={styles.label}>Medical Record:</Text>
+    <Text style={styles.value}>{donkeyDetails.medicalRecord}</Text>
+  </View>
+</View>
             
           <TouchableOpacity style={styles.pdfButton} onPress={generatePDF}>
            <Text style={styles.pdfButtonText}>Export as PDF</Text>
@@ -235,6 +283,7 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'cover',
     marginBottom: 10,
+    borderRadius: 6,
   },
   pdfButton: {
     marginTop:10,
@@ -310,8 +359,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: '#FFFAF0',
+    paddingHorizontal: 1,
     borderRadius: 5,
     marginBottom: 5,
   },
@@ -344,6 +392,26 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: '#f5f5dc',
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#4f4f4f',           // Darker color for headers
+    marginBottom: 10,           // Space below the headers
+    marginTop:15,
+    textAlign: 'center',        // Center the headers
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    flex: 1.5,                    // Labels take up some space
+    color: '#333',              // Slightly darkened color for labels
+  },
+  value: {
+    fontSize: 15,
+    flex: 2,                  // Values take up more space than labels
+    color: '#555',              // Use a softer color for values
+    textAlign: 'left',          // Align the values to the left
   },
 });
 
