@@ -247,7 +247,7 @@ const RegisterDonkeyScreen = () => {
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home')}>
-            <Text style={styles.buttonTextCust}>Return to Home</Text>
+            <Text style={styles.buttonTextCust}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register Donkey')}>
             <Text style={styles.buttonTextCust}>Register Donkey</Text>
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,    // Adds height to the button
     borderRadius: 10,       // Rounded corners for the button
     marginTop: 10,
-    width: 80,
+    width: 90,
   },
   deleteButtonText: {
     color: '#fff',  // White text

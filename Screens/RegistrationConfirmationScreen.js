@@ -32,7 +32,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
     <ImageBackground source={background} style={styles.background} resizeMode="cover">
       <View style={styles.menuStrip}>
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Home', { reset: true })}>
-          <Text style={styles.menuButtonText}>Return to Home</Text>
+          <Text style={styles.menuButtonText}>Home</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('Register for Donkey')}>
@@ -129,6 +129,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     backgroundColor: '#f5f5dc',
+  },
+  row: {
+    flexDirection: 'row',    // Makes the text and value in the same line
+    justifyContent: 'space-between', // Add space between the text and value
+    marginBottom: 10,        // Add some space between each row
   },
   title: {
     fontSize: 24,
