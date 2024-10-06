@@ -34,6 +34,7 @@ const RegisterDonkeyScreen = () => {
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
   const [owner, setOwner] = useState('');
+  const [ healthcareWorker, setHealthCareWorker] = useState('');
   const [image, setImage] = useState('');
   const [healthStatus, setHealthStatus] = useState('');
   const [symptoms, setSymptoms] = useState('');
@@ -181,6 +182,7 @@ const RegisterDonkeyScreen = () => {
           age,
           location,
           owner,
+          healthcareWorker,
           imageUrl, // Changed from 'imageURL' to 'imageUrl'
           healthStatus,
           symptoms,
@@ -232,6 +234,7 @@ const RegisterDonkeyScreen = () => {
     setAge('');
     setLocation('');
     setOwner('');
+    setHealthCareWorker('');
     setImage('');
     generateUniqueId(); 
   };
@@ -310,6 +313,14 @@ const RegisterDonkeyScreen = () => {
             placeholder="Owner's Name"
             value={owner}
             onChangeText={setOwner}
+          />
+
+          <Text style={styles.label}>Health care worker Name:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Health care worker's Name"
+            value={healthcareWorker}
+            onChangeText={setHealthCareWorker}
           />
           
           <Text style={styles.label}>Location:</Text>

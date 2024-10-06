@@ -76,6 +76,7 @@ const DonkeyReportScreen = () => {
             <Text>Gender: {donkey.gender}</Text>
             <Text>Location: {renderLocation(donkey.location)}</Text>
             <Text>Owner: {donkey.owner}</Text>
+            <Text>Health care worker: {donkey.healthcareWorker}</Text>
             <Text>ID: {donkey.id}</Text>
             <Text>Health Status: {donkey.healthStatus}</Text>
 

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Image, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import * as ImagePicker from 'expo-image-picker';
 import RNPickerSelect from 'react-native-picker-select';
 import MapView, { Marker } from 'react-native-maps';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -11,6 +12,7 @@ import { format } from 'date-fns';
 
 const EditDonkeyScreen = ({ route, navigation }) => {
   const { donkeyId } = route.params;
+  const [image, setImage] = useState(null);
   const [donkey, setDonkey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -26,12 +28,6 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     }
   };
   
-  //const [location, setLocation] = useState({
-   // latitude: donkey?.location?.latitude || -23.14064265296368,
-   // longitude: donkey?.location?.longitude || 28.99409628254349,
-  //});
-  
- 
 
   useEffect(() => {
     if (route.params?.reset) {
@@ -69,6 +65,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
               latitude: parseFloat(donkeyData.location.split(',')[0]),
               longitude: parseFloat(donkeyData.location.split(',')[1])
             } : null,
+            imageUrl: donkeyData.imageUrl || null,
             medicationDate: donkeyData.medicationDate ? new Date(donkeyData.medicationDate) : null,
             lastCheckup: donkeyData.lastCheckup ? new Date(donkeyData.lastCheckup) : null,
             healthStatus: donkeyData.healthStatus || '',
@@ -77,6 +74,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
             medication: donkeyData.medication || '',
             medicalRecord: donkeyData.medicalRecord || '',
           });
+          setImage(donkeyData.imageUrl || null);
            setSelectedLocation(donkeyData.location ? {
             latitude: parseFloat(donkeyData.location.split(',')[0]),
             longitude: parseFloat(donkeyData.location.split(',')[1])
@@ -97,6 +95,32 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     fetchDonkey();
   }, [donkeyId, navigation]);
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please grant permission to access your photo library.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const uploadImage = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const storage = getStorage();
+    const storageRef = ref(storage, `donkeys/${donkeyId}/image.jpg`);
+    await uploadBytes(storageRef, blob);
+    return await getDownloadURL(storageRef);
+  };
+
   const handleMapPress = (e) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
     setSelectedLocation({ latitude, longitude });
@@ -114,6 +138,11 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   
     setLoading(true);
     try {
+
+      let imageUrl = donkey.imageUrl;
+      if (image && image !== donkey.imageUrl) {
+        imageUrl = await uploadImage(image);
+      }
       const donkeysRef = collection(db, "donkeys");
       const q = query(donkeysRef, where("id", "==", donkeyId));
       const querySnapshot = await getDocs(q);
@@ -121,6 +150,8 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       if (!querySnapshot.empty) {
         const docToUpdate = querySnapshot.docs[0];
         await updateDoc(docToUpdate.ref, {
+
+          imageUrl: imageUrl,
           name: donkey.name,
           age: donkey.age,
           gender: donkey.gender,
@@ -136,7 +167,7 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
         });
         // Navigate to confirmation screen after update
-        navigation.navigate('Edit Confirmation', { donkey });
+        navigation.navigate('Edit Confirmation', { donkey, imageUrl });
   
       } else {
         throw new Error("Donkey not found");
@@ -176,6 +207,16 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
     <View style={styles.container}>
     <Text style={styles.title}>Edit the Donkey's Details</Text>
+
+    <Text style={styles.label}>Donkey Picture:</Text>
+        {image ? (
+          <Image source={{ uri: image }} style={styles.donkeyImage} />
+        ) : (
+          <Text>No image available</Text>
+        )}
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <Text style={styles.buttonText}>{image ? 'Change Image' : 'Add Image'}</Text>
+        </TouchableOpacity>
       
         <Text style={styles.label}>Name:</Text>
         <TextInput
@@ -363,6 +404,14 @@ const styles = StyleSheet.create({ // Here we edited the UI
     padding: 10,
     
     backgroundColor: 'beige',
+  },
+  donkeyImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+    alignSelf: 'center',
+    marginVertical: 10,
+    borderRadius: 10,
   },
   fieldContainer: {
     flexDirection: 'row',

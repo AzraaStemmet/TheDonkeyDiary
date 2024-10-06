@@ -26,6 +26,18 @@ const DonkeyReport = () => {
   const [filterGender, setFilterGender] = useState('');
   const [filterAge, setFilterAge] = useState('');
   const [filterHealthStatus, setFilterHealthStatus] = useState('');
+  const getHealthStatusStyle = (health) => {
+    switch (health) {
+      case 'Good':
+        return { backgroundColor: '#86B049', color: 'white' };
+      case 'Mild':
+        return { backgroundColor: '#FFBF00', color: 'black' };
+      case 'Serious':
+        return { backgroundColor: '#FF0000', color: 'white' };
+      default:
+        return {};
+    }
+  };
   // initializing state variables 
 
   useEffect(() => {
@@ -232,6 +244,7 @@ const DonkeyReport = () => {
               <Text style={styles.header}>Health Status</Text>
               <Text style={styles.headerLocation}>Location</Text>
               <Text style={styles.header}>Owner</Text>
+              <Text style={styles.header}>Health care worker</Text>
               <Text style={styles.headerID}>ID</Text>
             </View>
           </ScrollView>
@@ -240,16 +253,9 @@ const DonkeyReport = () => {
               <Text style={styles.cell}>{donkey.name}</Text>
               <Text style={styles.cell}>{donkey.age}</Text>
               <Text style={styles.cell}>{donkey.gender}</Text>
-              <Text
-    style={[
-      styles.cell,
-      donkey.health === 'Good' && { backgroundColor: '#86B049' },
-      donkey.health === 'Mild' && { backgroundColor: '#FFBF00' },
-      donkey.health === 'Serious' && { backgroundColor: '#FF0000' }
-    ]}
-  >
-    {donkey.health}
-  </Text>
+              <Text style={[styles.cell, getHealthStatusStyle(donkey.health)]}>
+                {donkey.health}
+              </Text>
               <Text style={styles.cellLocation}>
                 {typeof donkey.location === 'object'
                 ? '${donkey.location.latitude, ${donkey.location.longtitude}'
@@ -257,6 +263,7 @@ const DonkeyReport = () => {
 
               </Text>
               <Text style={styles.cell}>{donkey.owner}</Text>
+              <Text style={styles.cell}>{donkey.healthcareWorker}</Text>
               <Text style={styles.cell}>{donkey.id}</Text>
             </ScrollView>
           ))}

@@ -66,6 +66,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
             <Text style={styles.detailsText}>Age:</Text>
             <Text style={styles.detailsText}>Location:</Text>
             <Text style={styles.detailsText}>Owner:</Text>
+            <Text style={styles.detailsText}>Health Care Worker:</Text>
             <Text style={styles.detailsText}>Health Status:</Text>
             <Text style={styles.detailsText}>Symptoms:</Text>
             <Text style={styles.detailsText}>Other Symptoms:</Text>
@@ -81,6 +82,7 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
             <Text style={styles.detailsValue}>{donkey.age}</Text>
             <Text style={styles.detailsValue}>{donkey.location}</Text>
             <Text style={styles.detailsValue}>{donkey.owner}</Text>
+            <Text style={styles.detailsValue}>{donkey.healthcareWorker}</Text>
             <Text style={styles.detailsValue}>{donkey.healthStatus}</Text>
             <Text style={styles.detailsValue}>{donkey.symptoms}</Text>
             <Text style={styles.detailsValue}>{donkey.othersymptoms}</Text>

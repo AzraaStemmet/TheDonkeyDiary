@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, Button, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 
 const EditConfirmationScreen = ({ route, navigation }) => {
   const { donkey } = route.params;
 
   const handleEditAnotherDonkey = () => {
-    navigation.navigate('ViewReports', { reset: true });
+    navigation.navigate('View Existing Donkeys', { reset: true });
   };
 
   return ( // Standardized menustrip and below is the labels and textboxes that displays the donkeys information
@@ -28,6 +28,12 @@ const EditConfirmationScreen = ({ route, navigation }) => {
 
       <View style={styles.container}>
   <Text style={styles.title}>Edit Successful!</Text>
+
+  {donkey.imageUrl ? (
+          <Image source={{ uri: donkey.imageUrl }} style={styles.donkeyImage} />
+        ) : (
+          <Text style={styles.noImageText}>No image available</Text>
+        )}
 
   <View style={styles.detailContainerColumn}>
     <Text style={styles.label}>ID:</Text>
@@ -61,7 +67,7 @@ const EditConfirmationScreen = ({ route, navigation }) => {
 
   <View style={styles.detailContainerColumn}>
     <Text style={styles.label}>Health Status:</Text>
-    <Text style={styles.input}>{donkey.health}</Text>
+    <Text style={styles.input}>{donkey.healthStatus}</Text>
   </View>
 
   <TouchableOpacity style={styles.button} onPress={handleEditAnotherDonkey}>
@@ -71,9 +77,6 @@ const EditConfirmationScreen = ({ route, navigation }) => {
   <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
     <Text style={styles.buttonText}>Return to Home</Text>
   </TouchableOpacity>
-
-
-        
       </View>
     </ScrollView>
   );
@@ -84,6 +87,13 @@ export default EditConfirmationScreen;
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'beige',
+  },
+  donkeyImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    marginBottom: 10,
   },
   menuStrip: {
     flexDirection: 'row',
