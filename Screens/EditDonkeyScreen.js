@@ -11,6 +11,8 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   const { donkeyId } = route.params;
   const [donkey, setDonkey] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -19,10 +21,11 @@ const EditDonkeyScreen = ({ route, navigation }) => {
       Alert.alert('Sign Out Error', 'Unable to sign out. Please try again later.');
     }
   };
-  const [location, setLocation] = useState({
-    latitude: donkey?.location?.latitude || -23.14064265296368,
-    longitude: donkey?.location?.longitude || 28.99409628254349,
-  });
+  
+  //const [location, setLocation] = useState({
+   // latitude: donkey?.location?.latitude || -23.14064265296368,
+   // longitude: donkey?.location?.longitude || 28.99409628254349,
+  //});
   
  
 
@@ -56,8 +59,18 @@ const EditDonkeyScreen = ({ route, navigation }) => {
 
         if (!querySnapshot.empty) {
           const docSnapshot = querySnapshot.docs[0];
-          console.log("Document data:", docSnapshot.data()); 
-          setDonkey({ firestoreId: docSnapshot.id, ...docSnapshot.data() });
+          const donkeyData = docSnapshot.data();
+          //console.log("Document data:", docSnapshot.data()); 
+          setDonkey({ firestoreId: docSnapshot.id, ...donkeyData,
+            location: donkeyData.location ? {
+              latitude: parseFloat(donkeyData.location.split(',')[0]),
+              longitude: parseFloat(donkeyData.location.split(',')[1])
+            } : null
+           });
+           setSelectedLocation(donkeyData.location ? {
+            latitude: parseFloat(donkeyData.location.split(',')[0]),
+            longitude: parseFloat(donkeyData.location.split(',')[1])
+          } : null);
         } else {
           console.log("No such document!");
           Alert.alert("Error", "Donkey not found. Please check the ID and try again.");
@@ -73,6 +86,15 @@ const EditDonkeyScreen = ({ route, navigation }) => {
   
     fetchDonkey();
   }, [donkeyId, navigation]);
+
+  const handleMapPress = (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    setSelectedLocation({ latitude, longitude });
+    setDonkey(prevDonkey => ({
+      ...prevDonkey,
+      location: `${latitude},${longitude}`
+    }));
+  };
 
   const handleUpdate = async () => {
     if (!donkey) {
@@ -92,12 +114,9 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           name: donkey.name,
           age: donkey.age,
           gender: donkey.gender,
-          health: donkey.health,
-          location: {
-            latitude: donkey.location.latitude,
-            longitude: donkey.location.longitude,
-          },
+          health: donkey.healthStatus,
           owner: donkey.owner,
+
         });
         // Navigate to confirmation screen after update
         navigation.navigate('Edit Confirmation', { donkey });
@@ -177,31 +196,24 @@ const EditDonkeyScreen = ({ route, navigation }) => {
           placeholder="Owner's Name"
         />
       <Text style={styles.label}>Location:</Text>
-      <TextInput
-        style={styles.input}
-        value={`${location.latitude}, ${location.longitude}`} // Display current location
-        editable={false} // Make it read-only, if desired
-        placeholder="Location"
-      />
-<MapView
-  style={styles.map}
-  initialRegion={{
-    latitude: location.latitude,
-    longitude: location.longitude,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  }}
-  onPress={(e) => {
-    const { latitude, longitude } = e.nativeEvent.coordinate;
-    setLocation({ latitude, longitude });
-    setDonkey((prevDonkey) => ({
-      ...prevDonkey,
-      location: { latitude, longitude },
-    }));
-  }}
->
-  <Marker coordinate={location} />
-</MapView>  
+        <TextInput
+          style={styles.input}
+          value={donkey.location}
+          editable={false}
+          placeholder="Select location on map"
+        />
+        <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: selectedLocation?.latitude || -23.14064265296368,
+              longitude: selectedLocation?.longitude || 28.99409628254349,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            onPress={handleMapPress}
+          >
+            {selectedLocation && <Marker coordinate={selectedLocation} />}
+        </MapView> 
       <Text style={styles.label}>Health Status:</Text>
   <RNPickerSelect
     onValueChange={(value) => setDonkey({ ...donkey, health: value })} // we used a picker here for the health status for consistency purposes and validation purposes
