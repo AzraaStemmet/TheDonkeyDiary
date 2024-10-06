@@ -14,7 +14,6 @@ import { auth } from '../firebaseConfig';
 import * as FileSystem from 'expo-file-system';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-
 const RegisterDonkeyScreen = () => {
   const handleSignOut = async () => {
     try {
@@ -27,7 +26,6 @@ const RegisterDonkeyScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const db = getFirestore(app);
-
   const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
@@ -50,12 +48,11 @@ const RegisterDonkeyScreen = () => {
     setLastCheckup(currentDate);
 };
 
-const onMedicationDateChange = (event, selectedDate) => {
+  const onMedicationDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || medicationDate;
     setShowMedicationDatePicker(Platform.OS === 'ios');
     setMedicationDate(currentDate);
 };
-
 
   useEffect(() => {
     checkPermissions();
@@ -100,22 +97,12 @@ const onMedicationDateChange = (event, selectedDate) => {
       console.error('Error updating location:', error);
     }
   };
-  
-  
+   
   const [region, setRegion] = useState({
     latitude: -23.14064265296368,
     longitude: 28.99409628254349,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,});
-
-  
-   
-      
-    
-
-
-
-
 
   const uploadImage = async (uri) => {
     try {
@@ -142,16 +129,12 @@ const onMedicationDateChange = (event, selectedDate) => {
       Alert.alert('Upload Error', error.message);
     }
   };
-  
-  
 
   useEffect(() => {
     if (route.params?.reset) { 
       resetForm();
     }
   }, [route.params]);
-
-
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -180,7 +163,6 @@ const onMedicationDateChange = (event, selectedDate) => {
       console.log("Image picking cancelled");
     }
   };
-  
   
   const saveImageLocally = async (uri) => {
     try {
@@ -221,11 +203,9 @@ const onMedicationDateChange = (event, selectedDate) => {
           lastCheckup,
           showDatePicker,
         };
-  
         // Add donkey details to Firebase (assuming you have a 'donkeys' collection)
         const docRef = await addDoc(collection(db, 'donkeys'), donkey);
         
-        // Navigate to the confirmation screen
         navigation.navigate('Confirmation Screen', { donkey });
       } catch (error) {
         Alert.alert('Error', 'Failed to add donkey. Please try again.');
@@ -253,8 +233,7 @@ const onMedicationDateChange = (event, selectedDate) => {
     generateUniqueId(); 
   };
 
-  return (
-    
+  return (    
     <SafeAreaView style={styles.containers}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.menuStrip}>
@@ -310,14 +289,12 @@ const onMedicationDateChange = (event, selectedDate) => {
               { label: '1-5 years', value: '1-5yrs' },
               { label: '6-10 years', value: '6-10yrs' },
               { label: 'Older than 10 years', value: 'older than 10yrs' },
-              { label: 'Unknown', value: 'unknown' },
-             
+              { label: 'Unknown', value: 'unknown' },             
             ]}
             style={pickerSelectStyles}
             value={age}
             placeholder={{ label: "Select Age", value: '' }}
           />
-
           <Text style={styles.label}>Owner's Name:</Text>
           <TextInput
             style={styles.input}
@@ -353,14 +330,14 @@ const onMedicationDateChange = (event, selectedDate) => {
 
       </TouchableOpacity>
       </ScrollView>
-      <Text style={styles.label}>Donkey Picture</Text>
-<TouchableOpacity style={styles.button} onPress={pickImage}>
-  <Text style={styles.buttonText}>Pick Image</Text>
-</TouchableOpacity>
-{image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
-) : (
-  <Text>No image selected</Text>
-)}
+        <Text style={styles.label}>Donkey Picture</Text>
+      <TouchableOpacity style={styles.button} onPress={pickImage}>
+        <Text style={styles.buttonText}>Pick Image</Text>
+      </TouchableOpacity>
+            {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
+            ) : (
+       <Text>No image selected</Text>
+      )}
     <TouchableOpacity style={styles.deleteButton} onPress={() => setImage(null)}>
       <Text style={styles.deleteButtonText}>Remove</Text>
     </TouchableOpacity>
@@ -374,7 +351,7 @@ const onMedicationDateChange = (event, selectedDate) => {
           <Text>No image selected</Text>
         )}
 
-<Text style={styles.label}>Health Status:</Text>
+          <Text style={styles.label}>Health Status:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setHealthStatus(value)}
                 items={[
@@ -385,7 +362,6 @@ const onMedicationDateChange = (event, selectedDate) => {
                 style={pickerSelectStyles}
                 value={healthStatus}
             />
-
             <Text style={styles.label}>Symptoms:</Text>
             <RNPickerSelect
                 onValueChange={(value) => setSymptoms(value)}
@@ -406,7 +382,6 @@ const onMedicationDateChange = (event, selectedDate) => {
                 style={pickerSelectStyles}
                 value={symptoms}
             />
-
             <Text style={styles.label}>Medication:</Text>
             <TextInput
                 style={styles.input}
@@ -446,7 +421,6 @@ const onMedicationDateChange = (event, selectedDate) => {
                 multiline
                 numberOfLines={4}
             />
-
           <Button title="Add Donkey" onPress={handleAddDonkey} />
         </View>
       </ScrollView>
@@ -492,18 +466,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#fff',
-
   },
   addDonkeyButton: {
     backgroundColor: '#AD957E',
     padding: 1,
     borderRadius: 10,
-   
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
-    
-
   },
   mapContainer: {
     height: 400,
@@ -526,7 +496,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 5,
     color: '#AD957E',
-
   },
   button: {
     backgroundColor: '#AD957E',
@@ -537,8 +506,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 10,
     marginBottom: 10,
-    
-    
   },
   buttonText: {
     fontSize: 15,
@@ -560,7 +527,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 10,
-    
   },
   buttonTextCust: {
     color: '#FFF',

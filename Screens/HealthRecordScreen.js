@@ -9,8 +9,6 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
 
-
-
 const HealthRecordScreen = () => {
     const handleSignOut = async () => { // Function to handle signout
         try {
@@ -31,7 +29,6 @@ const HealthRecordScreen = () => {
     const [showMedicationDatePicker, setShowMedicationDatePicker] = useState(false);
     const [lastCheckup, setLastCheckup] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-
 
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || lastCheckup;

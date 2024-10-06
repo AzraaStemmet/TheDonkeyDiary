@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, Button, Alert, ScrollView, Touchable
 import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
-//import { auth, db } from './firebaseConfig'; 
+
 import RNPickerSelect from 'react-native-picker-select';
 
 const EditDonkeyScreen = ({ route, navigation }) => {
@@ -35,9 +35,6 @@ const EditDonkeyScreen = ({ route, navigation }) => {
     setImage('');
     generateUniqueId(); // Generate a new ID when resetting
   };
-
-
-
 
   useEffect(() => {
     const fetchDonkey = async () => {
