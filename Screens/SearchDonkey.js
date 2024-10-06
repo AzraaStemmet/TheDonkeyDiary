@@ -7,6 +7,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig'; 
 import { printToFileAsync } from 'expo-print';
 import { shareAsync } from 'expo-sharing'; // importing dependencies for functionaltities of the applciation 
+import { Timestamp } from 'firebase/firestore';
 
 
 function SearchDonkey() {
@@ -34,7 +35,14 @@ function SearchDonkey() {
   }, [route.params]);
 
   const resetForm = () => {
-    // Reset form logic
+    setId('');
+    setName('');
+    setGender('');
+    setAge('');
+    setLocation('');
+    setOwner('');
+    setImage('');
+    generateUniqueId();
   };
 
   useEffect(() => {
@@ -81,9 +89,14 @@ function SearchDonkey() {
 
       const donkey = suggestions.find(d => d.name === item.name || d.id === item.id);
       if (donkey) {
-        const treatmentsSnapshot = await getDocs(collection(db, `healthRecords`), where("donkeyId", "==", donkey.id));
-        const treatments = treatmentsSnapshot.docs.map(doc => doc.data());
-        setDonkeyDetails({ ...donkey, treatments });
+        // Fetch all fields from the donkey document
+        const donkeyDoc = await getDocs(query(collection(db, 'donkeys'), where('id', '==', donkey.id)));
+        if (!donkeyDoc.empty) {
+          const donkeyData = donkeyDoc.docs[0].data();
+          setDonkeyDetails(donkeyData);
+        } else {
+          setError('No matching donkey found.');
+        }
       } else {
         setError('No matching donkey found.');
       }
@@ -111,22 +124,14 @@ function SearchDonkey() {
         <p><strong>Owner:</strong> ${donkeyDetails.owner}</p>
         <p><strong>Location:</strong> ${donkeyDetails.location}</p>
         <p><strong>Gender:</strong> ${donkeyDetails.gender}</p>
-        <p><strong>Health Status:</strong> ${donkeyDetails.health}</p>
-        <h2>Treatment Records</h2>
-        <table>
-          <tr>
-            <th>Date</th>
-            <th>Medication</th>
-            <th>Treatment</th>
-          </tr>
-          ${donkeyDetails.treatments.map(treatment => `
-            <tr>
-              <td>${treatment.lastCheckup?.toDate().toLocaleDateString()}</td>
-              <td>${treatment.medication}</td>
-              <td>${treatment.treatmentGiven}</td>
-            </tr>
-          `).join('')}
-        </table>
+        <h1>Health Details</h1>
+        <p><strong>Health Status:</strong> ${donkeyDetails.healthStatus}</p>
+        <p><strong>Symptoms:</strong> ${donkeyDetails.symptoms}</p>
+        <p><strong>Other Symptoms:</strong> ${donkeyDetails.othersymptoms}</p>
+        <p><strong>Medication:</strong> ${donkeyDetails.medication}</p>
+        <p><strong>Medication Date:</strong> ${donkeyDetails.medicationDate ? new Date(donkeyDetails.medicationDate).toLocaleDateString() : 'N/A'}</p>
+        <p><strong>Medical Record:</strong> ${donkeyDetails.medicalRecord}</p>
+        
       </body>
       </html>
     `;
@@ -189,24 +194,21 @@ function SearchDonkey() {
             />
           )}
           
-          <Text>Donkey Name: {donkeyDetails.name}</Text>
-          <Text>Donkey Age: {donkeyDetails.age}</Text>
-          <Text>Donkey Owner: {donkeyDetails.owner}</Text>
-          <Text>Location: {donkeyDetails.location}</Text>
-          <Text>Gender: {donkeyDetails.gender}</Text>
-          <Text>Health Status: {donkeyDetails.health}</Text>         
-          <Text style={styles.subtitle}>Treatment Records:</Text>
-          {donkeyDetails.treatments && donkeyDetails.treatments.length > 0 ? (
-            donkeyDetails.treatments.map((treatment, index) => (
-              <View key={index} style={styles.treatmentCard}>
-                <Text>Date: {treatment.lastCheckup?.toDate().toLocaleDateString()}</Text>
-                <Text>Health Status: {treatment.healthStatus}</Text>
-                <Text>Treatment Given: {treatment.treatmentGiven}</Text>
-              </View>
-            ))
-          ) : (
-            <Text>No treatment records available.</Text>
-          )}
+          <Text>Donkey Details</Text>
+            <Text>Donkey Name: {donkeyDetails.name}</Text>
+            <Text>Donkey Age: {donkeyDetails.age}</Text>
+            <Text>Donkey Owner: {donkeyDetails.owner}</Text>
+            <Text>Location: {donkeyDetails.location}</Text>
+            <Text>Gender: {donkeyDetails.gender}</Text>
+            <Text>          Health Details         </Text>
+            <Text>Health Status: {donkeyDetails.healthStatus}</Text>
+            <Text>Symptoms: {donkeyDetails.symptoms}</Text>
+            <Text>Other Symptoms: {donkeyDetails.othersymptoms}</Text>
+            <Text>Medication: {donkeyDetails.medication}</Text>
+            <Text>Medication Date: {donkeyDetails.medicationDate ? new Date(donkeyDetails.medicationDate).toLocaleDateString() : 'N/A'}</Text>
+            <Text>Medical Record: {donkeyDetails.medicalRecord}</Text>
+            
+            
           <TouchableOpacity style={styles.pdfButton} onPress={generatePDF}>
            <Text style={styles.pdfButtonText}>Export as PDF</Text>
          </TouchableOpacity>
@@ -214,6 +216,8 @@ function SearchDonkey() {
       ) : (
         <Text>No donkey details to display</Text>
       )}
+
+      
     </ScrollView>    
     </ScrollView>
   );
