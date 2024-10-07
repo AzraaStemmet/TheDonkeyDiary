@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
     width: 300,
   },
   buttonText: {
-    color: '#FFF',
+    color: '#FFF8E1',
     fontSize: 16,
-    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 

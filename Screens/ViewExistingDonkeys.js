@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   buttonTextCust: {
     color: '#FFF',
-    fontSize: 12,
+
   },
   card: {
     backgroundColor: '#fff',
@@ -167,7 +167,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFF8E1',
+    fontSize: 16,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
   treatmentCard: {

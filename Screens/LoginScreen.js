@@ -56,30 +56,30 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    justifyContent: 'center', // Center items vertically
-    alignItems: 'center', // Center items horizontally
+    justifyContent: 'center', 
+    alignItems: 'center', 
   },
   container: {
-    width: '90%', // Adjust as needed
-    maxWidth: 400, // Maximum width for large screens
-    padding: 20, // Add padding if needed
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Slightly transparent for readability
-    borderRadius: 10, // Rounded corners
+    width: '90%', 
+    maxWidth: 400, 
+    padding: 20, 
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+    borderRadius: 10, 
   },
   input: {
     height: 50,
-    borderColor: '#D9CAB3', // A softer border color
+    borderColor: '#D9CAB3', 
     borderWidth: 1,
     marginBottom: 15,
     paddingHorizontal: 15,
-    borderRadius: 10, // Rounded borders
-    backgroundColor: '#FFFAF0', // Very light beige background for input
-    color: '#5C5346', // Darker text color for better readability
+    borderRadius: 10,
+    backgroundColor: '#FFFAF0', 
+    color: '#5C5346', 
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#AD957E', // A soft, earthy brown
+    color: '#AD957E',
     marginBottom: 20,
     textAlign: 'center',
   },

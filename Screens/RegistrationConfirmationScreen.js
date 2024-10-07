@@ -186,8 +186,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   customButtonText: {
-    color: '#FFF',
+    color: '#FFF8E1',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
