@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 import { useNetInfo } from "@react-native-community/netinfo";
-
+import { getFirestore, collection, addDoc, updateDoc } from 'firebase/firestore';
 // Import your screens
 import WelcomeScreen from './Screens/WelcomeScreen';
 import LoginScreen from './Screens/LoginScreen';
