@@ -236,6 +236,7 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'cover',
     marginBottom: 10,
+    borderRadius: 6,
   },
   pdfButton: {
     marginTop:10,
@@ -311,8 +312,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: '#FFFAF0',
+    paddingHorizontal: 1,
     borderRadius: 5,
     marginBottom: 5,
   },
@@ -345,6 +345,26 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: '#f5f5dc',
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#4f4f4f',           // Darker color for headers
+    marginBottom: 10,           // Space below the headers
+    marginTop:15,
+    textAlign: 'center',        // Center the headers
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    flex: 1.5,                    // Labels take up some space
+    color: '#333',              // Slightly darkened color for labels
+  },
+  value: {
+    fontSize: 15,
+    flex: 2,                  // Values take up more space than labels
+    color: '#555',              // Use a softer color for values
+    textAlign: 'left',          // Align the values to the left
   },
 });
 

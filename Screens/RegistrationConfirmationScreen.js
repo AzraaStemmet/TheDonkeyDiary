@@ -57,8 +57,13 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
         ) : (
           <Text>No image available</Text>
         )}
+  <View style={styles.detailsContainer}>
+  <View style={styles.row}>
+    <Text style={styles.detailsText}>ID:</Text>
+    <Text style={styles.detailsValue}>{donkey.id}</Text>
+  </View>
 
-        <View style={styles.detailsContainer}>
+       //</View> <View style={styles.detailsContainer}>
           <View style={styles.column}>
             <Text style={styles.detailsText}>ID:</Text>
             <Text style={styles.detailsText}>Name:</Text>
@@ -132,11 +137,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     backgroundColor: '#f5f5dc',
   },
-  row: {
-    flexDirection: 'row',    // Makes the text and value in the same line
-    justifyContent: 'space-between', // Add space between the text and value
-    marginBottom: 10,        // Add some space between each row
-  },
+ 
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -157,27 +158,36 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
+  column: {
+    flex: 1,                          // Ensure both columns take equal space
+    paddingHorizontal: 10,
+  },
   detailsContainer: {
-    flexDirection: 'row',
+    paddingHorizontal: 6,
     marginBottom: 20,
   },
-  column: {
-    flex: 1,
-    paddingHorizontal: 10,
+  row: {
+    flexDirection: 'row',          // Make sure each field has label and value in one row
+    alignItems: 'flex-start',      // Align items to the top in case of multi-line text
+    marginBottom: 10,
   },
   detailsText: {
     fontSize: 16,
     color: '#000',
-    marginBottom: 10,
+    width: 130,                   // Fixed width for labels to prevent overlap
+    textAlign: 'left',            // Align text to the left
+    marginTop: 4,
   },
   detailsValue: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#000',
-    marginBottom: 10,
+    flex: 1,                      // Let values take up the remaining space
     borderWidth: 1,
     borderColor: '#000',
     padding: 8,
     borderRadius: 5,
+    textAlign: 'right',           // Align values to the right
+    flexWrap: 'wrap',             // Ensure multi-line values wrap correctly
   },
   customButton: {
     backgroundColor: '#AD957E',
