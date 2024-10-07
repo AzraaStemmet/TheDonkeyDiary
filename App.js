@@ -7,6 +7,9 @@ import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
 import { useNetInfo } from "@react-native-community/netinfo";
 import { getFirestore, collection, addDoc, updateDoc } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+
 // Import your screens
 import WelcomeScreen from './Screens/WelcomeScreen';
 import LoginScreen from './Screens/LoginScreen';
