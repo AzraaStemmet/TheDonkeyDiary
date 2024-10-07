@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { initializeApp, getApps } from 'firebase/app';
 import firebaseConfig from './firebaseConfig';
+import { useNetInfo } from "@react-native-community/netinfo";
 
 // Import your screens
 import WelcomeScreen from './Screens/WelcomeScreen';
@@ -30,7 +31,13 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const [isReady, setIsReady] = useState(false);
+  const netInfo = useNetInfo();
 
+  useEffect(() => {
+    if (netInfo.isConnected) {
+      syncLocalDonkeys();
+    }
+  }, [netInfo.isConnected]);
   useEffect(() => {
     async function prepare() {
       try {
@@ -62,6 +69,11 @@ const App = () => {
 
   return (
     <NavigationContainer>
+       {!netInfo.isConnected && (
+        <View style={styles.offlineBanner}>
+          <Text style={styles.offlineText}>You are offline. Data will be synced when you're back online.</Text>
+        </View>
+      )}
       <Stack.Navigator
         initialRouteName="Welcome"
         screenOptions={{

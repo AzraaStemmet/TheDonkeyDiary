@@ -14,6 +14,8 @@ import * as FileSystem from 'expo-file-system';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 
 
 const RegisterDonkeyScreen = () => {
@@ -48,6 +50,18 @@ const RegisterDonkeyScreen = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+
+  // function to save data locally
+  const saveDonkeyLocally = async (donkey) => {
+    try {
+      const existingDonkeys = await AsyncStorage.getItem('localDonkeys');
+      const donkeys = existingDonkeys ? JSON.parse(existingDonkeys) : [];
+      donkeys.push({ ...donkey, synced: false });
+      await AsyncStorage.setItem('localDonkeys', JSON.stringify(donkeys));
+    } catch (error) {
+      console.error('Error saving donkey locally:', error);
+    }
+  };
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === 'ios');
     if (selectedDate) {
@@ -174,7 +188,7 @@ const RegisterDonkeyScreen = () => {
         if (image) {
           imageUrl = await uploadImage(image);
         }
-
+  
         const donkey = {
           id,
           name,
@@ -183,7 +197,7 @@ const RegisterDonkeyScreen = () => {
           location,
           owner,
           healthcareWorker,
-          imageUrl, // Changed from 'imageURL' to 'imageUrl'
+          imageUrl,
           healthStatus,
           symptoms,
           othersymptoms,
@@ -192,30 +206,56 @@ const RegisterDonkeyScreen = () => {
           medicalRecord,
           lastCheckup: lastCheckup ? lastCheckup.toISOString() : null,
         };
-
-        // Add donkey details to Firebase
-        const docRef = await addDoc(collection(db, 'donkeys'), donkey);
-
-        // Update the document with the location
-        await updateDoc(docRef, {
-          location: location,
-        });
-
-        // If there's an image, update the document with the image URL
-        if (imageUrl) {
-          await updateDoc(docRef, { imageUrl: imageUrl }); // Changed from 'imageURL' to 'imageUrl'
+  
+        const isConnected = await NetInfo.fetch().then(state => state.isConnected);
+  
+        if (isConnected) {
+          // Add donkey details to Firebase
+          const docRef = await addDoc(collection(db, 'donkeys'), donkey);
+          await updateDoc(docRef, { location: location });
+          if (imageUrl) {
+            await updateDoc(docRef, { imageUrl: imageUrl });
+          }
+          console.log('Donkey added successfully with ID: ', docRef.id);
+        } else {
+          // Save donkey locally
+          await saveDonkeyLocally(donkey);
+          Alert.alert('Offline Mode', 'Donkey details saved locally. They will be synced when you back online.');
         }
-
-        console.log('Donkey added successfully with ID: ', docRef.id);
-
+  
         setIsLoading(false);
-        // Navigate to the confirmation screen
         navigation.navigate('Confirmation Screen', { donkey });
       } catch (error) {
         setIsLoading(false);
         Alert.alert('Error', 'Failed to add donkey. Please try again.');
         console.error('Error adding donkey: ', error);
       }
+    }
+  };
+
+  //synchronized mechanism
+  const syncLocalDonkeys = async () => {
+    const isConnected = await NetInfo.fetch().then(state => state.isConnected);
+    if (!isConnected) return;
+  
+    try {
+      const localDonkeys = await AsyncStorage.getItem('localDonkeys');
+      if (localDonkeys) {
+        const donkeys = JSON.parse(localDonkeys);
+        for (const donkey of donkeys) {
+          if (!donkey.synced) {
+            const docRef = await addDoc(collection(db, 'donkeys'), donkey);
+            await updateDoc(docRef, { location: donkey.location });
+            if (donkey.imageUrl) {
+              await updateDoc(docRef, { imageUrl: donkey.imageUrl });
+            }
+            donkey.synced = true;
+          }
+        }
+        await AsyncStorage.setItem('localDonkeys', JSON.stringify(donkeys));
+      }
+    } catch (error) {
+      console.error('Error syncing local donkeys:', error);
     }
   };
 
@@ -318,7 +358,7 @@ const RegisterDonkeyScreen = () => {
           <Text style={styles.label}>Health care worker Name:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Healthcare Worker's Name"
+            placeholder="Health care worker's Name"
             value={healthcareWorker}
             onChangeText={setHealthCareWorker}
           />
@@ -344,18 +384,23 @@ const RegisterDonkeyScreen = () => {
         </View>
 
         <Text style={styles.label}>Selected Location:</Text>
-        <Text>{selectedLocation ? `${selectedLocation.latitude}, ${selectedLocation.longitude}` : 'No location selected'}</Text>
+          <Text>
+            {selectedLocation 
+              ? `${selectedLocation.latitude}, ${selectedLocation.longitude}` 
+              : 'No location selected'}
+          </Text>
         <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Location Confirmed')}>
         <Text style={styles.buttonText}>Select Location</Text>
 
       </TouchableOpacity>
       
       </ScrollView>
-      <Text style={styles.label}>Donkey Picture: Special Characteristic</Text>
+      <Text style={styles.label}>Donkey Picture</Text>
         <TouchableOpacity style={styles.button} onPress={pickImage}>
           <Text style={styles.buttonText}>Pick Image</Text>
         </TouchableOpacity>
-        {image ? (<Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
+        {image ? (
+          <Image source={{ uri: image }} style={{ width: 200, height: 200, alignSelf: 'center', borderWidth: 2, borderColor: '#a67c52', marginTop: 20 }}/>
         ) : (
           <Text>No image selected</Text>
         )}
@@ -562,9 +607,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    color: '#FFF8E1',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    color: '#fff',
   },
   input: {
     height: 40,
