@@ -92,27 +92,27 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      {!netInfo.isConnected && (
-        <View style={styles.offlineBanner}>
-          <Text style={styles.offlineText}>You are offline. Data will be synced when you're back online.</Text>
-        </View>
-      )}
-      <Stack.Navigator
-        initialRouteName="Welcome"
-        screenOptions={{
-          headerRight: () => (
-            <Image
-              source={logoImage}
-              style={{ width: 40, height: 40, marginRight: 10 }}
-            />
-          ),
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#f5f5f5', 
-          },
-          headerTintColor: '#333',
-        }}
-      >
+    {!netInfo.isConnected && (
+      <View style={styles.offlineBanner}>
+        <Text style={styles.offlineText}>You are offline. Data will be synced when you're back online.</Text>
+      </View>
+    )}
+    <Stack.Navigator
+      initialRouteName="Welcome"
+      screenOptions={{
+        headerRight: () => (
+          <Image
+            source={logoImage}
+            style={{ width: 40, height: 40, marginRight: 10 }}
+          />
+        ),
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#f5f5f5',
+        },
+        headerTintColor: '#333',
+      }}
+    >
      
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
