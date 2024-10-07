@@ -40,7 +40,7 @@ const DonkeyReport = () => {
 
   useEffect(() => {
     filterDonkeys();
-  }, [searchQuery, donkeys, filterGender, filterAge]);
+  }, [searchQuery, donkeys, filterGender, filterAge, filterHealthStatus]);
 
   const filterDonkeys = () => {
     let filtered = donkeys.filter(donkey => {
@@ -67,12 +67,15 @@ const DonkeyReport = () => {
   };
   const generateTable = (filteredDonkeys, filterGender, filterAge, filterHealthStatus) => {
     const heading = `
-      <h2 style="color: #AD957E;">Donkey Report</h2>
-      <p>Filters Applied: 
-        ${filterGender ? `Gender: ${filterGender}, ` : ''}
-        ${filterAge ? `Age: ${filterAge}, ` : ''}
-        ${filterHealthStatus ? `Health Status: ${filterHealthStatus}` : ''}
-      </p>
+      <h1 style="color: #623d23;">The Donkey Diary</h1>
+      <h2 style="color: black;">Donkey Reports</h2>
+      <p>
+       <strong>Filters Applied:</strong> 
+       ${filterGender ? `Gender: ${filterGender}, ` : ''}
+       ${filterAge ? `Age: ${filterAge}, ` : ''}
+       ${filterHealthStatus ? `Health Status: ${filterHealthStatus}` : ''}
+     </p>
+
     `;
   
     const healthStatusColor = (status) => {
@@ -99,8 +102,8 @@ const DonkeyReport = () => {
              border: 1px solid #cccccc;
            }
            th {
-             background-color: #623d23; 
-             color: white;
+             background-color: black; 
+             color: #623d23;
              padding: 10px;
              text-align: center;
            }
@@ -148,7 +151,7 @@ const DonkeyReport = () => {
                  <td>${donkey.name}</td>
                  <td>${donkey.age}</td>
                  <td>${donkey.gender}</td>
-                 <td style="background-color: ${healthStatusColor(donkey.healthStatus)};">${donkey.healthStatus}</td>
+                 <td style="color: ${healthStatusColor(donkey.healthStatus)};">${donkey.healthStatus}</td>
                  <td>${donkey.owner}</td>
                  <td>${donkey.healthcareWorker}</td>
                  <td>${typeof donkey.location === 'object' 
@@ -163,7 +166,6 @@ const DonkeyReport = () => {
      </html>
    `;
   };
-  
   
   
   let generatePDF = async () => {
@@ -282,7 +284,7 @@ const DonkeyReport = () => {
         </View>
       </ScrollView>
       <TouchableOpacity style={styles.customButton} onPress={generatePDF}>
-          <Text style={styles.buttonTextCust}>Export as PDF</Text>
+          <Text style={styles.customButtonText}>Export as PDF</Text>
         </TouchableOpacity>
     </ScrollView>
     </ScrollView>
@@ -308,6 +310,12 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       alignItems: 'center',
       marginBottom: 10,
+    },
+    customButtonText:{
+
+      color: '#FFF8E1',
+      fontSize: 16,
+      fontWeight: 'bold',
     },
     buttonTextCust: {
       color: '#FFF',
@@ -362,6 +370,9 @@ const styles = StyleSheet.create({
       color: '#ffffff',
       padding: 5,
       minWidth: 120,
+      color: '#FFF8E1',
+      fontSize: 16,
+      fontWeight: 'bold',
     },
     cell: {
       flex: 1,

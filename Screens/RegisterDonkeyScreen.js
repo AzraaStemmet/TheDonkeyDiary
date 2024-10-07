@@ -318,7 +318,7 @@ const RegisterDonkeyScreen = () => {
           <Text style={styles.label}>Health care worker Name:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Health care worker's Name"
+            placeholder="Healthcare Worker's Name"
             value={healthcareWorker}
             onChangeText={setHealthCareWorker}
           />
@@ -351,7 +351,7 @@ const RegisterDonkeyScreen = () => {
       </TouchableOpacity>
       
       </ScrollView>
-      <Text style={styles.label}>Donkey Picture</Text>
+      <Text style={styles.label}>Donkey Picture: Special Characteristic</Text>
         <TouchableOpacity style={styles.button} onPress={pickImage}>
           <Text style={styles.buttonText}>Pick Image</Text>
         </TouchableOpacity>
@@ -562,8 +562,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    fontSize: 15,
-    color: '#fff',
+    color: '#FFF8E1',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   input: {
     height: 40,
