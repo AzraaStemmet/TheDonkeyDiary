@@ -30,7 +30,7 @@ const SignupScreen = ({ navigation }) => {
       });
 
       Alert.alert('Success', 'User registered successfully!');
-      navigation.navigate('Workers');
+      navigation.navigate('Home');
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -65,6 +65,9 @@ const SignupScreen = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry
         />
+        
+       
+
         <TouchableOpacity style={styles.button} onPress={handleSignup}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>

@@ -105,26 +105,31 @@ function SearchDonkey() {
       setError('Error searching for donkey');
     }
   };
-  const generatePDF = async () => {
+  // code that generates the pdf with all the information previously fetched 
+  const generatePDF = async () => { 
     if (!donkeyDetails) return;
 
     const htmlContent = `
       <html>
       <head><style>
         body { font-family: Arial, sans-serif; padding: 20px; }
-        h1 { color: #AD957E; }
+        h1 { color: #623d23; }
+        h2 { color: black}
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table, th, td { border: 1px solid #AD957E; padding: 10px; }
-        th { background-color: #AD957E; color: white; }
+        table, th, td { border: 1px solid #623d23; padding: 10px; }
+        th { background-color: #623d23; color: white; }
       </style></head>
       <body>
-        <h1>Donkey Details</h1>
+        <h1>The Donkey Diary</h1>
+        <h2>Donkey Details</h2>
         <p><strong>Name:</strong> ${donkeyDetails.name}</p>
         <p><strong>Age:</strong> ${donkeyDetails.age}</p>
         <p><strong>Owner:</strong> ${donkeyDetails.owner}</p>
+        <p><strong>Healthcare Worker:</strong> ${donkeyDetails.healthcareWorker}</p>
         <p><strong>Location:</strong> ${donkeyDetails.location}</p>
         <p><strong>Gender:</strong> ${donkeyDetails.gender}</p>
-        <h1>Health Details</h1>
+        ${donkeyDetails.imageUrl ? `<p><strong>Special Characteristic:</strong><br><img src="${donkeyDetails.imageUrl}" alt="Donkey Image" style="max-width: 300px; height: auto;" /></p>` : '<p>No image available</p>'}
+        <h2>Health Details</h2>
         <p><strong>Health Status:</strong> ${donkeyDetails.healthStatus}</p>
         <p><strong>Symptoms:</strong> ${donkeyDetails.symptoms}</p>
         <p><strong>Other Symptoms:</strong> ${donkeyDetails.othersymptoms}</p>
@@ -137,18 +142,19 @@ function SearchDonkey() {
     `;
 
     try {
-      const file = await printToFileAsync({
-        html: htmlContent,
-        base64: false,
-      });
+        const file = await printToFileAsync({
+            html: htmlContent,
+            base64: false,
+        });
 
-      // Share the generated PDF
-      await shareAsync(file.uri);
+        // Share the generated PDF
+        await shareAsync(file.uri);
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      Alert.alert('Error', 'Unable to generate PDF.');
+        console.error('Error generating PDF:', error);
+        Alert.alert('Error', 'Unable to generate PDF.');
     }
-  };
+};
+
 
   return (
     <ScrollView style={styles.scrollView}>
