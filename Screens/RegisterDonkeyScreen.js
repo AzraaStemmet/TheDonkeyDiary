@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-
+import { getFirestore, collection, addDoc, updateDoc } from 'firebase/firestore';
 
 const RegisterDonkeyScreen = () => {
   const handleSignOut = async () => {

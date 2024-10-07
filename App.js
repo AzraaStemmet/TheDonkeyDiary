@@ -29,6 +29,29 @@ const logoImage = require('./assets/bahananwa.jpg');
 
 const Stack = createStackNavigator();
 
+const syncLocalDonkeys = async () => {
+  const db = getFirestore();
+  try {
+    const localDonkeys = await AsyncStorage.getItem('localDonkeys');
+    if (localDonkeys) {
+      const donkeys = JSON.parse(localDonkeys);
+      for (const donkey of donkeys) {
+        if (!donkey.synced) {
+          const docRef = await addDoc(collection(db, 'donkeys'), donkey);
+          await updateDoc(docRef, { location: donkey.location });
+          if (donkey.imageUrl) {
+            await updateDoc(docRef, { imageUrl: donkey.imageUrl });
+          }
+          donkey.synced = true;
+        }
+      }
+      await AsyncStorage.setItem('localDonkeys', JSON.stringify(donkeys));
+    }
+  } catch (error) {
+    console.error('Error syncing local donkeys:', error);
+  }
+};
+
 const App = () => {
   const [isReady, setIsReady] = useState(false);
   const netInfo = useNetInfo();
@@ -38,24 +61,21 @@ const App = () => {
       syncLocalDonkeys();
     }
   }, [netInfo.isConnected]);
+
   useEffect(() => {
     async function prepare() {
       try {
-        // Prevent the splash screen from auto-hiding
         await SplashScreen.preventAutoHideAsync();
 
-        // Initialize Firebase only if it hasn't been initialized yet
         if (getApps().length === 0) {
           initializeApp(firebaseConfig);
         }
 
-        // Simulate a loading task (e.g., fetching resources)
         await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {
         setIsReady(true);
-        // Hide the splash screen
         await SplashScreen.hideAsync();
       }
     }
@@ -64,12 +84,12 @@ const App = () => {
   }, []);
 
   if (!isReady) {
-    return null; // Render nothing while the app is loading
+    return null;
   }
 
   return (
     <NavigationContainer>
-       {!netInfo.isConnected && (
+      {!netInfo.isConnected && (
         <View style={styles.offlineBanner}>
           <Text style={styles.offlineText}>You are offline. Data will be synced when you're back online.</Text>
         </View>
@@ -80,7 +100,7 @@ const App = () => {
           headerRight: () => (
             <Image
               source={logoImage}
-              style={{ width: 40, height: 40, marginRight: 10 }} // Adjust size as necessary
+              style={{ width: 40, height: 40, marginRight: 10 }}
             />
           ),
           headerTitleAlign: 'center',
@@ -90,6 +110,7 @@ const App = () => {
           headerTintColor: '#333',
         }}
       >
+     
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
