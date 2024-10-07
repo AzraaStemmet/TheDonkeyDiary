@@ -132,4 +132,20 @@ const App = () => {
   );
 };
 
+
+const styles = StyleSheet.create({
+  offlineBanner: {
+    backgroundColor: 'red',
+    padding: 10,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+  },
+  offlineText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+});
 export default App;
