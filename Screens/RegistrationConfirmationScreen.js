@@ -57,50 +57,76 @@ const RegistrationConfirmationScreen = ({ route, navigation }) => {
         ) : (
           <Text>No image available</Text>
         )}
-  <View style={styles.detailsContainer}>
-  <View style={styles.row}>
-    <Text style={styles.detailsText}>ID:</Text>
-    <Text style={styles.detailsValue}>{donkey.id}</Text>
-  </View>
-
-       //</View> <View style={styles.detailsContainer}>
-          <View style={styles.column}>
-            <Text style={styles.detailsText}>ID:</Text>
-            <Text style={styles.detailsText}>Name:</Text>
-            <Text style={styles.detailsText}>Gender:</Text>
-            <Text style={styles.detailsText}>Age:</Text>
-            <Text style={styles.detailsText}>Location:</Text>
-            <Text style={styles.detailsText}>Owner:</Text>
-            <Text style={styles.detailsText}>Health Care Worker:</Text>
-            <Text style={styles.detailsText}>Health Status:</Text>
-            <Text style={styles.detailsText}>Symptoms:</Text>
-            <Text style={styles.detailsText}>Other Symptoms:</Text>
-            <Text style={styles.detailsText}>Medication:</Text>
-            <Text style={styles.detailsText}>Medication Date:</Text>
-            <Text style={styles.detailsText}>Medical Record:</Text>
-            <Text style={styles.detailsText}>Last Checkup Date:</Text>
-          </View>
-          <View style={styles.column}>
-            <Text style={styles.detailsValue}>{donkey.id}</Text>
-            <Text style={styles.detailsValue}>{donkey.name}</Text>
-            <Text style={styles.detailsValue}>{donkey.gender}</Text>
-            <Text style={styles.detailsValue}>{donkey.age}</Text>
-            <Text style={styles.detailsValue}>{donkey.location}</Text>
-            <Text style={styles.detailsValue}>{donkey.owner}</Text>
-            <Text style={styles.detailsValue}>{donkey.healthcareWorker}</Text>
-            <Text style={styles.detailsValue}>{donkey.healthStatus}</Text>
-            <Text style={styles.detailsValue}>{donkey.symptoms}</Text>
-            <Text style={styles.detailsValue}>{donkey.othersymptoms}</Text>
-            <Text style={styles.detailsValue}>{donkey.medication}</Text>
-            <Text style={styles.detailsValue}>
-              {donkey.medicationDate ? new Date(donkey.medicationDate).toLocaleDateString() : 'Not specified'}
-            </Text>
-            <Text style={styles.detailsValue}>{donkey.medicalRecord}</Text>
-            <Text style={styles.detailsValue}>
-              {donkey.lastCheckup ? new Date(donkey.lastCheckup).toLocaleDateString() : 'Not specified'}
-            </Text>
-          </View>
+      <View style={styles.detailsContainer}>
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>ID:</Text>
+          <Text style={styles.detailsValue}>{donkey.id}</Text>
         </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Name:</Text>
+          <Text style={styles.detailsValue}>{donkey.name}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Gender:</Text>
+          <Text style={styles.detailsValue}>{donkey.gender}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Age:</Text>
+          <Text style={styles.detailsValue}>{donkey.age}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Location:</Text>
+          <Text style={styles.detailsValue}>{donkey.location}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Owner:</Text>
+          <Text style={styles.detailsValue}>{donkey.owner}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Health Status:</Text>
+          <Text style={styles.detailsValue}>{donkey.healthStatus}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Symptoms:</Text>
+          <Text style={styles.detailsValue}>{donkey.symptoms}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Other Symptoms:</Text>
+          <Text style={styles.detailsValue}>{donkey.othersymptoms}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Medication:</Text>
+          <Text style={styles.detailsValue}>{donkey.medication}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Medication Date:</Text>
+          <Text style={styles.detailsValue}>
+            {donkey.medicationDate ? new Date(donkey.medicationDate).toLocaleDateString() : 'Not specified'}
+          </Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Medical Record:</Text>
+          <Text style={styles.detailsValue}>{donkey.medicalRecord}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.detailsText}>Last Checkup Date:</Text>
+          <Text style={styles.detailsValue}>
+            {donkey.lastCheckup ? new Date(donkey.lastCheckup).toLocaleDateString() : 'Not specified'}
+          </Text>
+        </View>
+      </View>.0
 
         <TouchableOpacity style={styles.customButton} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.customButtonText}>Return to Home</Text>
